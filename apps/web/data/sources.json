@@ -172,5 +172,30 @@
   "retrieved": "2026-10-01",
   "used_for": "Lunar-gravity flammability from a rotating sounding rocket",
   "abstract": "The Lunar Combustion Investigation (LUCI) demonstrates the feasibility of conducting material flammability experiments in partial-g.  A spinning Blue Origin New Shepard sounding rocket yields Lunar gravity by using centrifugal acceleration.  These are the first-ever, extended-duration (greater than 25 seconds) combustion tests performed in simulated Lunar gravity.  A steady vehicle rotation of 11 RPM is established, with an effective radius of rotation of 1.22 m at the experiment location.  Two samples are burned simultaneously in air at normal pressure.  The first sample is a cotton-fiberglass composite fabric sheet and the second a 4-mm diameter rod of acrylic plastic (polymethyl methacrylate).  Flame images from two orthogonal cameras are used to determine flame spread and growth rates, and the burn lasts for over two and a half minutes.  The oxygen concentration in the chamber is measured.  As the burns progress, the oxygen concentration drops, enabling a limiting value for extinction to be defined.  The effect of Coriolis force is discussed.  Results from this experiment are compared to related 1-g work, drop tower tests, aircraft experiments, and modeling.  The results are applicable to NASA’s exploration efforts in that they guide the selection of fire-safe materials and environments and ensure safety of future spacecraft and Lunar habitats.  The data also provides fundamental understanding of fires.  Finally, the experiment is a steppingstone to the ultimate goal of performing burn tests on the Lunar surface in the Flammability of Materials on the Moon (FM2) experiment which is planned to launch in late 2026."
+ },
+ {
+  "source_id": "exploration-atmosphere",
+  "ntrs_id": "20220009546",
+  "title": "Results of a 3-day Pilot Study to Validate Planetary Prebreathe Protocols Using a 56.5 kPa 34% O2, 66% N2 Saturation Cabin Atmosphere",
+  "authors": [
+   "Alejandro Garbino",
+   "E Lichar Dillon",
+   "Patrick Estep",
+   "Monica Hew",
+   "Karina Marshall-Bowman",
+   "Jason Norcross",
+   "Kadambari Suri",
+   "Andrew F J Abercromby"
+  ],
+  "organization": "NASA",
+  "document_type": "PRESENTATION",
+  "published": null,
+  "url": "https://ntrs.nasa.gov/citations/20220009546",
+  "pdf_url": null,
+  "copyright": "PUBLIC_USE_PERMITTED",
+  "sha256": null,
+  "retrieved": "2026-10-01",
+  "used_for": "Source for the 56.5 kPa, 34 % O2 exploration cabin atmosphere scenario",
+  "abstract": "INTRODUCTION:\nApollo missions used 100% O2 cabin atmospheres which effectively eliminated the risk of decompression sickness (DCS) during extravehicular activities (EVAs, ‘spacewalks’); however, this atmosphere presented a flammability risk that is no longer acceptable to NASA. Denitrogenation prebreathe protocols used to mitigate DCS risk for Space Shuttle and International Space Station EVAs are validated for the microgravity environment, but the significantly increased risk of DCS during equivalent ambulatory surface EVAs make these protocols inapplicable to planetary/Lunar missions. An “exploration atmosphere” of 56.5 kPa (8.2 psia), 34% O2, 66% N2 has been recommended by NASA for future Moon and Mars missions as a compromise that balances subsequent pre-EVA prebreathe duration, hypoxia, and flammability risk, assuming a 29.6 kPa (4.3 psi) spacesuit.  Prebreathe validation studies was initiated utilizing a three-story 6m diameter hypobaric chamber at NASA’s Johnson Space Center. Here, we report the results of a 3-day human-in-the-loop system checkout. \n\nMETHODS:\nSix volunteers acclimated to the 56.6kPa/34% O2 66% N2 environment for 48hrs prior to conducting a 20-minute prebreathe and a 6-hour simulated EVA at 34kPa/85% O2 / 15% N2.  The EVA simulation was designed to include tasks that are physically and ergonomically representative of future planetary EVAs.  Decompression stress was evaluated by serial doppler and echocardiographs, as well as by clinical features of DCS signs/symptoms. \n\nRESULTS AND DISCUSSION:\nPreliminary data analysis noted venous gas emboli (VGE) in 3 of 6 subjects, with peak Grade II VGE by Doppler and peak E-B score of 5 by cardiac ultrasonography. No volunteers were diagnosed with DCS during this initial test. No acute hypoxic symptoms were noted. Musculoskeletal and gastrointestinal complaints were noted, likely associated with the exercise load and the food system. Validation of exploration prebreathe protocols has since been initiated with an 11-day saturation test using the same facility and protocol."
  }
 ]

@@ -200,5 +200,29 @@
    "confinement"
   ],
   "kind": "observed"
+ },
+ {
+  "id": "exploration-atmosphere",
+  "source_id": "exploration-atmosphere",
+  "in": "abstract",
+  "quote": "An “exploration atmosphere” of 56.5 kPa (8.2 psia), 34% O2, 66% N2 has been recommended by NASA for future Moon and Mars missions as a compromise that balances subsequent pre-EVA prebreathe duration, hypoxia, and flammability risk, assuming a 29.6 kPa (4.3 psi) spacesuit.",
+  "topics": [
+   "oxygen",
+   "pressure",
+   "partial-gravity"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "saffire-vs-bass",
+  "source_id": "confinement",
+  "in": "pdf",
+  "quote": "While steady flame spread was also observed, the flame spread rates at the steady state in Saffire were significantly lower than those obtained in BASS even at the same oxygen percentage and flow rate. The different spread rates were suspected to be due to the different confined conditions introduced by the large and small flow ducts used in these two experiments.",
+  "topics": [
+   "confinement",
+   "geometry"
+  ],
+  "kind": "observed",
+  "pdf_page": 2
  }
 ]

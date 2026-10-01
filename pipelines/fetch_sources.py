@@ -26,6 +26,7 @@ SOURCES = {
     "confinement": ("20205004657", "Saffire vs BASS confinement comparison"),
     "partial-g": ("20130010991", "Microgravity vs Martian gravity vs NASA-STD-6001 Test 1"),
     "luci": ("20250010653", "Lunar-gravity flammability from a rotating sounding rocket"),
+    "exploration-atmosphere": ("20220009546", "Source for the 56.5 kPa, 34 % O2 exploration cabin atmosphere scenario"),
 }
 
 
@@ -39,11 +40,13 @@ def main():
     manifest = []
     for source_id, (ntrs_id, used_for) in SOURCES.items():
         meta = get_json(f"{NTRS}/api/citations/{ntrs_id}")
-        pdf_link = next(d["links"]["pdf"] for d in meta["downloads"] if d.get("mimetype") == "application/pdf")
+        # Some NTRS records are metadata-only (no PDF); those are cited by their abstract alone.
+        pdf_link = next((d["links"]["pdf"] for d in meta.get("downloads") or [] if d.get("mimetype") == "application/pdf"), None)
         pdf = RAW / f"{ntrs_id}.pdf"
-        if not pdf.exists():
+        if pdf_link and not pdf.exists():
             urllib.request.urlretrieve(NTRS + pdf_link, pdf)
-        subprocess.run(["pdftotext", "-layout", str(pdf), str(pdf.with_suffix(".txt"))], check=True)
+        if pdf_link:
+            subprocess.run(["pdftotext", "-layout", str(pdf), str(pdf.with_suffix(".txt"))], check=True)
         pubs = meta.get("publications") or [{}]
         manifest.append({
             "source_id": source_id,
@@ -54,9 +57,9 @@ def main():
             "document_type": meta.get("stiType"),
             "published": (pubs[0].get("publicationDate") or "")[:10] or None,
             "url": f"{NTRS}/citations/{ntrs_id}",
-            "pdf_url": NTRS + pdf_link,
+            "pdf_url": NTRS + pdf_link if pdf_link else None,
             "copyright": (meta.get("copyright") or {}).get("determinationType"),
-            "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
+            "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest() if pdf_link else None,
             "retrieved": date.today().isoformat(),
             "used_for": used_for,
             "abstract": (meta.get("abstract") or "").strip() or None,

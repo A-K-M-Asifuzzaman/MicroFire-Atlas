@@ -34,6 +34,17 @@ export function FlowO2Plot({ data, highlight = [], scenario, height = 420, label
   const plotted = data.filter((e) => e.flow_initial_cm_s != null && e.oxygen_vol_pct != null);
   // Draw highlighted points last so they sit on top.
   plotted.sort((a, b) => Number(hi.has(a.id)) - Number(hi.has(b.id)));
+  // One label per position: coincident highlighted tests share a label ("B8, B13, B15").
+  const labels = new Map<string, { x: number; y: number; ids: string[] }>();
+  for (const e of plotted) {
+    if (!hi.has(e.id)) continue;
+    const lx = x(e.flow_final_cm_s ?? e.flow_initial_cm_s!);
+    const ly = y(e.oxygen_vol_pct!);
+    const key = `${lx.toFixed(1)},${ly.toFixed(1)}`;
+    const l = labels.get(key) ?? { x: lx, y: ly, ids: [] };
+    l.ids.push(e.test_id);
+    labels.set(key, l);
+  }
 
   return (
     <figure className="m-0">
@@ -103,16 +114,16 @@ export function FlowO2Plot({ data, highlight = [], scenario, height = 420, label
                 stroke={s.color}
                 strokeWidth={s.hollow ? 1.6 : 0}
               />
-              {isHi && (
-                <text x={cx + 10} y={cy - 9} fontSize="12" fontWeight="600" fill="var(--ink)">
-                  {e.test_id}
-                </text>
-              )}
               {/* invisible larger hit area */}
               <circle cx={cx} cy={cy} r={10} fill="transparent" />
             </a>
           );
         })}
+        {[...labels.values()].map((l, i) => (
+          <text key={i} x={l.x + 10} y={i % 2 ? l.y + 18 : l.y - 9} fontSize="12" fontWeight="600" fill="var(--ink)" aria-hidden="true">
+            {l.ids.join(", ")}
+          </text>
+        ))}
       </svg>
     </figure>
   );

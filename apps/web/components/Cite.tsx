@@ -10,6 +10,7 @@ const SHORT: Record<string, string> = {
   confinement: "Effects of confinement",
   "partial-g": "Microgravity vs Martian gravity",
   luci: "Lunar Combustion Investigation",
+  "exploration-atmosphere": "Exploration atmosphere pilot study",
 };
 
 export const shortName = (sourceId: string) => SHORT[sourceId] ?? sourceId;

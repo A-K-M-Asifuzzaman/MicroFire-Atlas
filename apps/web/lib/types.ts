@@ -62,9 +62,9 @@ export type Source = {
   document_type: string | null;
   published: string | null;
   url: string;
-  pdf_url: string;
+  pdf_url: string | null;
   copyright: string | null;
-  sha256: string;
+  sha256: string | null;
   retrieved: string;
   used_for: string;
   abstract: string | null;

@@ -4,7 +4,9 @@
   "source_id": "bass-thickness",
   "in": "pdf",
   "quote": "Microgravity flames were found to be especially sensitive to air flow speed in the range 0 to 5 cm/s.",
-  "topics": ["airflow"],
+  "topics": [
+   "airflow"
+  ],
   "kind": "observed"
  },
  {
@@ -12,7 +14,10 @@
   "source_id": "bass-thickness",
   "in": "pdf",
   "quote": "At the lowest speeds examined (less than 1 cm/s) all the flames tended to become dim blue and very stable. However, heat loss at these very low convective rates is small so the flames can burn for a long time.",
-  "topics": ["airflow", "detection"],
+  "topics": [
+   "airflow",
+   "detection"
+  ],
   "kind": "observed"
  },
  {
@@ -20,7 +25,10 @@
   "source_id": "bass-thickness",
   "in": "abstract",
   "quote": "This has implications for spacecraft fire safety since a tiny flame might be undetected for a long time. While the small flame is not particularly hazardous if it remains small, the danger is that it might flare up if the air convection is suddenly increased or if the flame spreads into another fuel source.",
-  "topics": ["detection", "airflow"],
+  "topics": [
+   "detection",
+   "airflow"
+  ],
   "kind": "interpretation"
  },
  {
@@ -28,7 +36,9 @@
   "source_id": "bass2-summary",
   "in": "pdf",
   "quote": "Flames survived at airflow less than 1 cm/s.",
-  "topics": ["airflow"],
+  "topics": [
+   "airflow"
+  ],
   "kind": "observed"
  },
  {
@@ -36,7 +46,11 @@
   "source_id": "sibal-concurrent",
   "in": "abstract",
   "quote": "The quenching speeds were found to be between 1 and 5 cm/s with higher speed in lower oxygen atmosphere.",
-  "topics": ["airflow", "oxygen", "quench"],
+  "topics": [
+   "airflow",
+   "oxygen",
+   "quench"
+  ],
   "kind": "observed",
   "experiments": "family:SIBAL fabric · concurrent flow"
  },
@@ -45,7 +59,9 @@
   "source_id": "sibal-concurrent",
   "in": "abstract",
   "quote": "This is the first time that a low-speed quenching boundary in concurrent spread is determined in a clean and unambiguous manner.",
-  "topics": ["quench"],
+  "topics": [
+   "quench"
+  ],
   "kind": "interpretation"
  },
  {
@@ -53,7 +69,11 @@
   "source_id": "bass2-summary",
   "in": "pdf",
   "quote": "Flames spread more slowly across the narrower samples, at lower flow velocities and at lower O2 percentages.",
-  "topics": ["airflow", "oxygen", "geometry"],
+  "topics": [
+   "airflow",
+   "oxygen",
+   "geometry"
+  ],
   "kind": "observed",
   "experiments": "family:SIBAL fabric · concurrent flow"
  },
@@ -62,9 +82,14 @@
   "source_id": "bass2-summary",
   "in": "pdf",
   "quote": "Compared with the 10-cm/s case, the 5-cm/s case has a shorter flame and spreads more slowly.",
-  "topics": ["airflow"],
+  "topics": [
+   "airflow"
+  ],
   "kind": "observed",
-  "experiments": ["sibal-GMT96-T7", "sibal-GMT96-T8"],
+  "experiments": [
+   "sibal-GMT96-T7",
+   "sibal-GMT96-T8"
+  ],
   "experiments_basis": "The report's Figures 7.2 and 7.3 (2.2-cm sample, 21 % O2, 10 and 5 cm/s) do not name test IDs; GMT96-T7 and GMT96-T8 are the only Table 7.1 tests with exactly these conditions."
  },
  {
@@ -72,9 +97,13 @@
   "source_id": "bass2-summary",
   "in": "pdf",
   "quote": "The whole combustion process took about 40 s.",
-  "topics": ["airflow"],
+  "topics": [
+   "airflow"
+  ],
   "kind": "observed",
-  "experiments": ["sibal-GMT96-T7"],
+  "experiments": [
+   "sibal-GMT96-T7"
+  ],
   "experiments_basis": "Figure 7.2 conditions (2.2-cm sample, 10 cm/s, 21 % O2) match only GMT96-T7 in Table 7.1."
  },
  {
@@ -82,9 +111,13 @@
   "source_id": "bass2-summary",
   "in": "pdf",
   "quote": "Because the flow speed is lower, it took more than 60 s to burn the whole sample.",
-  "topics": ["airflow"],
+  "topics": [
+   "airflow"
+  ],
   "kind": "observed",
-  "experiments": ["sibal-GMT96-T8"],
+  "experiments": [
+   "sibal-GMT96-T8"
+  ],
   "experiments_basis": "Figure 7.3 conditions (2.2-cm sample, 5 cm/s, 21 % O2) match only GMT96-T8 in Table 7.1."
  },
  {
@@ -92,7 +125,11 @@
   "source_id": "pmma-rods-concurrent",
   "in": "abstract",
   "quote": "Both blowoff and quenching limits were obtained at several oxygen concentrations.",
-  "topics": ["oxygen", "blowoff", "quench"],
+  "topics": [
+   "oxygen",
+   "blowoff",
+   "quench"
+  ],
   "kind": "observed"
  },
  {
@@ -100,7 +137,10 @@
   "source_id": "pmma-rods-concurrent",
   "in": "abstract",
   "quote": "Quenching was observed when the flow became sufficiently weak that the flame could no longer provide adequate heat flux to compensate for the heat losses (conduction into the rod and radiation).",
-  "topics": ["quench", "airflow"],
+  "topics": [
+   "quench",
+   "airflow"
+  ],
   "kind": "interpretation"
  },
  {
@@ -108,7 +148,10 @@
   "source_id": "partial-g",
   "in": "abstract",
   "quote": "Previous testing at microgravity and Lunar gravity indicated that some materials burned to lower oxygen concentrations in low gravity than in normal gravity, although the low g extinction limit criteria are not the same as 1g due to time constraints in drop testing.",
-  "topics": ["partial-gravity", "oxygen"],
+  "topics": [
+   "partial-gravity",
+   "oxygen"
+  ],
   "kind": "observed"
  },
  {
@@ -116,7 +159,9 @@
   "source_id": "partial-g",
   "in": "abstract",
   "quote": "If proven for more materials, this may indicate the need to include a factor of safety on 1g flammability limits.",
-  "topics": ["partial-gravity"],
+  "topics": [
+   "partial-gravity"
+  ],
   "kind": "interpretation"
  },
  {
@@ -124,7 +169,9 @@
   "source_id": "luci",
   "in": "abstract",
   "quote": "These are the first-ever, extended-duration (greater than 25 seconds) combustion tests performed in simulated Lunar gravity.",
-  "topics": ["partial-gravity"],
+  "topics": [
+   "partial-gravity"
+  ],
   "kind": "observed"
  },
  {
@@ -132,7 +179,9 @@
   "source_id": "luci",
   "in": "abstract",
   "quote": "Finally, the experiment is a steppingstone to the ultimate goal of performing burn tests on the Lunar surface in the Flammability of Materials on the Moon (FM2) experiment which is planned to launch in late 2026.",
-  "topics": ["partial-gravity"],
+  "topics": [
+   "partial-gravity"
+  ],
   "kind": "observed"
  },
  {
@@ -140,7 +189,32 @@
   "source_id": "confinement",
   "in": "abstract",
   "quote": "For all baffle types, the flame either fails to ignite or extinguishes before reaching the end of the sample when the inter-baffle distance is too small (~ 1 cm). This is attributed to the reduction of oxygen supply to the flame zone and heat loss to the baffles.",
-  "topics": ["confinement"],
+  "topics": [
+   "confinement"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "exploration-atmosphere",
+  "source_id": "exploration-atmosphere",
+  "in": "abstract",
+  "quote": "An “exploration atmosphere” of 56.5 kPa (8.2 psia), 34% O2, 66% N2 has been recommended by NASA for future Moon and Mars missions as a compromise that balances subsequent pre-EVA prebreathe duration, hypoxia, and flammability risk, assuming a 29.6 kPa (4.3 psi) spacesuit.",
+  "topics": [
+   "oxygen",
+   "pressure",
+   "partial-gravity"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "saffire-vs-bass",
+  "source_id": "confinement",
+  "in": "pdf",
+  "quote": "While steady flame spread was also observed, the flame spread rates at the steady state in Saffire were significantly lower than those obtained in BASS even at the same oxygen percentage and flow rate. The different spread rates were suspected to be due to the different confined conditions introduced by the large and small flow ducts used in these two experiments.",
+  "topics": [
+   "confinement",
+   "geometry"
+  ],
   "kind": "observed"
  }
 ]

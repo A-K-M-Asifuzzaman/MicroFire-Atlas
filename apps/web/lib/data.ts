@@ -56,7 +56,7 @@ export const FLAG_LABELS: Record<string, string> = {
 export function pdfLink(sourceId: string, page?: number) {
   const s = getSource(sourceId);
   if (!s) return "#";
-  return page ? `${s.pdf_url}#page=${page}` : s.url;
+  return page && s.pdf_url ? `${s.pdf_url}#page=${page}` : s.url;
 }
 
 export function findingsFor(e: Experiment) {

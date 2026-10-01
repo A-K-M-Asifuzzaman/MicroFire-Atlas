@@ -216,7 +216,7 @@ export default async function ExperimentPage({ params }: PageProps<"/experiments
               />
             </p>
             <p className="mt-3 text-xs text-faint">
-              Transcribed by hand into <code>data/curated/</code>; file SHA-256 {src.sha256.slice(0, 12)}…
+              Transcribed by hand into <code>data/curated/</code>; file SHA-256 {src.sha256?.slice(0, 12)}…
             </p>
           </section>
 
