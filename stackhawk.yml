@@ -24,6 +24,7 @@ hawk:
       - /methodology
       - /sources
       - /ask
+      - /story
 tags:
   - name: _STACKHAWK_AGENT
     value: ${HAWK_AGENT:none}
