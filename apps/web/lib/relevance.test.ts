@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { rank, confidence, flowRange } from "./relevance.ts";
+import { rank, confidence, flowRange, outsideEvidence } from "./relevance.ts";
 import type { Experiment } from "./types";
 
 const all: Experiment[] = JSON.parse(readFileSync(new URL("../data/experiments.json", import.meta.url), "utf8"));
@@ -54,4 +54,22 @@ test("confidence reflects NASA's own flags", () => {
   assert.equal(suspect.checks.find((c) => c.label.startsWith("Oxygen"))!.pass, false);
   const solid = confidence(byId("bass2-B19"), all);
   assert.ok(solid.score > suspect.score);
+});
+
+test("exploration atmosphere is flagged as outside the evidence", () => {
+  const notes = outsideEvidence(all, { oxygen: 34, pressureKpa: 56.5, gravity: "lunar" });
+  assert.equal(notes.length, 3);
+  assert.deepEqual(outsideEvidence(all, { oxygen: 18, flow: 5, pressureKpa: 101 }), []);
+});
+
+test("gravity mismatch lowers every score equally and never reorders by itself", () => {
+  const micro = rank(all, { oxygen: 18, flow: 5, gravity: "microgravity" });
+  const lunar = rank(all, { oxygen: 18, flow: 5, gravity: "lunar" });
+  assert.deepEqual(micro.map((r) => r.experiment.id), lunar.map((r) => r.experiment.id));
+  assert.ok(lunar[0].score < micro[0].score);
+});
+
+test("pressure inside a series range counts as a match", () => {
+  const r = rank([byId("bass2-B19")], { pressureKpa: 99.3 })[0];
+  assert.equal(r.score, 1);
 });

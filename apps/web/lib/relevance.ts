@@ -11,9 +11,13 @@ import type { Experiment } from "./types";
  * weight in the denominator, so blank fields can never raise a score.
  */
 
+export type Gravity = "microgravity" | "lunar" | "martian";
+
 export type Scenario = {
   oxygen?: number; // vol %
   flow?: number; // cm/s
+  pressureKpa?: number;
+  gravity?: Gravity;
   material?: string;
   flowDirection?: string;
   thicknessMm?: number;
@@ -23,6 +27,8 @@ export type Scenario = {
 export const WEIGHTS = {
   oxygen: 3,
   flow: 3,
+  pressureKpa: 2,
+  gravity: 2,
   material: 2,
   flowDirection: 1,
   thicknessMm: 1,
@@ -32,6 +38,8 @@ export const WEIGHTS = {
 export const LABELS: Record<keyof Scenario, string> = {
   oxygen: "Oxygen",
   flow: "Airflow",
+  pressureKpa: "Pressure",
+  gravity: "Gravity",
   material: "Material",
   flowDirection: "Flow direction",
   thicknessMm: "Thickness",
@@ -45,6 +53,14 @@ export const MATERIAL_CLASS: Record<string, string> = {
   Nomex: "fabric",
 };
 export const SAME_CLASS_CREDIT = 0.5;
+
+/**
+ * Every test in the atlas ran near 1 atm, so the data's own pressure spread (~1 kPa) is too
+ * narrow to be a fair yardstick. A fixed, documented scale is used instead.
+ */
+export const PRESSURE_SCALE_KPA = 10;
+
+const isMicrogravity = (e: Experiment) => e.gravity_regime.startsWith("microgravity");
 
 export type Term = {
   key: keyof Scenario;
@@ -96,6 +112,13 @@ export function rank(exps: Experiment[], s: Scenario): Ranked[] {
       const d = r == null ? null : s.flow < r[0] ? r[0] - s.flow : s.flow > r[1] ? s.flow - r[1] : 0;
       add("flow", d == null ? null : near(d, sc.flow), r == null ? "—" : r[0] === r[1] ? `${r[0]} cm/s` : `${r[0]}–${r[1]} cm/s`);
     }
+    if (s.pressureKpa != null) {
+      const p = e.pressure_kpa != null ? [e.pressure_kpa, e.pressure_kpa] : e.pressure_kpa_range ?? null;
+      const d = p == null ? null : s.pressureKpa < p[0] ? p[0] - s.pressureKpa : s.pressureKpa > p[1] ? s.pressureKpa - p[1] : 0;
+      add("pressureKpa", d == null ? null : near(d, PRESSURE_SCALE_KPA), p == null ? "—" : p[0] === p[1] ? `${p[0]} kPa` : `${p[0]}–${p[1]} kPa`);
+    }
+    if (s.gravity != null)
+      add("gravity", (s.gravity === "microgravity") === isMicrogravity(e) ? 1 : 0, isMicrogravity(e) ? "microgravity" : e.gravity_regime);
     if (s.material != null) {
       const same = e.material === s.material;
       const cls = MATERIAL_CLASS[e.material] && MATERIAL_CLASS[e.material] === MATERIAL_CLASS[s.material];
@@ -119,6 +142,30 @@ export function rank(exps: Experiment[], s: Scenario): Ranked[] {
   return out.sort(
     (a, b) => b.score - a.score || b.coverage - a.coverage || a.experiment.id.localeCompare(b.experiment.id),
   );
+}
+
+/** Scenario values that fall outside everything the atlas has tested. */
+export function outsideEvidence(exps: Experiment[], s: Scenario) {
+  const out: string[] = [];
+  const span = (vals: (number | null | undefined)[]) => {
+    const v = vals.filter((x): x is number => x != null);
+    return [Math.min(...v), Math.max(...v)] as const;
+  };
+  const check = (label: string, v: number | undefined, [lo, hi]: readonly [number, number], unit: string) => {
+    if (v != null && (v < lo || v > hi)) out.push(`${label} of ${v} ${unit} is outside the tested range (${lo}–${hi} ${unit}).`);
+  };
+  check("Oxygen", s.oxygen, span(exps.map((e) => e.oxygen_vol_pct)), "%");
+  check("Airflow", s.flow, span(exps.flatMap((e) => [e.flow_initial_cm_s, e.flow_final_cm_s])), "cm/s");
+  check(
+    "Pressure",
+    s.pressureKpa,
+    span(exps.flatMap((e) => [e.pressure_kpa, ...(e.pressure_kpa_range ?? [])])),
+    "kPa",
+  );
+  if (s.gravity && s.gravity !== "microgravity" && !exps.some((e) => !isMicrogravity(e)))
+    out.push(`No test in this atlas was run at ${s.gravity} gravity; every result below is microgravity evidence.`);
+  if (s.material && !exps.some((e) => e.material === s.material)) out.push(`No test in this atlas used ${s.material}.`);
+  return out;
 }
 
 /**
