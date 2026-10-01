@@ -2,11 +2,13 @@
 # Run locally: start the site (cd apps/web && npm run build && npx next start -p 3417), then
 #   APP_HOST=http://localhost:3417 hawk scan
 # Discovery assumptions (headless): surfaces = server-rendered HTML pages linked from the nav;
-# no auth, no REST/GraphQL API yet. Add openApiConf when /api/ask lands.
+# no auth; one JSON API route (/api/ask) described in openapi.yaml.
 app:
   applicationId: ${APP_ID:fedde518-fdde-4a48-9ead-dfa6ae2635bc}
   env: ${APP_ENV:Production}
   host: ${APP_HOST:http://localhost:3417}
+  openApiConf:
+    filePath: openapi.yaml
 hawk:
   spider:
     base: true
@@ -21,6 +23,7 @@ hawk:
       - /gaps
       - /methodology
       - /sources
+      - /ask
 tags:
   - name: _STACKHAWK_AGENT
     value: ${HAWK_AGENT:none}
