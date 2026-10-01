@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
+import { HeroFlame } from "@/components/HeroFlame";
 import { Legend, OutcomeTag } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
 import { experiments, findings, getExperiment, sources } from "@/lib/data";
@@ -33,22 +34,44 @@ export default function Home() {
 
   return (
     <>
-      <section className="border-b border-rule">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-12 grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center">
+      <section className="relative border-b border-rule overflow-hidden">
+        <div className="absolute inset-0 story-stars opacity-70" aria-hidden="true" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-14 grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center">
           <div>
-            <h1 className="display text-4xl sm:text-5xl lg:text-[3.6rem] max-w-[14ch]">Fire behaves differently when gravity disappears</h1>
+            <p className="text-signal text-sm font-semibold">NASA Space Apps 2026, Flame in Freefall</p>
+            <h1 className="display text-4xl sm:text-5xl lg:text-[3.6rem] max-w-[14ch] mt-3">Fire behaves differently when gravity disappears</h1>
             <p className="mt-6 text-lg text-muted max-w-[52ch]">
               MicroFire Atlas puts NASA&apos;s microgravity fire experiments on one map, test by test. See what kept a flame
               alive, what put it out, and where the evidence runs out before a crew relies on it.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/mission" className="bg-signal text-void font-semibold px-5 py-3 rounded-sm hover:brightness-110">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/story" className="story-cta">
+                Play the story
+              </Link>
+              <Link href="/mission" className="border border-rule-strong px-5 py-3 rounded-full hover:border-signal">
                 Run a mission scenario
               </Link>
-              <Link href="/atlas" className="border border-rule-strong px-5 py-3 rounded-sm hover:border-signal">
+              <Link href="/atlas" className="px-3 py-3 text-muted hover:text-ink">
                 Browse all {experiments.length} tests
               </Link>
             </div>
+          </div>
+          <HeroFlame />
+        </div>
+      </section>
+
+      <section className="border-b border-rule">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center">
+          <div>
+            <h2 className="display text-2xl sm:text-3xl">Every test on one map</h2>
+            <p className="mt-3 text-muted">
+              Each dot is a real burn aboard the ISS, placed by its oxygen level and airflow and coloured by what NASA
+              recorded. Select any dot to open its record.
+            </p>
+            <p className="mt-4 text-sm text-muted">
+              Highlighted: the same 2-cm-wide, 0.1-mm PMMA film at about 16.5 % oxygen. The main difference between the runs
+              was airflow, and the outcome changed three ways. <Cite sourceId="bass2-summary" page={111} where="Table A.1" />
+            </p>
           </div>
           <div className="bg-panel border border-rule rounded-sm p-3 sm:p-5">
             <FlowO2Plot
@@ -57,10 +80,6 @@ export default function Home() {
               label="Every NASA test in the atlas, plotted by oxygen and airflow. Tests B16, B20 and B19 are highlighted."
             />
             <Legend className="mt-3 px-1" />
-            <p className="mt-4 px-1 text-sm text-muted max-w-[70ch]">
-              Highlighted: the same 2-cm-wide, 0.1-mm PMMA film at about 16.5 % oxygen aboard the ISS. The main difference
-              between the runs was airflow, and the outcome changed three ways. <Cite sourceId="bass2-summary" page={111} where="Table A.1" />
-            </p>
           </div>
         </div>
       </section>

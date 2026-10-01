@@ -224,5 +224,51 @@
   ],
   "kind": "observed",
   "pdf_page": 2
+ },
+ {
+  "id": "bass-duct",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The tests were performed in the 250-L free volume Microgravity Science Glovebox (MSG) in the Destiny Lab of the International Space Station (ISS).",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed",
+  "pdf_page": 74
+ },
+ {
+  "id": "bass-duct-size",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The flow duct measured 7.6 by 7.6 by 17 cm with rounded internal corners for smooth laminar flow through the duct.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed",
+  "pdf_page": 74
+ },
+ {
+  "id": "blowoff-kinetics",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "As the opposed-flow velocity is increased, the residence time being inversely proportional to the square of velocity, finite-rate kinetics in the gas phase becomes important leading ultimately to the blowoff extinction.",
+  "topics": [
+   "blowoff",
+   "airflow"
+  ],
+  "kind": "interpretation",
+  "pdf_page": 28
+ },
+ {
+  "id": "radiative-regime",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "studies have established the radiative regime in the mild opposed-flow environment in which the flame spread rate decreases as the opposed-flow velocity is reduced leading to flame extinguishment (Ref. 10) if the flow velocity is sufficiently low.",
+  "topics": [
+   "quench",
+   "airflow"
+  ],
+  "kind": "interpretation",
+  "pdf_page": 28
  }
 ]
