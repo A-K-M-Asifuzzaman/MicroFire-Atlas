@@ -25,3 +25,20 @@ test("routes resolve to the right guide page", () => {
   assert.equal(guideFor("/nowhere"), undefined);
   assert.ok(PAGES.every((p) => p.steps.length > 0));
 });
+
+test("discoveries are unique, placed in the box and open real routes", async () => {
+  const { DISCOVERIES } = await import("./guide.ts");
+  assert.equal(new Set(DISCOVERIES.map((d) => d.id)).size, DISCOVERIES.length);
+  for (const d of DISCOVERIES) {
+    assert.ok(d.x >= 0 && d.x <= 100 && d.y >= 0 && d.y <= 100, d.id);
+    assert.match(d.href, /^\/(story|atlas|gaps|sources|experiments\/bass2-B\d+)?$/, d.id);
+  }
+});
+
+test("every guide page has a crew goal", async () => {
+  const { GOALS, CREW } = await import("./guide.ts");
+  for (const p of PAGES) {
+    assert.ok(GOALS[p.id], `no goal for ${p.id}`);
+    assert.ok(CREW[GOALS[p.id].crew]);
+  }
+});

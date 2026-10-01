@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
 import { ScrollStory } from "@/components/ScrollStory";
-import { Ember } from "@/components/game/Ember";
+import { EvidenceConstellation } from "@/components/world/EvidenceConstellation";
+import { GravityTeaser } from "@/components/world/GravityTeaser";
+import { LivingSky } from "@/components/world/LivingSky";
+import { StartMission } from "@/components/world/StartMission";
 import { Legend } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
-import { experiments, findings, sources } from "@/lib/data";
+import { experiments, findings, getExperiment, sources } from "@/lib/data";
 
 const FATES = ["bass2-B16", "bass2-B20", "bass2-B19"];
 const WHY = ["low-flow-sensitivity", "dim-blue-low-flow", "tiny-flame-undetected", "low-g-burns-lower-o2"];
@@ -31,44 +34,52 @@ const STEPS = [
 export default function Home() {
   const why = WHY.map((id) => findings.find((f) => f.id === id)!);
   const materials = new Set(experiments.map((e) => e.material)).size;
+  const b19 = getExperiment("bass2-B19")!;
 
   return (
     <>
       <section data-guide="hero" className="relative overflow-hidden">
-        <div className="absolute inset-0 story-stars" aria-hidden="true" />
-        <div className="absolute -right-48 -top-24 w-[720px] h-[720px] rounded-full story-orb" aria-hidden="true" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20 grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center min-h-[calc(100vh-3.5rem)]">
+        <LivingSky variant="home" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-16 grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center min-h-[calc(100vh-3.5rem)]">
           <div>
-            <p className="text-signal text-sm font-semibold">NASA Space Apps 2026, Flame in Freefall</p>
-            <h1 className="display text-5xl sm:text-6xl lg:text-[4.6rem] max-w-[13ch] mt-3">Fire behaves differently when gravity disappears</h1>
-            <p className="mt-6 text-lg text-muted max-w-[52ch]">
-              MicroFire Atlas turns NASA&apos;s space-station fire experiments into something you can explore, build and play,
-              with every number traced to NASA&apos;s own pages.
+            <p className="text-signal text-sm font-semibold">A space-station science mission for explorers</p>
+            <h1 className="display text-5xl sm:text-6xl lg:text-[4.6rem] max-w-[12ch] mt-3">Can you light a fire in space?</h1>
+            <p className="mt-6 text-lg text-muted max-w-[48ch]">
+              Build NASA&apos;s real fire experiment, switch gravity off, and find out what astronauts saw. Every clue comes
+              from NASA&apos;s own reports.
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link data-guide="play" href="/story" className="story-cta">
-                Play Mission Freefall
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <StartMission />
+              <Link href="/atlas" className="border border-rule-strong px-5 py-3 rounded-full hover:border-signal bg-void/60">
+                Explore real tests
               </Link>
-              <Link href="/mission" className="border border-rule-strong px-5 py-3 rounded-full hover:border-signal">
-                Run a mission scenario
-              </Link>
-              <a href="#scroll-story" className="px-3 py-3 text-muted hover:text-ink">
-                Scroll the story ↓
-              </a>
             </div>
-            <dl className="mt-12 grid grid-cols-3 gap-6 max-w-lg">
-              <div><dt className="text-xs text-muted">Real ISS tests</dt><dd className="display text-3xl num">{experiments.length}</dd></div>
-              <div><dt className="text-xs text-muted">Verified NASA quotes</dt><dd className="display text-3xl num">{findings.length}</dd></div>
-              <div><dt className="text-xs text-muted">NASA documents</dt><dd className="display text-3xl num">{sources.length}</dd></div>
-            </dl>
+            <figure className="clue-card mt-10 max-w-lg">
+              <p className="text-xs font-semibold text-flame">Real NASA clue · test {b19.test_id}</p>
+              <p className="mt-1.5 text-[17px]">
+                A flame on the space station started in a gentle {b19.flow_initial_cm_s} cm/s breeze. Then the crew&apos;s log says:
+              </p>
+              <blockquote className="mt-2 text-[17px] text-ink">“{b19.observations_verbatim}”</blockquote>
+              <figcaption className="mt-2 text-sm text-muted">
+                “Pot” is the fan&apos;s dial setting. Blown out by moving air, in space? The mission shows you why.{" "}
+                <Cite sourceId="bass2-summary" page={b19.provenance.record.pdf_page} where="Table A.1" />
+              </figcaption>
+            </figure>
           </div>
-          <div className="flex flex-col items-center gap-5">
-            <Ember form="earth" mood="happy" size={260} />
-            <div className="ember-bubble max-w-xs">
-              <p className="text-[11px] font-semibold text-signal">Ember, your flame guide</p>
-              <p className="mt-1">Scroll down and watch what happens to me when gravity switches off.</p>
-            </div>
+          <GravityTeaser />
+        </div>
+      </section>
+
+      <section className="border-y border-rule bg-panel/60">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center">
+          <div>
+            <h2 className="display text-2xl sm:text-3xl">Your evidence map</h2>
+            <p className="mt-3 text-muted max-w-[44ch]">
+              Every star is something you can do or a real NASA record. Stars light up when you discover them, and any
+              star takes you there.
+            </p>
           </div>
+          <EvidenceConstellation />
         </div>
       </section>
 

@@ -26,7 +26,7 @@ export function GapMap() {
   const rows = [...grid.keys()].reverse(); // high oxygen at the top
 
   return (
-    <div className="grid gap-10 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+    <div className="grid grid-cols-1 gap-10 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
       <div>
         <label className="inline-flex items-center gap-3 text-sm">
           <span className="text-muted">Material</span>

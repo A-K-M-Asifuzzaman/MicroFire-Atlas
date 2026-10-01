@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useExplorer } from "@/components/guide/EmberGuide";
 
 const LINKS = [
-  { href: "/story", label: "Story" },
+  { href: "/story", label: "Play" },
   { href: "/atlas", label: "Atlas" },
   { href: "/analyze", label: "Flame Vision" },
   { href: "/compare", label: "Compare" },
@@ -18,6 +19,7 @@ const LINKS = [
 export function Nav() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const { gentle, setGentle } = useExplorer();
   const items = LINKS.map((l) => {
     const active = path === l.href || path.startsWith(l.href + "/");
     return (
@@ -34,9 +36,21 @@ export function Nav() {
       </Link>
     );
   });
+  const motion = (
+    <button
+      onClick={() => setGentle(!gentle)}
+      aria-pressed={gentle}
+      title={gentle ? "Background motion paused" : "Pause background motion"}
+      className="nav-motion"
+    >
+      <span aria-hidden="true">{gentle ? "▶" : "❚❚"}</span>
+      <span className="sr-only lg:not-sr-only">{gentle ? "Play motion" : "Pause motion"}</span>
+    </button>
+  );
   return (
-    <nav aria-label="Main">
+    <nav aria-label="Main" className="flex items-center gap-2">
       <div className="hidden md:flex items-center gap-1">{items}</div>
+      {motion}
       <button
         className="md:hidden text-sm text-muted px-3 py-2 border border-rule rounded-sm"
         aria-expanded={open}

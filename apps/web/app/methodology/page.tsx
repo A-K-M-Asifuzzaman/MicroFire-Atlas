@@ -31,7 +31,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 export default function MethodologyPage() {
   const sc = scalesFrom(experiments);
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
       <nav aria-label="On this page" className="text-sm lg:sticky lg:top-6 lg:self-start">
         <ul className="space-y-2 text-muted">
           {[

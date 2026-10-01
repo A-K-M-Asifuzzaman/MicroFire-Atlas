@@ -137,16 +137,6 @@ a {
     radial-gradient(ellipse at 20% 90%, rgba(240, 160, 68, 0.08), transparent 55%);
   background-size: 420px 420px, 380px 380px, 520px 520px, 460px 460px, 340px 340px, 600px 600px, 500px 500px, 100% 100%, 100% 100%;
 }
-.story-orb {
-  background: radial-gradient(circle at 35% 35%, rgba(240, 160, 68, 0.35), rgba(91, 140, 255, 0.18) 45%, transparent 70%);
-  filter: blur(8px);
-  animation: story-drift 18s ease-in-out infinite alternate;
-}
-@keyframes story-drift {
-  to {
-    transform: translate(-60px, 40px) scale(1.08);
-  }
-}
 .story-cta {
   display: inline-block;
   background: linear-gradient(135deg, #f0a044, #ffcf7a);
@@ -767,3 +757,326 @@ a {
 .guide-ember:focus-visible {
   animation-play-state: paused; /* easier to hit for small hands */
 }
+
+/* Floating drift used by the living sky's astronaut */
+@keyframes astro-drift {
+  0% { transform: translate(0, 0) rotate(-6deg); }
+  100% { transform: translate(-14px, 18px) rotate(7deg); }
+}
+/* Pause motion (site switch): a still composition */
+html[data-motion="gentle"] .story-orb,
+html[data-motion="gentle"] .ember-body,
+html[data-motion="gentle"] .guide-ember {
+  animation: none !important;
+}
+
+/* Pause motion control in the header */
+.nav-motion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 36px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.nav-motion:hover,
+.nav-motion[aria-pressed="true"] {
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+
+/* Discovery pop from Ember */
+.guide-pop {
+  max-width: 260px;
+  padding: 0.6rem 0.9rem;
+  border-radius: 18px 18px 4px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #f0a044, #ffcf7a);
+  color: #1a1206;
+  box-shadow: 0 14px 40px -12px rgba(240, 160, 68, 0.7);
+  animation: banner-pop 4.2s ease both;
+}
+
+/* Gravity teaser switch */
+.teaser-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 48px;
+  padding: 0.5rem 1.1rem 0.5rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: rgba(13, 20, 36, 0.8);
+  font-weight: 600;
+}
+.teaser-switch:hover { border-color: var(--signal); }
+.teaser-track {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  border-radius: 999px;
+  background: #f0a044;
+  transition: background 0.3s;
+}
+.teaser-knob {
+  position: absolute;
+  top: 3px;
+  left: 25px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #fff;
+  transition: left 0.3s cubic-bezier(.3, 1.4, .6, 1);
+}
+.teaser-switch[aria-checked="false"] .teaser-track { background: #5b8cff; }
+.teaser-switch[aria-checked="false"] .teaser-knob { left: 3px; }
+
+/* Transition layer: the trip into the experiment bay */
+.trip {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at 50% 50%, #0d1a33, #070b16 70%);
+  animation: trip-in 0.25s ease both;
+}
+@keyframes trip-in { from { opacity: 0; } }
+.trip-window {
+  width: min(70vmin, 520px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  border: 10px solid #2c3a58;
+  box-shadow: 0 0 0 4px #121b30, 0 0 80px rgba(86, 212, 228, 0.25), inset 0 0 60px rgba(0, 0, 0, 0.8);
+  background: #070b16;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  animation: trip-window 1.6s cubic-bezier(.6, 0, .3, 1) both;
+}
+@keyframes trip-window {
+  0%, 35% { transform: scale(0.15); opacity: 0; }
+  60% { transform: scale(0.7); opacity: 1; }
+  100% { transform: scale(3.2); opacity: 1; }
+}
+/* fly into the illustrated sky toward the station (it sits at about 74% / 34% of the plate) */
+.trip-plate {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transform-origin: 74% 34%;
+  animation: trip-zoom 1.6s cubic-bezier(.55, 0, .35, 1) both;
+}
+@keyframes trip-zoom {
+  0% { transform: scale(1); filter: none; }
+  70% { transform: scale(4.5); filter: blur(1px) brightness(0.8); opacity: 1; }
+  100% { transform: scale(7); filter: blur(4px) brightness(0.4); opacity: 0; }
+}
+.trip-lab { width: 78%; opacity: 0; animation: trip-lab 1.6s ease both; }
+@keyframes trip-lab { 40% { opacity: 0; } 70%, 100% { opacity: 1; } }
+.trip-spark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ffd27a;
+  box-shadow: 0 0 18px 6px rgba(240, 160, 68, 0.8), 0 0 40px 14px rgba(91, 140, 255, 0.35);
+  animation: trip-spark 0.9s cubic-bezier(.5, 0, .2, 1) both;
+}
+@keyframes trip-spark {
+  0% { transform: translate(-38vw, 30vh) scale(1.6); }
+  100% { transform: translate(22vw, -14vh) scale(0.2); opacity: 0; }
+}
+.trip-caption {
+  position: absolute;
+  z-index: 1;
+  text-shadow: 0 2px 12px #000;
+  bottom: 12vh;
+  font-family: var(--font-fredoka);
+  font-size: 1.4rem;
+}
+.trip-skip {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  min-height: 44px;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: var(--panel);
+}
+
+/* Evidence constellation */
+.const-map { width: 100%; height: auto; overflow: visible; }
+.const-line { stroke: var(--rule-strong); stroke-width: 0.25; stroke-dasharray: 0.8 0.9; }
+.const-line-on {
+  stroke: var(--flame);
+  stroke-width: 0.4;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: const-draw 1.4s ease forwards;
+}
+@keyframes const-draw { to { stroke-dashoffset: 0; } }
+.const-halo { fill: rgba(86, 212, 228, 0.08); stroke: var(--rule-strong); stroke-width: 0.25; }
+.const-core { fill: var(--faint); }
+.const-node-on .const-halo { fill: rgba(240, 160, 68, 0.18); stroke: var(--flame); }
+.const-node-on .const-core { fill: #ffd27a; }
+.const-gap .const-halo { stroke-dasharray: 0.7 0.5; }
+.const-q { font-size: 2.6px; font-weight: 700; fill: var(--ink); pointer-events: none; }
+.const-gap .const-core { fill: transparent; }
+.const-label { font-size: 2.1px; fill: var(--muted); pointer-events: none; }
+.const-node-on .const-label { fill: var(--ink); }
+.const-node { cursor: pointer; outline: none; }
+.const-node:hover .const-halo,
+.const-node:focus-visible .const-halo { stroke: var(--signal); stroke-width: 0.5; }
+@media (max-width: 640px) {
+  .const-label { display: none; }
+}
+
+.clue-card {
+  position: relative;
+  padding: 1rem 1.2rem;
+  border-radius: 18px;
+  border: 1px solid rgba(240, 160, 68, 0.45);
+  background: rgba(13, 20, 36, 0.88);
+  box-shadow: 0 20px 50px -24px rgba(240, 160, 68, 0.5);
+}
+
+/* ---------- Living sky (ambient layer for big scenes) ---------- */
+.sky { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; background: #050914; }
+.sky-plate {
+  position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; object-position: 70% 50%;
+  animation: sky-push 60s ease-in-out infinite alternate;
+}
+@keyframes sky-push { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.07) translate(-1.5%, 1%); } }
+.sky-stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sky-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(5, 9, 20, 0.92) 0%, rgba(5, 9, 20, 0.72) 38%, rgba(5, 9, 20, 0.15) 70%, rgba(5, 9, 20, 0.3) 100%),
+    linear-gradient(0deg, var(--void) 0%, transparent 22%);
+}
+.sky-calm .sky-plate { opacity: 0.45; animation: none; }
+.sky-calm .sky-scrim { background: linear-gradient(0deg, var(--void) 5%, rgba(5, 9, 20, 0.6) 60%, rgba(5, 9, 20, 0.75)); }
+.sky-floater { position: absolute; right: 30%; top: 6%; width: clamp(110px, 14vw, 210px); }
+.sky-story .sky-floater { right: 6%; top: 10%; }
+.sky-floater-img { width: 100%; height: auto; animation: astro-drift 13s ease-in-out infinite alternate; filter: drop-shadow(0 0 30px rgba(86, 212, 228, 0.25)); }
+.sky-credit { position: absolute; right: 10px; bottom: 6px; font-size: 10px; color: var(--faint); }
+@media (max-width: 1023px) {
+  .sky-scrim { background: linear-gradient(180deg, rgba(5, 9, 20, 0.55), rgba(5, 9, 20, 0.85) 45%, var(--void)); }
+  .sky-floater { right: 4px; top: 4px; width: 84px; }
+}
+html[data-motion="gentle"] .sky *, html[data-motion="gentle"] .sky-floater-img { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .sky * { animation: none !important; } }
+
+/* ---------- Guide crew: "What am I looking for?" ---------- */
+.crew-tip { position: fixed; left: 16px; bottom: 16px; z-index: 59; }
+.crew-card { display: flex; align-items: flex-end; gap: 0; max-width: min(430px, calc(100vw - 132px)); animation: crew-in 0.6s cubic-bezier(.2, 1.3, .4, 1) both; }
+@keyframes crew-in { from { transform: translateY(40px); opacity: 0; } }
+.crew-img { width: 92px; height: auto; flex: none; margin-right: -10px; filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.6)); animation: crew-bob 4s ease-in-out infinite; }
+@keyframes crew-bob { 50% { transform: translateY(-5px); } }
+.crew-bubble {
+  margin-bottom: 18px; padding: 0.75rem 0.95rem; border-radius: 18px 18px 18px 4px;
+  background: rgba(13, 20, 36, 0.96); border: 1px solid var(--rule-strong);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.8);
+}
+.crew-mini {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.85rem 0.25rem 0.25rem; min-height: 48px;
+  border-radius: 999px; background: rgba(13, 20, 36, 0.92); border: 1px solid var(--rule-strong); font-size: 13px; font-weight: 600;
+}
+.crew-mini img { width: 40px; height: 40px; object-fit: cover; object-position: top; border-radius: 999px; background: #182340; }
+.crew-mini:hover { border-color: var(--signal); }
+@media (max-width: 640px) {
+  .crew-img { width: 64px; }
+  .crew-mini span { display: none; }
+  .crew-mini { padding: 0.25rem; }
+}
+html[data-motion="gentle"] .crew-img { animation: none; }
+
+/* ---------- Mission Freefall: task sheet, stages and chapter mechanics ---------- */
+.game-sheet {
+  position: absolute; z-index: 20; left: 24px; bottom: 24px; width: 500px;
+  max-height: calc(100% - 6.5rem); overflow-y: auto;
+}
+.game-goal { font-family: var(--font-fredoka); font-size: 1.05rem; color: var(--flame); }
+@media (max-width: 639px) {
+  .game-sheet { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 52%; padding: 1rem 1.05rem; }
+  .game-sheet-min { max-height: none; }
+  .game-sheet-min .game-sheet-body { display: none; }
+}
+.game-2d { position: absolute; left: 548px; right: 24px; top: 72px; bottom: 24px; display: grid; place-items: center; }
+@media (max-width: 1023px) { .game-2d { left: 8px; right: 8px; top: 64px; bottom: auto; height: 42%; } }
+.app2d { width: 100%; max-width: 760px; }
+.app2d svg { width: 100%; height: auto; }
+.app2d-mini { max-width: 320px; }
+.app2d-cap, .app2d-tag { font-size: 12px; fill: var(--muted); font-family: var(--font-lexend); }
+.app2d-tag { fill: var(--ink); font-size: 11px; }
+.app2d-arrow { font-size: 12px; fill: var(--signal); }
+.app2d-void { margin-top: 0.5rem; text-align: center; color: var(--flame); font-size: 14px; }
+.app2d-ghost { opacity: 0.45; stroke-dasharray: 5 4; animation: guide-glow 1.4s ease-in-out infinite; }
+.app2d-snap { animation: app2d-snap 0.45s cubic-bezier(.3, 1.5, .5, 1) both; transform-box: fill-box; transform-origin: center; }
+@keyframes app2d-snap { from { transform: translateY(-14px) scale(0.92); opacity: 0.4; } }
+.app2d-air { animation: app2d-air 1.6s linear infinite; }
+.app2d-flow-slow { animation-duration: 3.2s; }
+.app2d-flow-fast { animation-duration: 0.8s; }
+.app2d-air-rev { animation-direction: reverse; }
+@keyframes app2d-air { to { stroke-dashoffset: -36; } }
+.app2d-fan { animation: app2d-spin 1.2s linear infinite; }
+.app2d-fan.app2d-flow-fast { animation-duration: 0.4s; }
+.app2d-fan.app2d-flow-slow { animation-duration: 3s; }
+.app2d-fan-rev { animation-direction: reverse; }
+@keyframes app2d-spin { to { transform: rotate(360deg); } }
+.app2d-loose { transform: translate(18px, -40px) rotate(-8deg); transform-box: fill-box; transition: transform 0.6s cubic-bezier(.3, 1.4, .5, 1); }
+.app2d-seated { transition: transform 0.6s cubic-bezier(.3, 1.4, .5, 1); }
+.app2d-flame-in { animation: app2d-snap 0.6s ease both; }
+.app2d-hidden { opacity: 0.12; }
+.app2d-quench { animation: app2d-fade 2s ease both; }
+@keyframes app2d-fade { from { opacity: 1; } to { opacity: 0.55; } }
+.app2d-blowoff { animation: app2d-blow 1.4s ease-out both; }
+@keyframes app2d-blow { from { transform: translateX(-140px); opacity: 1; } }
+.app2d-flicker { animation: ember-flicker 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom; }
+
+.story-choice-picked { border-color: var(--signal) !important; background: rgba(86, 212, 228, 0.1); }
+.game-gesture { padding: 0.9rem; border-radius: 14px; border: 1px dashed var(--signal); background: rgba(86, 212, 228, 0.05); }
+.game-dial { width: 84px; height: 84px; flex: none; border-radius: 999px; touch-action: none; user-select: none; }
+.game-dial svg { width: 100%; height: 100%; }
+.game-dial:active svg circle { stroke: var(--signal); }
+.game-lever { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; border-radius: 14px; background: #0b1222; border: 1px solid var(--rule-strong); }
+.game-lever button { min-height: 56px; border-radius: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.game-lever button small { font-weight: 400; font-size: 11px; color: var(--muted); }
+.game-lever button[aria-checked="true"] { background: linear-gradient(135deg, #f0a044, #ffcf7a); color: #1a1206; }
+.game-lever button[aria-checked="true"] small { color: #3a2a10; }
+
+.check { display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.75rem; border-radius: 12px; border: 1px solid var(--rule); }
+.check-dot { width: 26px; height: 26px; flex: none; display: grid; place-items: center; border-radius: 999px; font-weight: 800; }
+.check-ok .check-dot { background: rgba(86, 212, 228, 0.18); color: var(--signal); }
+.check-bad { border-color: rgba(240, 160, 68, 0.6); background: rgba(240, 160, 68, 0.06); }
+.check-bad .check-dot { background: var(--flame); color: #1a1206; animation: guide-glow 1.4s ease-in-out infinite; }
+
+.clue { display: block; width: 100%; text-align: left; padding: 0.7rem; border-radius: 12px; border: 1px solid var(--rule-strong); background: rgba(13, 20, 36, 0.8); transition: transform 0.2s; }
+.clue:hover { transform: translateY(-2px); border-color: var(--signal); }
+.clue-on { border-color: var(--flame); box-shadow: 0 0 0 1px var(--flame), 0 12px 30px -16px rgba(240, 160, 68, 0.7); transform: rotate(-1deg); }
+.clue-tag { font-size: 11px; color: var(--signal); font-weight: 700; }
+
+.fab-ax { font-size: 9px; fill: var(--muted); }
+.fab-dot { animation: app2d-snap 0.45s cubic-bezier(.3, 1.5, .5, 1) both; transform-box: fill-box; transform-origin: center; }
+.moon-map { cursor: crosshair; border-radius: 10px; }
+.moon-known { fill: rgba(240, 160, 68, 0.06); stroke: rgba(240, 160, 68, 0.5); stroke-dasharray: 3 3; }
+.moon-known-on { fill: rgba(240, 160, 68, 0.18); stroke: var(--flame); }
+.moon-marker { animation: app2d-snap 0.6s cubic-bezier(.3, 1.5, .5, 1) both; transform-box: fill-box; transform-origin: center; }
+.moon-q { font-size: 14px; font-weight: 800; fill: var(--flame); }
+.moon-window {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 78% 26%, rgba(243, 227, 196, 0.22), transparent 18%), radial-gradient(ellipse at 70% 40%, rgba(240, 160, 68, 0.1), transparent 55%);
+  animation: trip-in 1.2s ease both;
+}
+
+.crew-row { display: flex; align-items: flex-end; gap: 0.5rem; }
+.crew-row-item { margin: 0; display: flex; flex-direction: column; align-items: center; animation: crew-in 0.7s cubic-bezier(.2, 1.3, .4, 1) both; }
+.crew-row-item:nth-child(2) { animation-delay: 0.12s; }
+.crew-row-item:nth-child(3) { animation-delay: 0.24s; }
+.crew-row-item img { height: clamp(150px, 22vw, 250px); width: auto; filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.6)); }
+.crew-row-item figcaption { text-align: center; font-size: 13px; line-height: 1.2; }
+.crew-row-item figcaption span { display: block; color: var(--muted); font-size: 11px; }
+html[data-motion="gentle"] .app2d *, html[data-motion="gentle"] .crew-row-item, html[data-motion="gentle"] .crew-card { animation: none !important; }

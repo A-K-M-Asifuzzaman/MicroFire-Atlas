@@ -6,17 +6,27 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { Ember, type Mood } from "@/components/game/Ember";
 import { Cite } from "@/components/Cite";
 import { findings } from "@/lib/data";
-import { FUN_FACTS, guideFor, PAGES } from "@/lib/guide";
+import { CREW, DISCOVERIES, discovery, FUN_FACTS, GOALS, guideFor } from "@/lib/guide";
 
 /* ---------- Explorer / Scientist mode, shared across the site ---------- */
 
 type Mode = "kid" | "pro";
-const ExplorerCtx = createContext<{ mode: Mode; setMode: (m: Mode) => void }>({ mode: "kid", setMode: () => {} });
+type Ctx = {
+  mode: Mode;
+  setMode: (m: Mode) => void;
+  /** Site-wide Gentle Motion (shown as "Pause motion"): stills the backdrop and shortens transitions. */
+  gentle: boolean;
+  setGentle: (on: boolean) => void;
+  /** Discoveries found so far: learning actions, never page visits. */
+  found: string[];
+  discover: (id: string) => void;
+};
+const ExplorerCtx = createContext<Ctx>({ mode: "kid", setMode: () => {}, gentle: false, setGentle: () => {}, found: [], discover: () => {} });
 export const useExplorer = () => useContext(ExplorerCtx);
 
-const KEY = "microfire-explorer-v1";
-type Saved = { mode: Mode; stars: string[]; open: boolean; seen: string[] };
-const DEFAULT: Saved = { mode: "kid", stars: [], open: false, seen: [] };
+const KEY = "microfire-explorer-v2";
+type Saved = { mode: Mode; found: string[]; open: boolean; seen: string[]; gentle: boolean; tips: string[] };
+const DEFAULT: Saved = { mode: "kid", found: [], open: false, seen: [], gentle: false, tips: [] };
 
 function load(): Saved {
   try {
@@ -38,6 +48,7 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
   const [step, setStep] = useState(0);
   const [fact, setFact] = useState<number | null>(null);
   const [nudge, setNudge] = useState(false);
+  const [pop, setPop] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const page = guideFor(path);
@@ -54,13 +65,12 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, [s, ready]);
 
-  // new page: earn a star, restart the tour, and wave hello if it's the first visit
+  // new page: restart the tour, and wave hello if it's the first visit (visits earn nothing)
   useEffect(() => {
     if (!ready || !page) return;
     /* eslint-disable react-hooks/set-state-in-effect -- reacting to navigation */
     setStep(0);
     setFact(null);
-    setS((x) => (x.stars.includes(page.id) ? x : { ...x, stars: [...x.stars, page.id] }));
     if (!s.seen.includes(page.id)) {
       setNudge(true);
       const t = setTimeout(() => setNudge(false), 6000);
@@ -98,17 +108,85 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [s.open, setOpen]);
 
-  const ctx = useMemo(() => ({ mode: s.mode, setMode: (mode: Mode) => setS((x) => ({ ...x, mode })) }), [s.mode]);
+  const discover = useCallback((id: string) => {
+    setS((x) => {
+      if (x.found.includes(id) || !discovery(id)) return x;
+      setPop(id);
+      return { ...x, found: [...x.found, id] };
+    });
+  }, []);
+  useEffect(() => {
+    if (!pop) return;
+    const t = setTimeout(() => setPop(null), 4200);
+    return () => clearTimeout(t);
+  }, [pop]);
+
+  // opening any NASA report link is a discovery, wherever it happens
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (a && /nasa\.gov/.test(a.href)) discover("source");
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, [discover]);
+
+  useEffect(() => {
+    if (s.gentle) document.documentElement.dataset.motion = "gentle";
+    else delete document.documentElement.dataset.motion;
+  }, [s.gentle]);
+
+  const ctx = useMemo(
+    () => ({
+      mode: s.mode,
+      setMode: (mode: Mode) => setS((x) => ({ ...x, mode })),
+      gentle: s.gentle,
+      setGentle: (gentle: boolean) => setS((x) => ({ ...x, gentle })),
+      found: s.found,
+      discover,
+    }),
+    [s.mode, s.gentle, s.found, discover],
+  );
   const hidden = path.startsWith("/story"); // the game has Ember built in
   const kid = s.mode === "kid";
   const mood: Mood = current?.mood ?? (fact != null ? "surprised" : kid ? "happy" : "curious");
   const factItem = fact != null ? FUN_FACTS[fact % FUN_FACTS.length] : null;
   const factQuote = factItem ? findings.find((f) => f.id === factItem.finding) : null;
-  const total = PAGES.length;
+  const goal = page ? GOALS[page.id] : undefined;
+  const crew = goal ? CREW[goal.crew] : undefined;
+  const tipOpen = !!page && !s.tips.includes(page.id);
+  const setTip = (open: boolean) =>
+    page && setS((x) => ({ ...x, tips: open ? x.tips.filter((t) => t !== page.id) : [...new Set([...x.tips, page.id])] }));
+  const total = DISCOVERIES.length;
+  const nextUp = DISCOVERIES.find((d) => !s.found.includes(d.id));
 
   return (
     <ExplorerCtx.Provider value={ctx}>
       {children}
+      {!hidden && ready && goal && crew && (
+        <div className={`crew-tip ${tipOpen ? "crew-tip-open" : ""}`}>
+          {tipOpen ? (
+            <div className="crew-card" role="note" aria-label={`${crew.name}'s tip`}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- illustrated character */}
+              <img src={crew.img} alt="" className="crew-img" />
+              <div className="crew-bubble">
+                <p className="text-[11px] font-semibold text-signal">{crew.name} · What am I looking for?</p>
+                <p className="mt-1 text-[15px] leading-snug">{kid ? goal.kid : goal.pro}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
+                  {goal.next && <Link href={goal.next.href} className="link">{goal.next.label}</Link>}
+                  <button className="text-muted hover:text-ink" onClick={() => setTip(false)}>Got it</button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button className="crew-mini" onClick={() => setTip(true)} aria-label={`Ask ${crew.name}: what am I looking for?`}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- illustrated character */}
+              <img src={crew.img} alt="" />
+              <span>What do I do here?</span>
+            </button>
+          )}
+        </div>
+      )}
       {!hidden && ready && (
         <div className="guide-root" data-open={s.open}>
           {s.open && page && current && (
@@ -160,29 +238,38 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
 
               <div className="mt-4 pt-3 border-t border-rule">
                 <p className="text-xs text-muted">
-                  Explorer stars <b className="text-flame num">{s.stars.length}</b> of {total}
+                  Discoveries <b className="text-flame num">{s.found.length}</b> of {total}
                 </p>
-                <ol className="mt-1.5 flex flex-wrap gap-1" aria-label="Pages explored">
-                  {PAGES.map((p) => (
-                    <li key={p.id} title={p.name} className={`guide-star ${s.stars.includes(p.id) ? "guide-star-on" : ""}`}>
+                <ol className="mt-1.5 flex flex-wrap gap-1" aria-label="Discoveries">
+                  {DISCOVERIES.map((d) => (
+                    <li key={d.id} title={d.label} className={`guide-star ${s.found.includes(d.id) ? "guide-star-on" : ""}`}>
                       <span aria-hidden="true">★</span>
-                      <span className="sr-only">{p.name}{s.stars.includes(p.id) ? " explored" : " not yet explored"}</span>
+                      <span className="sr-only">{d.label}{s.found.includes(d.id) ? ", found" : ", not found yet"}</span>
                     </li>
                   ))}
                 </ol>
-                {s.stars.length >= total ? (
-                  <p className="mt-2 text-sm text-flame">You explored every page! You are a MicroFire scientist.</p>
-                ) : (
+                {nextUp ? (
                   <p className="mt-2 text-xs text-faint">
-                    Next: <Link className="link" href={nextUnexplored(s.stars)}>{PAGES.find((p) => !s.stars.includes(p.id))?.name}</Link>, or{" "}
-                    <Link className="link" href="/story">play the mission</Link>.
+                    Next discovery: <Link className="link" href={nextUp.href}>{nextUp.label.toLowerCase()}</Link>
                   </p>
+                ) : (
+                  <p className="mt-2 text-sm text-flame">You found every discovery. You think like a fire scientist!</p>
                 )}
+                <label className="mt-3 flex items-center justify-between gap-2 text-xs text-muted">
+                  Pause background motion
+                  <input type="checkbox" checked={s.gentle} onChange={(e) => ctx.setGentle(e.target.checked)} className="accent-[var(--signal)]" />
+                </label>
               </div>
             </div>
           )}
 
-          {!s.open && nudge && page && (
+          {pop && !s.open && (
+            <p className="guide-pop" role="status">
+              <span aria-hidden="true">★ </span>New discovery: {discovery(pop)?.label}
+            </p>
+          )}
+
+          {!s.open && nudge && page && !tipOpen && (
             <button className="guide-nudge" onClick={() => setOpen(true)}>
               {kid ? "Psst! Want me to show you around?" : `Guide to ${page.name}`}
             </button>
@@ -196,24 +283,10 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
             className="guide-ember"
           >
             <Ember form={path === "/" && !s.open ? "earth" : "orbit"} mood={mood} size={74} label={false} />
-            <span className="guide-badge num" aria-hidden="true">{s.stars.length}</span>
+            <span className="guide-badge num" aria-hidden="true">{s.found.length}</span>
           </button>
         </div>
       )}
     </ExplorerCtx.Provider>
   );
 }
-
-const ROUTE: Record<string, string> = {
-  home: "/",
-  atlas: "/atlas",
-  analyze: "/analyze/saffire-vi-pmma",
-  compare: "/compare",
-  mission: "/mission",
-  gaps: "/gaps",
-  ask: "/ask",
-  experiment: "/experiments/bass2-B19",
-  methodology: "/methodology",
-  sources: "/sources",
-};
-const nextUnexplored = (stars: string[]) => ROUTE[PAGES.find((p) => !stars.includes(p.id))?.id ?? "home"];

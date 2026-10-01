@@ -231,9 +231,9 @@ export function MissionLab() {
                         <OutcomeTag outcome={e.outcome} label={e.outcome_label} />
                       </span>
                     </span>
-                    <span className="flex items-center gap-2" aria-label={`Relevance ${Math.round(r.score * 100)} of 100`}>
+                    <span className="flex items-center gap-2 w-28 sm:w-auto" aria-label={`Relevance ${Math.round(r.score * 100)} of 100`}>
                       {/* SVG attributes, not inline styles, so the strict CSP needs no 'unsafe-inline' */}
-                      <svg className="flex-1 h-1.5" aria-hidden="true">
+                      <svg className="flex-1 min-w-0 h-1.5" aria-hidden="true">
                         <rect width="100%" height="100%" rx="3" fill="var(--rule)" />
                         <rect width={`${r.score * 100}%`} height="100%" rx="3" fill="var(--signal)" />
                       </svg>

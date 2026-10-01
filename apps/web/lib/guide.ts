@@ -15,8 +15,9 @@ export const PAGES: GuidePage[] = [
     match: (p) => p === "/",
     steps: [
       { target: "hero", kid: "Hi, I'm Ember! On Earth, flames like me stand tall because hot air rises. In space nothing rises, so we change shape!", pro: "MicroFire Atlas: 56 BASS/BASS-II tests transcribed from NASA/TM-20210011385, with page-level citations and verified quotes." },
+      { target: "hero", kid: "Try the gravity switch next to me, then read the real NASA clue. It comes straight from the astronauts' logbook!", pro: "Hero: gravity teaser (illustration) and test B19's verbatim crew note with its Table A.1 page." },
       { target: "scroll-story", kid: "Scroll down slowly and watch me change from Earth to space. Every result you see really happened on the space station.", pro: "Scroll story: each beat drives the 3D illustration with a recorded outcome (B16 quench, B20 burned, B19 blowoff)." },
-      { target: "play", kid: "Want to build a real NASA experiment and light it yourself? Press Play Mission Freefall!", pro: "Mission Freefall: guided game built on the same records and verified quotes." },
+      { target: "play", kid: "Want to build a real NASA experiment and light it yourself? Press Start the mission!", pro: "Mission Freefall: guided game built on the same records and verified quotes." },
     ],
   },
   {
@@ -116,3 +117,49 @@ export const FUN_FACTS: { finding: string; text: string }[] = [
   { finding: "saffire-vs-bass", text: "Big Saffire fires in a big tunnel spread slower than small BASS fires in a small tunnel. The space around a fire matters!" },
   { finding: "hw-igniter", text: "Astronauts lit each sample with a glowing coil of wire, pulled into place by hand." },
 ];
+
+/**
+ * Discoveries: the only thing that earns an Explorer star. Each is a learning action
+ * (not a page visit) and each node in the evidence constellation opens a real place.
+ * x/y place the star on the constellation (0-100 box); the list order is the journey.
+ */
+export type Discovery = { id: string; label: string; href: string; x: number; y: number; kind: "act" | "record" | "gap" | "source" };
+export const DISCOVERIES: Discovery[] = [
+  { id: "gravity", label: "Saw a flame change without gravity", href: "/story", x: 8, y: 70, kind: "act" },
+  { id: "built", label: "Built NASA's BASS-II wind tunnel", href: "/story", x: 20, y: 48, kind: "act" },
+  { id: "fixed", label: "Fixed the setup before the test", href: "/story", x: 30, y: 72, kind: "act" },
+  { id: "b20", label: "Lit a sample at test B20's real settings", href: "/experiments/bass2-B20", x: 40, y: 40, kind: "record" },
+  { id: "b16", label: "Watched how test B16 ended", href: "/experiments/bass2-B16", x: 52, y: 62, kind: "record" },
+  { id: "b19", label: "Watched how test B19 ended", href: "/experiments/bass2-B19", x: 58, y: 28, kind: "record" },
+  { id: "fabric", label: "Lined up the fabric quench records", href: "/atlas", x: 68, y: 52, kind: "record" },
+  { id: "clue", label: "Pinned a real crew-log clue", href: "/story", x: 76, y: 22, kind: "record" },
+  { id: "quiet", label: "Found the hidden dim flame", href: "/story", x: 82, y: 68, kind: "act" },
+  { id: "source", label: "Opened a real NASA report page", href: "/sources", x: 90, y: 40, kind: "source" },
+  { id: "edge", label: "Found where the evidence stops", href: "/gaps", x: 95, y: 14, kind: "gap" },
+];
+export const discovery = (id: string) => DISCOVERIES.find((d) => d.id === id);
+
+/**
+ * The guide crew: original illustrated characters who each show children one kind of thing.
+ * Ember hosts tours and fun facts; a crew member gives each page's one-line goal.
+ */
+export type CrewId = "tala" | "kofi" | "mei";
+export const CREW: Record<CrewId, { name: string; job: string; img: string }> = {
+  tala: { name: "Tala", job: "Navigator: where to go next", img: "/art/tala.webp" },
+  kofi: { name: "Kofi", job: "Lab engineer: how to play", img: "/art/kofi.webp" },
+  mei: { name: "Dr. Mei", job: "Scientist: how to read the evidence", img: "/art/mei.webp" },
+};
+
+/** "What am I looking for?": one short goal per page, in Explorer and Scientist words. */
+export const GOALS: Record<string, { crew: CrewId; kid: string; pro: string; next?: { label: string; href: string } }> = {
+  home: { crew: "tala", kid: "Flip the gravity switch, read the real NASA clue, then press Start the mission. Scroll down to see fire change in space!", pro: "Hero teaser, one verbatim crew note, then the scroll story and evidence map.", next: { label: "Start the mission", href: "/story" } },
+  atlas: { crew: "mei", kid: "Every dot is a real fire test from the space station. Tap a dot, then read what the astronauts wrote.", pro: "All 56 records by O₂ and airflow; select a point for its full provenance.", next: { label: "Compare two tests", href: "/compare" } },
+  analyze: { crew: "kofi", kid: "Play the real NASA video, then press AI vision to see the computer find the flame.", pro: "Classical CV on NASA footage; pixel units only.", next: { label: "Explore the tests", href: "/atlas" } },
+  compare: { crew: "mei", kid: "Two tests, one difference. Guess what changed the flame, then read what NASA saw.", pro: "Controlled presets: observed, interpretation and gaps kept apart.", next: { label: "Find the evidence gaps", href: "/gaps" } },
+  mission: { crew: "kofi", kid: "Pick a place for a space crew to live. We'll find the closest real tests, and show what's missing.", pro: "Evidence proximity with a separate coverage figure; not a risk score.", next: { label: "See the gaps", href: "/gaps" } },
+  gaps: { crew: "tala", kid: "Empty squares are places no test has been. Finding them is a real discovery!", pro: "O₂ × airflow coverage; empty cells make no claim.", next: { label: "Ask a question", href: "/ask" } },
+  ask: { crew: "mei", kid: "Ask a short question. Every answer shows the NASA evidence it came from, or says we don't know.", pro: "Deterministic retrieval, then a cited answer with claim checks.", next: { label: "Back to the mission", href: "/story" } },
+  experiment: { crew: "mei", kid: "This is one real test. Each number says if NASA wrote it down (recorded) or we worked it out (derived).", pro: "Per-field provenance: recorded, series, derived, not stated.", next: { label: "Compare it", href: "/compare" } },
+  methodology: { crew: "mei", kid: "This is how we checked every number. Scientists call it showing your work!", pro: "Formulas, weights and limits, rendered from code.", next: { label: "See the sources", href: "/sources" } },
+  sources: { crew: "mei", kid: "These are the real NASA reports. Open one to see where a clue came from.", pro: "NTRS records with hashes.", next: { label: "Back to the mission", href: "/story" } },
+};
