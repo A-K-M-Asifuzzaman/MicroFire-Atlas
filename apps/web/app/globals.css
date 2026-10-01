@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/*
+  MicroFire Atlas tokens.
+  Colour carries the science: outcome colours follow what the flames looked like
+  (near-limit microgravity flames are dim blue; sustained flames are sooty amber).
+  Cyan is reserved for interaction and data UI.
+*/
+:root {
+  --void: #070b16;
+  --panel: #0d1424;
+  --panel-2: #121b30;
+  --rule: #1e2940;
+  --rule-strong: #2c3a58;
+  --ink: #e6eaf2;
+  --muted: #8f9ab1;
+  --faint: #5d6880;
+
+  --signal: #56d4e4; /* interaction, links, focus */
+  --flame: #f0a044; /* kept burning */
+  --quench: #5b8cff; /* went out at low flow */
+  --blowoff: #d6e4ff; /* blown out at high flow */
+  --inert: #4a5570; /* did not ignite */
+  --unknown: #f0a044; /* burned, end state not stated (drawn hollow) */
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-void: var(--void);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-signal: var(--signal);
+  --color-flame: var(--flame);
+  --color-quench: var(--quench);
+  --color-blowoff: var(--blowoff);
+  --color-inert: var(--inert);
+  --font-sans: var(--font-archivo);
+}
+
+html {
+  background: var(--void);
+}
+
+body {
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 100;
+  line-height: 1.55;
+}
+
+/* Archivo's width axis does the typographic work: expanded for display, condensed for data. */
+.display {
+  font-variation-settings: "wdth" 125;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+}
+.condensed {
+  font-variation-settings: "wdth" 80;
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A faint instrument grid behind data panels only. */
+.grid-bg {
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: -1px -1px;
+}
+
+a {
+  color: inherit;
+}
+.link {
+  color: var(--signal);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.link:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--quench);
+  color: var(--void);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

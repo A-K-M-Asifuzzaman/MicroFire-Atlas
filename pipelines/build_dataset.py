@@ -120,6 +120,7 @@ def sibal_record(row):
                 "pressure_kpa": {**SIBAL_METHOD_CITE, "quote": "Ambient pressure was 1 atm.", "original": "1 atm"},
             },
             "derived": {"outcome": "Coded by MicroFire Atlas from the verbatim Comments column of Table 7.1."},
+            "notes": {},
         },
     }
 
@@ -181,8 +182,8 @@ def table_a_record(row):
                 "outcome": "Coded by MicroFire Atlas from the verbatim observations column.",
                 "flow_initial_cm_s": "First value of the 'Air display' column (air velocity transducer, cm/s). "
                                      "Later 'pot' values are fan potentiometer settings, not velocities, and are not converted.",
-                "oxygen_vol_pct": "'Calibrated initial O2 vol%' column.",
             },
+            "notes": {"oxygen_vol_pct": "Taken from NASA's 'Calibrated initial O2 vol%' column."},
         },
     }
 
