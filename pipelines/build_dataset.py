@@ -11,10 +11,12 @@ Rules:
 import csv
 import json
 import pathlib
+import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CURATED = ROOT / "data" / "curated"
 OUT = ROOT / "data" / "processed" / "experiments.json"
+WEB = ROOT / "apps" / "web" / "data"  # what the website imports
 
 ATM_KPA = 101.325
 
@@ -197,11 +199,51 @@ def build():
     return records
 
 
+def squash(text):
+    return " ".join(text.split())
+
+
+def pdf_pages(ntrs_id):
+    pdf = ROOT / "data" / "raw" / "ntrs" / f"{ntrs_id}.pdf"
+    if not pdf.exists():
+        raise FileNotFoundError(f"{pdf} missing: run pipelines/fetch_sources.py first")
+    out = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], check=True, capture_output=True, text=True).stdout
+    return [squash(p) for p in out.split("\f")]
+
+
+def build_findings(sources, experiment_ids):
+    """Every quote must appear verbatim in its source; PDF quotes get their page number."""
+    by_id = {s["source_id"]: s for s in sources}
+    findings = json.loads((CURATED / "findings.json").read_text())
+    pages_cache = {}
+    for f in findings:
+        src = by_id[f["source_id"]]
+        q = squash(f["quote"])
+        if f["in"] == "abstract":
+            if q not in squash(src["abstract"] or ""):
+                raise ValueError(f"{f['id']}: quote not found in {f['source_id']} abstract")
+        else:
+            pages = pages_cache.setdefault(src["ntrs_id"], pdf_pages(src["ntrs_id"]))
+            hits = [i + 1 for i, p in enumerate(pages) if q in p]
+            if not hits:
+                raise ValueError(f"{f['id']}: quote not found in {f['source_id']} PDF")
+            f["pdf_page"] = hits[0]
+        for eid in f.get("experiments", []) if isinstance(f.get("experiments"), list) else []:
+            if eid not in experiment_ids:
+                raise ValueError(f"{f['id']}: unknown experiment {eid}")
+    return findings
+
+
 def main():
     records = build()
+    sources = json.loads((ROOT / "data" / "sources.json").read_text())
+    findings = build_findings(sources, {r["id"] for r in records})
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(records, indent=1, ensure_ascii=False) + "\n")
-    print(f"{len(records)} records -> {OUT.relative_to(ROOT)}")
+    WEB.mkdir(parents=True, exist_ok=True)
+    for name, data in (("experiments", records), ("sources", sources), ("findings", findings)):
+        (WEB / f"{name}.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
+    print(f"{len(records)} records, {len(findings)} verified findings -> {WEB.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

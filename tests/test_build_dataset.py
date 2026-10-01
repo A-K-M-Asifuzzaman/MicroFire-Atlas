@@ -53,6 +53,21 @@ class Dataset(unittest.TestCase):
         for tid in ("sibal-GMT45-T1", "sibal-GMT45-T2", "bass2-B3", "bass2-B5"):
             self.assertIn("o2_reading_suspect", self.records[tid]["quality_flags"])
 
+    def test_misquote_is_rejected(self):
+        sources = [{"source_id": "s", "ntrs_id": "x", "abstract": "Flames were dim and blue."}]
+        orig = b.CURATED
+        tmp = ROOT / "data" / "processed" / "_test_curated"
+        tmp.mkdir(parents=True, exist_ok=True)
+        try:
+            (tmp / "findings.json").write_text(json.dumps([{"id": "f", "source_id": "s", "in": "abstract", "quote": "Flames were bright."}]))
+            b.CURATED = tmp
+            with self.assertRaises(ValueError):
+                b.build_findings(sources, set())
+        finally:
+            b.CURATED = orig
+            (tmp / "findings.json").unlink()
+            tmp.rmdir()
+
     def test_quench_requires_falling_flow(self):
         row = {"test_id": "X", "investigation": "BASS-II", "sample_width_cm": "2.2", "flow_start_cm_s": "3",
                "flow_end_cm_s": "5", "o2_vol_pct": "18", "o2_reading_suspect": "false", "comment_verbatim": "Quenched"}

@@ -59,6 +59,7 @@ def main():
             "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
             "retrieved": date.today().isoformat(),
             "used_for": used_for,
+            "abstract": (meta.get("abstract") or "").strip() or None,
         })
         print(source_id, ntrs_id, "ok")
     (ROOT / "data" / "sources.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
