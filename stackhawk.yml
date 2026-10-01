@@ -17,6 +17,10 @@ hawk:
       - /compare
       - /compare?preset=pmma-flow-window
       - /experiments/bass2-B19
+      - /mission
+      - /gaps
+      - /methodology
+      - /sources
 tags:
   - name: _STACKHAWK_AGENT
     value: ${HAWK_AGENT:none}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Nav } from "@/components/Nav";
 import "./globals.css";
 
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
     "Explore NASA microgravity fire experiments test by test: find the evidence closest to a mission scenario, compare outcomes, and see where the data stops.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Render per request so each page gets a fresh CSP nonce (see proxy.ts).
+  await connection();
   return (
     <html lang="en" className={`${archivo.variable} antialiased`}>
       <body className="min-h-screen flex flex-col">

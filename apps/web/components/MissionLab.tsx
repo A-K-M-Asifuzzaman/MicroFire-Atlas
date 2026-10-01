@@ -232,9 +232,11 @@ export function MissionLab() {
                       </span>
                     </span>
                     <span className="flex items-center gap-2" aria-label={`Relevance ${Math.round(r.score * 100)} of 100`}>
-                      <span className="h-1.5 flex-1 bg-rule rounded-full overflow-hidden">
-                        <span className="block h-full bg-signal" style={{ width: `${r.score * 100}%` }} />
-                      </span>
+                      {/* SVG attributes, not inline styles, so the strict CSP needs no 'unsafe-inline' */}
+                      <svg className="flex-1 h-1.5" aria-hidden="true">
+                        <rect width="100%" height="100%" rx="3" fill="var(--rule)" />
+                        <rect width={`${r.score * 100}%`} height="100%" rx="3" fill="var(--signal)" />
+                      </svg>
                       <span className="num text-sm w-7 text-right">{Math.round(r.score * 100)}</span>
                     </span>
                     <button

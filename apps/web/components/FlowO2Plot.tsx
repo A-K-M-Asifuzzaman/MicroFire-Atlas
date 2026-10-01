@@ -100,7 +100,8 @@ export function FlowO2Plot({ data, highlight = [], scenario, height = 420, label
             start === end ? `${start} cm/s` : `${start} to ${end} cm/s`
           }. ${e.outcome_label}.`;
           return (
-            <a key={e.id} href={`/experiments/${e.id}`} aria-label={name} style={{ opacity: dim ? 0.28 : 1 }}>
+            <a key={e.id} href={`/experiments/${e.id}`} aria-label={name}>
+              <g opacity={dim ? 0.28 : 1}>
               <title>{name}</title>
               {start !== end && <line x1={x(start)} x2={cx} y1={cy} y2={cy} stroke={s.color} strokeOpacity=".45" strokeWidth="1.5" />}
               {tail !== 0 && (
@@ -116,6 +117,7 @@ export function FlowO2Plot({ data, highlight = [], scenario, height = 420, label
               />
               {/* invisible larger hit area */}
               <circle cx={cx} cy={cy} r={10} fill="transparent" />
+              </g>
             </a>
           );
         })}
