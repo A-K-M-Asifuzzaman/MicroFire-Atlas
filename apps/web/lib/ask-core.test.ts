@@ -42,6 +42,8 @@ test("citation check removes invented IDs and flags unsupported numbers", () => 
     ev.items,
   );
   assert.deepEqual(checked.map((c) => c.verified), [true, false, false, true]);
+  // regression: "12" must not be accepted because the evidence mentions "PDF page 112"
+  assert.ok(ev.items.find((i) => i.key === "E:bass2-B19")!.text.includes("112"));
   assert.equal(checked[2].cites.length, 0);
 });
 

@@ -182,8 +182,9 @@ export function checkAnswer(raw: RawAnswer, items: EvidenceItem[]): CheckedClaim
     if (factual && cites.length === 0) issues.push("No valid citation for a factual claim");
     if (c.type === "INTERPRETATION" && cites.length === 0) issues.push("Interpretation cites no evidence");
     if (factual && cites.length) {
-      const cited = cites.map((k) => byKey.get(k)!.text).join(" ");
-      const missing = (c.text.match(NUMBER) ?? []).filter((n) => !cited.includes(n));
+      // Compare whole numbers, not substrings: "12" must not match inside "112".
+      const citedNumbers = new Set(cites.flatMap((k) => byKey.get(k)!.text.match(NUMBER) ?? []));
+      const missing = (c.text.match(NUMBER) ?? []).filter((n) => !citedNumbers.has(n));
       if (missing.length) issues.push(`Numbers not found in cited evidence: ${missing.join(", ")}`);
     }
     return { ...c, cites, verified: issues.length === 0, issues };
