@@ -53,7 +53,7 @@ export function AtlasExplorer({ data }: { data: Experiment[] }) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-      <aside aria-label="Filters" className="space-y-6 text-sm lg:sticky lg:top-6 lg:self-start">
+      <aside data-guide="filters" aria-label="Filters" className="space-y-6 text-sm lg:sticky lg:top-6 lg:self-start">
         <label className="block">
           <span className="text-muted">Material</span>
           <select value={material} onChange={(e) => setMaterial(e.target.value)} className="mt-1 w-full bg-panel border border-rule rounded-sm px-2 py-2">
@@ -93,14 +93,14 @@ export function AtlasExplorer({ data }: { data: Experiment[] }) {
       </aside>
 
       <div className="min-w-0">
-        <div className="bg-panel border border-rule rounded-sm p-3 sm:p-5">
+        <div data-guide="plot" className="bg-panel border border-rule rounded-sm p-3 sm:p-5">
           <FlowO2Plot data={rows} height={360} label={`${rows.length} filtered NASA tests, plotted by oxygen and airflow`} />
           <Legend className="mt-3 px-1" />
         </div>
         <p className="mt-6 text-sm text-muted" aria-live="polite">
           Showing {rows.length} of {data.length} tests
         </p>
-        <div className="mt-2 overflow-x-auto">
+        <div data-guide="table" className="mt-2 overflow-x-auto">
           <table className="w-full text-sm condensed num">
             <caption className="sr-only">NASA microgravity combustion tests</caption>
             <thead className="text-muted border-b border-rule-strong">

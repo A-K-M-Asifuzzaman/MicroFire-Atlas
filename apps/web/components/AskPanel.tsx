@@ -59,7 +59,7 @@ export function AskPanel() {
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
       <div>
-        <form
+        <form data-guide="ask-box"
           onSubmit={(e) => {
             e.preventDefault();
             if (question.trim().length >= 3) ask(question.trim());
@@ -154,7 +154,7 @@ export function AskPanel() {
         </div>
       </div>
 
-      <aside aria-label="Evidence used" className="lg:sticky lg:top-6 lg:self-start">
+      <aside data-guide="evidence" aria-label="Evidence used" className="lg:sticky lg:top-6 lg:self-start">
         <h2 className="font-semibold">Evidence package</h2>
         <p className="text-xs text-faint mt-1">
           Retrieved by deterministic search before any AI runs. Only these items can be cited.

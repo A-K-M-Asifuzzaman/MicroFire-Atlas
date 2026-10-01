@@ -40,7 +40,10 @@
   --color-quench: var(--quench);
   --color-blowoff: var(--blowoff);
   --color-inert: var(--inert);
-  --font-sans: var(--font-archivo);
+  --font-sans: var(--font-lexend);
+  /* softer, friendlier corners for younger explorers */
+  --radius-sm: 0.6rem;
+  --radius-xl: 1.25rem;
 }
 
 html {
@@ -50,23 +53,31 @@ html {
 body {
   background: var(--void);
   color: var(--ink);
-  font-family: var(--font-archivo), system-ui, sans-serif;
-  font-variation-settings: "wdth" 100;
-  line-height: 1.55;
+  font-family: var(--font-lexend), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
 }
 
 /* Archivo's width axis does the typographic work: expanded for display, condensed for data. */
 .display {
-  font-variation-settings: "wdth" 125;
+  font-family: var(--font-fredoka), var(--font-lexend), sans-serif;
+  font-variation-settings: "wdth" 112;
   font-weight: 650;
-  letter-spacing: -0.02em;
-  line-height: 1.04;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
 }
-.condensed {
-  font-variation-settings: "wdth" 80;
+/* data tables keep the technical face */
+.condensed,
+table {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 82;
 }
 .num {
   font-variant-numeric: tabular-nums;
+}
+button,
+a.story-cta {
+  min-height: 40px;
 }
 
 /* A faint instrument grid behind data panels only. */
@@ -605,4 +616,154 @@ a {
     border: 1px solid var(--rule-strong);
     backdrop-filter: blur(6px);
   }
+}
+
+/* ---------- Ember's floating guide ---------- */
+.guide-root {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+.guide-root > * {
+  pointer-events: auto;
+}
+.guide-ember {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 60%, rgba(91, 140, 255, 0.28), rgba(7, 11, 22, 0.85) 70%);
+  border: 1px solid rgba(86, 212, 228, 0.35);
+  box-shadow: 0 12px 40px -12px rgba(91, 140, 255, 0.8);
+  animation: guide-bob 3.6s ease-in-out infinite;
+  transition: transform 0.2s;
+}
+.guide-ember:hover {
+  transform: scale(1.06);
+}
+.guide-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1206;
+  background: var(--flame);
+}
+@keyframes guide-bob {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.guide-panel {
+  width: min(360px, calc(100vw - 32px));
+  padding: 1rem 1.1rem;
+  border-radius: 22px 22px 6px 22px;
+  background: linear-gradient(165deg, rgba(25, 36, 62, 0.98), rgba(12, 18, 33, 0.98));
+  border: 1px solid var(--rule-strong);
+  box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.9);
+  outline: none;
+  animation: story-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.guide-kicker {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--signal);
+}
+.guide-text {
+  margin-top: 0.3rem;
+  font-size: 17px;
+  line-height: 1.45;
+}
+.guide-switch {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  font-size: 13px;
+}
+.guide-switch button {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  color: var(--muted);
+}
+.guide-switch button[aria-pressed="true"] {
+  background: var(--flame);
+  color: #1a1206;
+  font-weight: 700;
+}
+.guide-x {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--muted);
+}
+.guide-x:hover {
+  color: var(--ink);
+  background: var(--panel-2);
+}
+.guide-btn {
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #1a1206;
+  background: linear-gradient(135deg, #f0a044, #ffcf7a);
+}
+.guide-btn-ghost {
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+}
+.guide-btn-ghost:disabled {
+  opacity: 0.35;
+}
+.guide-star {
+  font-size: 16px;
+  color: var(--rule-strong);
+}
+.guide-star-on {
+  color: var(--flame);
+  text-shadow: 0 0 10px rgba(240, 160, 68, 0.7);
+}
+.guide-nudge {
+  max-width: 230px;
+  padding: 0.6rem 0.9rem;
+  border-radius: 18px 18px 4px 18px;
+  font-size: 15px;
+  text-align: left;
+  background: var(--ink);
+  color: var(--void);
+  font-weight: 600;
+  box-shadow: 0 14px 40px -12px rgba(0, 0, 0, 0.8);
+  animation: banner-pop 6s ease both;
+}
+.guide-glow {
+  outline: 3px solid var(--flame) !important;
+  outline-offset: 6px;
+  border-radius: 14px;
+  animation: guide-glow 1.6s ease-in-out infinite;
+}
+@keyframes guide-glow {
+  50% {
+    outline-color: rgba(240, 160, 68, 0.3);
+  }
+}
+.guide-ember:hover,
+.guide-ember:focus-visible {
+  animation-play-state: paused; /* easier to hit for small hands */
 }

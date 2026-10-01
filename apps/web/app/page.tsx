@@ -34,7 +34,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative overflow-hidden">
+      <section data-guide="hero" className="relative overflow-hidden">
         <div className="absolute inset-0 story-stars" aria-hidden="true" />
         <div className="absolute -right-48 -top-24 w-[720px] h-[720px] rounded-full story-orb" aria-hidden="true" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20 grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center min-h-[calc(100vh-3.5rem)]">
@@ -46,7 +46,7 @@ export default function Home() {
               with every number traced to NASA&apos;s own pages.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link href="/story" className="story-cta">
+              <Link data-guide="play" href="/story" className="story-cta">
                 Play Mission Freefall
               </Link>
               <Link href="/mission" className="border border-rule-strong px-5 py-3 rounded-full hover:border-signal">
@@ -72,7 +72,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div id="scroll-story">
+      <div data-guide="scroll-story" id="scroll-story">
         <ScrollStory />
       </div>
 

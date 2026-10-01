@@ -70,7 +70,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false }: {
     <div className={`grid gap-6 ${compact ? "" : "xl:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]"}`}>
       <div className="min-w-0">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div role="tablist" aria-label="View mode" className="inline-flex rounded-full border border-rule-strong p-1 bg-panel">
+          <div data-guide="fv-modes" role="tablist" aria-label="View mode" className="inline-flex rounded-full border border-rule-strong p-1 bg-panel">
             {(
               [
                 ["raw", "Raw footage"],
@@ -92,7 +92,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false }: {
           <p className="text-xs text-faint">NASA footage. Overlays are this site&apos;s computed measurements.</p>
         </div>
 
-        <div className="mt-3 relative rounded-xl overflow-hidden border border-rule-strong bg-black fv-frame">
+        <div data-guide="fv-video" className="mt-3 relative rounded-xl overflow-hidden border border-rule-strong bg-black fv-frame">
           {isVideo ? (
             <video
               ref={video}
@@ -195,7 +195,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false }: {
         {!analysis && !error && <p className="mt-3 text-sm text-muted animate-pulse">Loading measurements…</p>}
 
         {mode === "measure" && analysis && isVideo && (
-          <div className="mt-6 grid gap-6 md:grid-cols-2">
+          <div data-guide="fv-charts" className="mt-6 grid gap-6 md:grid-cols-2">
             <Chart
               title="Flame area, share of the analysed region"
               frames={analysis.frames}
@@ -224,7 +224,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false }: {
 
       {!compact && (
         <aside className="space-y-6">
-          <section className="bg-panel border border-rule rounded-xl p-5" aria-labelledby="fv-now">
+          <section data-guide="fv-metrics" className="bg-panel border border-rule rounded-xl p-5" aria-labelledby="fv-now">
             <h2 id="fv-now" className="font-semibold">
               {isVideo ? "This frame" : "This photograph"}
             </h2>

@@ -62,3 +62,18 @@ Not upgrades (already met or skipped deliberately): typed data contracts and loc
 | Docs | §38 set | Written for judges and reviewers |
 
 Then hand off to Codex with the adversarial review prompt.
+
+## 6. Audience update (user direction, 2026-10-01)
+
+The site's primary audience is children aged 8-13; mentors and judges must still find the full science.
+Two layers, never two versions of the facts:
+
+- **Explorer** (default): Ember floats on every page with a short, page-aware tour that points at real
+  elements, kid-friendly fun facts (each a rewording of a verified NASA quote, with the quote and page
+  shown underneath; numbers are tested against the quote), Explorer stars for pages explored, friendlier
+  type (Fredoka headings, Lexend body) and larger tap targets.
+- **Scientist**: the same tour in technical language. All data, citations, methods and caveats stay on the
+  pages in both modes.
+
+This sits in tension with the Experience Edition's "premium scientific system" styling; the user's audience
+direction takes precedence, and the evidence rules are unchanged.

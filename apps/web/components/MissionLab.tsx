@@ -100,7 +100,7 @@ export function MissionLab() {
   return (
     <div className="grid gap-10 lg:grid-cols-[300px_minmax(0,1fr)]">
       <aside aria-label="Scenario" className="space-y-7 lg:sticky lg:top-6 lg:self-start">
-        <fieldset>
+        <fieldset data-guide="contexts">
           <legend className="text-sm text-muted">Start from a mission context</legend>
           <div className="mt-2 grid gap-2">
             {CONTEXTS.map((c) => (
@@ -122,7 +122,7 @@ export function MissionLab() {
           </div>
         </fieldset>
 
-        <fieldset className="space-y-5 text-sm">
+        <fieldset data-guide="sliders" className="space-y-5 text-sm">
           <legend className="text-muted">Or set conditions</legend>
           <Slider label="Oxygen" unit="%" value={form.oxygen} min={14} max={36} step={0.5} onChange={(v) => set("oxygen", v)} />
           <Slider label="Airflow" unit="cm/s" value={form.flow} min={0.5} max={60} step={0.5} onChange={(v) => set("flow", v)} />
@@ -157,7 +157,7 @@ export function MissionLab() {
 
       <div className="min-w-0 space-y-10">
         {outside.length > 0 ? (
-          <section role="status" className="border border-flame/60 bg-panel rounded-sm p-5">
+          <section data-guide="notice" role="status" className="border border-flame/60 bg-panel rounded-sm p-5">
             <h2 className="font-semibold text-flame">Direct evidence under these exact conditions is limited</h2>
             <ul className="mt-2 space-y-1 text-[15px]">
               {outside.map((o) => (
@@ -169,7 +169,7 @@ export function MissionLab() {
             </p>
           </section>
         ) : (
-          <section role="status" className="border border-rule bg-panel rounded-sm p-5">
+          <section data-guide="notice" role="status" className="border border-rule bg-panel rounded-sm p-5">
             <h2 className="font-semibold">Your scenario sits inside the tested range</h2>
             <p className="mt-1 text-sm text-muted">Oxygen, airflow and pressure are all within values NASA tested in this atlas.</p>
           </section>

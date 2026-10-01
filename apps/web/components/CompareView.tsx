@@ -48,7 +48,7 @@ export function CompareView() {
 
   return (
     <div className="space-y-10">
-      <nav aria-label="Comparison presets" className="flex flex-wrap gap-2">
+      <nav data-guide="presets" aria-label="Comparison presets" className="flex flex-wrap gap-2">
         {PRESETS.map((p) => (
           <Link
             key={p.id}
@@ -76,7 +76,7 @@ export function CompareView() {
         <p className="text-muted">Pick two to four tests below to compare them side by side.</p>
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
-          <div className="overflow-x-auto">
+          <div data-guide="matrix" className="overflow-x-auto">
             <table className="w-full text-[15px]">
               <caption className="sr-only">Conditions and outcomes of the selected tests. Values that differ between tests are highlighted.</caption>
               <thead>
@@ -156,7 +156,7 @@ export function CompareView() {
       )}
 
       {preset && (
-        <section className="grid gap-px bg-rule border border-rule lg:grid-cols-3" aria-label="What the comparison shows">
+        <section data-guide="observed" className="grid gap-px bg-rule border border-rule lg:grid-cols-3" aria-label="What the comparison shows">
           <div className="bg-void p-6">
             <h3 className="font-semibold">Observed</h3>
             <p className="text-xs text-faint mt-1">Recorded in NASA&apos;s tables and reports</p>

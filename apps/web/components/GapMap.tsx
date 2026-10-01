@@ -38,7 +38,7 @@ export function GapMap() {
           </select>
         </label>
 
-        <div className="mt-5 overflow-x-auto">
+        <div data-guide="grid" className="mt-5 overflow-x-auto">
           <table className="border-separate border-spacing-1 num">
             <caption className="sr-only">Number of NASA tests in each oxygen and airflow range. Select a cell for details.</caption>
             <thead>

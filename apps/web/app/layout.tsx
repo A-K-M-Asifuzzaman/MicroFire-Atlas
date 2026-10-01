@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Archivo } from "next/font/google";
+import { Archivo, Fredoka, Lexend } from "next/font/google";
 import Link from "next/link";
 import { connection } from "next/server";
 import { Nav } from "@/components/Nav";
+import { ExplorerProvider } from "@/components/guide/EmberGuide";
 import "./globals.css";
 
-const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] });
+const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] }); // data tables and numbers
+const fredoka = Fredoka({ variable: "--font-fredoka", subsets: ["latin"], axes: ["wdth"] }); // friendly headings
+const lexend = Lexend({ variable: "--font-lexend", subsets: ["latin"] }); // easy-reading body text
 
 export const metadata: Metadata = {
   title: { default: "MicroFire Atlas", template: "%s · MicroFire Atlas" },
@@ -17,8 +20,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Render per request so each page gets a fresh CSP nonce (see proxy.ts).
   await connection();
   return (
-    <html lang="en" className={`${archivo.variable} antialiased`}>
+    <html lang="en" className={`${archivo.variable} ${fredoka.variable} ${lexend.variable} antialiased`}>
       <body className="min-h-screen flex flex-col">
+        <ExplorerProvider>
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 bg-panel px-3 py-2">
           Skip to content
         </a>
@@ -51,6 +55,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </p>
           </div>
         </footer>
+        </ExplorerProvider>
       </body>
     </html>
   );
