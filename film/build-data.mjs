@@ -10,18 +10,24 @@ const finds = read("findings");
 const sources = read("sources");
 const timed = JSON.parse(readFileSync(new URL("./build/script-timed.json", import.meta.url), "utf8"));
 
-// Scene timing: narration plus pacing pauses, total exactly 240 s.
-const PAD = { intro: 6, challenge: 3, data: 4, map: 6, quench: 4, hidden: 3, mission: 5, gaps: 4, ask: 3, close: 1 };
+// Scene timing: narration plus pacing pauses. Local rules: 4 minutes maximum, so stay safely under.
+export const TOTAL = 236;
+const PAD = { intro: 5, challenge: 2, data: 4, map: 5, quench: 4, hidden: 3, mission: 4, gaps: 3, ask: 3, close: 1 };
 const LEAD = { intro: 3 };
+// Shrink pauses evenly if the narration is long, leaving 1 s of tail at the end.
+const speech = timed.reduce((a, s) => a + s.audio, 0);
+const padSum = Object.values(PAD).reduce((a, b) => a + b, 0);
+const scale = Math.min(1, (TOTAL - 1 - speech) / padSum);
 let t = 0;
 const scenes = timed.map((s) => {
-  const dur = s.audio + PAD[s.id];
+  const dur = s.audio + Math.max((LEAD[s.id] ?? 1) + 0.6, PAD[s.id] * scale);
   const sc = { id: s.id, start: t, dur, audioAt: LEAD[s.id] ?? 1, audio: s.audio, narration: s.narration };
   t += dur;
   return sc;
 });
 const last = scenes[scenes.length - 1];
-last.dur += 240 - t;
+last.dur += TOTAL - t;
+if (last.dur < last.audio + last.audioAt) throw new Error("closing narration would be cut");
 
 const finding = (id) => {
   const f = finds.find((x) => x.id === id);
@@ -60,6 +66,7 @@ const demo = checkAnswer(
 );
 
 const data = {
+  total: TOTAL,
   scenes,
   counts: { tests: exps.length, findings: finds.length, sources: sources.length, materials: new Set(exps.map((e) => e.material)).size },
   sources: sources.map((s) => ({ title: s.title, type: s.document_type, ntrs: s.ntrs_id })),

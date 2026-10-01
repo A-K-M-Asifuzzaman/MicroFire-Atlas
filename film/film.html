@@ -28,6 +28,7 @@ body{font-family:Archivo,system-ui,sans-serif;color:var(--ink);font-variation-se
 #subs{left:50%;bottom:54px;transform:translateX(-50%);width:1500px;text-align:center;font-size:31px;line-height:1.35;color:var(--ink);text-shadow:0 2px 12px #000}
 #subs span{background:rgba(7,11,22,.72);padding:4px 14px;border-radius:4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 #progress{left:0;bottom:0;height:3px;background:var(--signal)}
+#ailabel{left:40px;bottom:14px;font-size:19px;color:#aab4c8;background:rgba(7,11,22,.75);padding:3px 10px;border:1px solid var(--rule2);border-radius:3px}
 .quote{font-size:30px;line-height:1.45}
 .cap{font-size:20px;color:var(--muted)}
 </style>
@@ -40,6 +41,7 @@ body{font-family:Archivo,system-ui,sans-serif;color:var(--ink);font-variation-se
   <div id="chapter" class="abs"></div>
   <div id="subs" class="abs"></div>
   <div id="progress" class="abs"></div>
+  <div id="ailabel" class="abs">Voiceover: AI-generated (text-to-speech)</div>
  </div>
 </div>
 <script>window.DATA = /*DATA*/null;</script>
@@ -389,7 +391,7 @@ window.renderAt = (T) => {
   chap.textContent = ROOT[cur.id].dataset.chapter ? `${String(idx).padStart(2, "0")}  ${ROOT[cur.id].dataset.chapter}` : "";
   const s = cur.sent.find((x) => lt >= x.start - .15 && lt < x.end + .35);
   subs.innerHTML = s ? `<span>${esc(s.text)}</span>` : "";
-  prog.style.width = `${(T / 240) * 100}%`;
+  prog.style.width = `${(T / D.total) * 100}%`;
   mark.style.opacity = cur.id === "intro" ? clamp((lt - 4) / 1) : 1;
   document.body.offsetHeight;
 };

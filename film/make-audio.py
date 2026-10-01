@@ -3,11 +3,12 @@ import json, re, subprocess
 d = json.load(open("build/data.json"))
 inputs, filters = [], []
 for i, sc in enumerate(d["scenes"]):
-    inputs += ["-i", f"build/{sc['id']}.aiff"]
+    inputs += ["-i", f"build/{sc['id']}.mp3"]
     ms = int(round((sc["start"] + sc["audioAt"]) * 1000))
     filters.append(f"[{i}]adelay={ms}|{ms},aformat=channel_layouts=stereo[a{i}]")
 n = len(d["scenes"])
-mix = "".join(f"[a{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0,apad=whole_dur=240,atrim=0:240,loudnorm=I=-16:TP=-1.5[out]"
+T = d["total"]
+mix = "".join(f"[a{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0,apad=whole_dur={T},atrim=0:{T},loudnorm=I=-16:TP=-1.5[out]"
 subprocess.run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", ";".join(filters) + ";" + mix, "-map", "[out]", "-c:a", "aac", "-b:a", "192k", "build/narration.m4a"], check=True)
 
 def ts(t):
