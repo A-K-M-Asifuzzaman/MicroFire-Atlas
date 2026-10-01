@@ -4,7 +4,7 @@ import { ANSWER_SCHEMA, buildEvidence, checkAnswer, isRawAnswer, SYSTEM_PROMPT, 
 
 const MAX_QUESTION = 400;
 const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 8;
+const MAX_PER_WINDOW = Number(process.env.ASK_RATE_LIMIT ?? 8); // raised only for security scans
 
 // ponytail: per-instance memory, resets on cold start; use a shared store (KV) if abuse appears.
 const hits = new Map<string, number[]>();
@@ -22,6 +22,10 @@ const json = (body: unknown, status = 200) => Response.json(body, { status, head
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "local";
   if (limited(ip)) return json({ error: "Too many questions. Wait a minute and try again." }, 429);
+
+  // Cross-site HTML forms cannot send application/json without a CORS preflight, so this blocks CSRF-style posts.
+  if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json"))
+    return json({ error: "Send the question as application/json." }, 415);
 
   let question: unknown;
   try {
