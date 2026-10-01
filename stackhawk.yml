@@ -25,6 +25,8 @@ hawk:
       - /sources
       - /ask
       - /story
+      - /analyze
+      - /analyze/saffire-vi-pmma
 tags:
   - name: _STACKHAWK_AGENT
     value: ${HAWK_AGENT:none}
