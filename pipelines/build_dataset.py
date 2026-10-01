@@ -11,6 +11,7 @@ Rules:
 import csv
 import json
 import pathlib
+import re
 import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -125,6 +126,22 @@ def sibal_record(row):
     }
 
 
+_TABLE_PAGES = {}
+
+
+def page_of_test(test_id, pages):
+    """Table A.1 spans two PDF pages: return the one whose text contains this test's row."""
+    if len(pages) == 1:
+        return pages[0]
+    if "bass2" not in _TABLE_PAGES:
+        _TABLE_PAGES["bass2"] = pdf_pages("20210011385")
+    text = _TABLE_PAGES["bass2"]
+    hits = [pg for pg in pages if re.search(rf"\b{re.escape(test_id)}\b", text[pg - 1])]
+    if len(hits) != 1:
+        raise ValueError(f"{test_id}: found on pages {hits}, expected exactly one of {pages}")
+    return hits[0]
+
+
 def table_a_record(row):
     pages = A1_CITE[row["pi_table"]]
     pi = {"A.1": "Bhattacharjee", "A.2": "Ferkul"}[row["pi_table"]]
@@ -174,8 +191,7 @@ def table_a_record(row):
         **outcome_fields(row["outcome"]),
         "quality_flags": flags,
         "provenance": {
-            "record": {"source_id": CITE_SUMMARY, "table": f"Table {row['pi_table']}", "pdf_page": pages[0],
-                       "pdf_pages": pages},
+            "record": {"source_id": CITE_SUMMARY, "table": f"Table {row['pi_table']}", "pdf_page": page_of_test(row["test_id"], pages)},
             "observed": ["test_id", "thickness_mm", "width_mm", "flow_verbatim", "oxygen_vol_pct", "co2_vol_pct", "co_ppm"],
             "series": series,
             "derived": {

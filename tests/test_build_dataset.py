@@ -35,6 +35,13 @@ class Dataset(unittest.TestCase):
         self.assertEqual((r["thickness_mm"], r["width_mm"], r["oxygen_vol_pct"], r["outcome"]), (0.1, 20.0, 16.4, "blowoff"))
         self.assertEqual(self.records["bass2-B15"]["outcome"], "sustained_no_blowoff")
 
+    def test_table_a1_rows_cite_their_own_page(self):
+        # Table A.1 spans PDF pages 111-112; checked by eye against the PDF.
+        pages = {r["test_id"]: r["provenance"]["record"]["pdf_page"] for r in self.records.values() if r["id"].startswith("bass2-B")}
+        self.assertEqual(pages["B16"], 111)
+        self.assertEqual(pages["B19"], 112)
+        self.assertEqual(pages["B20"], 112)
+
     def test_every_record_cites_a_known_source(self):
         for r in self.records.values():
             self.assertIn(r["provenance"]["record"]["source_id"], self.sources, r["id"])

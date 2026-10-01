@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { StoryMode } from "@/components/StoryMode";
+import { MissionFreefall } from "@/components/game/MissionFreefall";
 
 export const metadata: Metadata = {
-  title: "Story mode",
-  description: "Predict what real NASA fire tests on the ISS did, then watch the recorded outcome.",
+  title: "Mission Freefall",
+  description: "Build NASA's space-station fire experiment, light a sample in zero gravity, and predict what real flames did.",
 };
 
 export default function StoryPage() {
-  return <StoryMode />;
+  return <MissionFreefall />;
 }

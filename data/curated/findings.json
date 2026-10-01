@@ -258,5 +258,105 @@
    "airflow"
   ],
   "kind": "interpretation"
+ },
+ {
+  "id": "hw-duct",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The black anodized 7.6- by 7.6- by 17-cm rectangular flow duct with rounded corners was originally built to perform gas jet diffusion flame studies (Ref. 10).",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-fan",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The flow was blown through the duct using a variable speed fan.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-straightener",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The flow then passed through a honeycomb flow straightener and an inlet screen to reduce swirl.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-radiometer",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "Inside the test section was a nozzle for N2 flow, a movable scale, and an Oriel® 71768 thermopile detector (Newport Corporation) with a CaFl window (spectral range of 0.13 to 11 µm) in the downstream top back corner of the duct viewing the upstream direction.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-still-camera",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The top window was used by a Nikon D300s 12.3-megapixel digital color still camera with a 60-mm lens that provided 4,320- by 2,968-pixel images.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-video",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The video camera had an overlay that displayed the N2 flow rate (cm3/min), fan voltage (10× V), air velocity transducer reading (cm/s), and the radiometer signal.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-igniter",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The samples were manually ignited with a Kanthal® A–1 29-gauge hot-wire igniter coil with a nominal hot wire resistance of 0.8 to 1 Ω, powered by 3.5 to 3.8 amps when the astronaut manually pulled the deployment lever to move the igniter into position.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-samples",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The flat samples were 1 or 2 cm wide.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-exit",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "The duct exit contained a perforated copper plate followed by a brass screen to provide heat rejection and a cold surface for soot deposition.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "hw-nitrogen",
+  "source_id": "bass2-summary",
+  "in": "pdf",
+  "quote": "Working volume of MSG was diluted using ISS N2 gas.",
+  "topics": [
+   "apparatus"
+  ],
+  "kind": "observed"
  }
 ]

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
-import { HeroFlame } from "@/components/HeroFlame";
-import { Legend, OutcomeTag } from "@/components/Outcome";
+import { ScrollStory } from "@/components/ScrollStory";
+import { Ember } from "@/components/game/Ember";
+import { Legend } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
-import { experiments, findings, getExperiment, sources } from "@/lib/data";
+import { experiments, findings, sources } from "@/lib/data";
 
 const FATES = ["bass2-B16", "bass2-B20", "bass2-B19"];
 const WHY = ["low-flow-sensitivity", "dim-blue-low-flow", "tiny-flame-undetected", "low-g-burns-lower-o2"];
@@ -28,37 +29,52 @@ const STEPS = [
 ];
 
 export default function Home() {
-  const fates = FATES.map((id) => getExperiment(id)!);
   const why = WHY.map((id) => findings.find((f) => f.id === id)!);
   const materials = new Set(experiments.map((e) => e.material)).size;
 
   return (
     <>
-      <section className="relative border-b border-rule overflow-hidden">
-        <div className="absolute inset-0 story-stars opacity-70" aria-hidden="true" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-14 grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center">
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 story-stars" aria-hidden="true" />
+        <div className="absolute -right-48 -top-24 w-[720px] h-[720px] rounded-full story-orb" aria-hidden="true" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20 grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center min-h-[calc(100vh-3.5rem)]">
           <div>
             <p className="text-signal text-sm font-semibold">NASA Space Apps 2026, Flame in Freefall</p>
-            <h1 className="display text-4xl sm:text-5xl lg:text-[3.6rem] max-w-[14ch] mt-3">Fire behaves differently when gravity disappears</h1>
+            <h1 className="display text-5xl sm:text-6xl lg:text-[4.6rem] max-w-[13ch] mt-3">Fire behaves differently when gravity disappears</h1>
             <p className="mt-6 text-lg text-muted max-w-[52ch]">
-              MicroFire Atlas puts NASA&apos;s microgravity fire experiments on one map, test by test. See what kept a flame
-              alive, what put it out, and where the evidence runs out before a crew relies on it.
+              MicroFire Atlas turns NASA&apos;s space-station fire experiments into something you can explore, build and play,
+              with every number traced to NASA&apos;s own pages.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link href="/story" className="story-cta">
-                Play the story
+                Play Mission Freefall
               </Link>
               <Link href="/mission" className="border border-rule-strong px-5 py-3 rounded-full hover:border-signal">
                 Run a mission scenario
               </Link>
-              <Link href="/atlas" className="px-3 py-3 text-muted hover:text-ink">
-                Browse all {experiments.length} tests
-              </Link>
+              <a href="#scroll-story" className="px-3 py-3 text-muted hover:text-ink">
+                Scroll the story ↓
+              </a>
+            </div>
+            <dl className="mt-12 grid grid-cols-3 gap-6 max-w-lg">
+              <div><dt className="text-xs text-muted">Real ISS tests</dt><dd className="display text-3xl num">{experiments.length}</dd></div>
+              <div><dt className="text-xs text-muted">Verified NASA quotes</dt><dd className="display text-3xl num">{findings.length}</dd></div>
+              <div><dt className="text-xs text-muted">NASA documents</dt><dd className="display text-3xl num">{sources.length}</dd></div>
+            </dl>
+          </div>
+          <div className="flex flex-col items-center gap-5">
+            <Ember form="earth" mood="happy" size={260} />
+            <div className="ember-bubble max-w-xs">
+              <p className="text-[11px] font-semibold text-signal">Ember, your flame guide</p>
+              <p className="mt-1">Scroll down and watch what happens to me when gravity switches off.</p>
             </div>
           </div>
-          <HeroFlame />
         </div>
       </section>
+
+      <div id="scroll-story">
+        <ScrollStory />
+      </div>
 
       <section className="border-b border-rule">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center">
@@ -70,7 +86,8 @@ export default function Home() {
             </p>
             <p className="mt-4 text-sm text-muted">
               Highlighted: the same 2-cm-wide, 0.1-mm PMMA film at about 16.5 % oxygen. The main difference between the runs
-              was airflow, and the outcome changed three ways. <Cite sourceId="bass2-summary" page={111} where="Table A.1" />
+              was airflow, and the outcome changed three ways. <Cite sourceId="bass2-summary" page={111} where="Table A.1 (B16)" />,{" "}
+              <Cite sourceId="bass2-summary" page={112} where="Table A.1 (B20, B19)" />
             </p>
           </div>
           <div className="bg-panel border border-rule rounded-sm p-3 sm:p-5">
@@ -82,41 +99,6 @@ export default function Home() {
             <Legend className="mt-3 px-1" />
           </div>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
-        <h2 className="display text-2xl sm:text-3xl max-w-[30ch]">One material, one oxygen level, three outcomes</h2>
-        <p className="mt-3 text-muted max-w-[65ch]">
-          On Earth, rising hot air feeds a flame. In orbit there is no rising air, so the ventilation fan decides how much
-          oxygen reaches the fire. Too little flow starves it, too much blows it away.
-        </p>
-        <ol className="mt-8 grid gap-px bg-rule border border-rule md:grid-cols-3">
-          {fates.map((e) => (
-            <li key={e.id} className="bg-void p-6 flex flex-col">
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="display text-xl">{e.test_id}</span>
-                <span className="text-sm text-muted num">{e.oxygen_vol_pct}% oxygen</span>
-              </div>
-              <p className="mt-4 font-semibold">
-                <OutcomeTag outcome={e.outcome} label={e.outcome_label} />
-              </p>
-              <p className="mt-3 text-sm text-muted">
-                Airflow in NASA&apos;s table: <span className="text-ink num">“{e.flow_verbatim}”</span>
-                <span className="block text-faint">Numbers are cm/s; “pot” values are fan settings, not speeds.</span>
-              </p>
-              <blockquote className="mt-3 text-muted text-[15px] flex-1">
-                Crew and ground notes: “{e.observations_verbatim}”
-              </blockquote>
-              <Link href={`/experiments/${e.id}`} className="link mt-5 text-sm">
-                Open test {e.test_id}
-              </Link>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-4 text-sm text-muted">
-          These are three separate test runs, not one controlled sweep. Read them as evidence of a flammability window, not
-          as a measured boundary. <Link className="link" href="/compare?preset=pmma-flow-window">Compare them side by side</Link>
-        </p>
       </section>
 
       <section className="border-y border-rule bg-panel">

@@ -25,7 +25,17 @@ export type SceneState = {
   highlight?: string[];
   /** Show an empty "no data" region in the cloud (e.g. 34 % O2). */
   voidRegion?: { y: number; label: string } | null;
+  /** Installed hardware for the build chapter; undefined means the full rig. */
+  parts?: string[];
+  /** Hardware slot to outline while the player is placing it. */
+  ghost?: string | null;
+  /** Hot-wire igniter glow, 0 to 1. */
+  igniter?: number;
 };
+
+/** BASS-II hardware the player can install (positions are illustrative, layout follows NASA's description). */
+export const PART_IDS = ["duct", "fan", "straightener", "holder", "igniter", "still", "video", "radiometer", "nozzle", "exit"] as const;
+export type PartId = (typeof PART_IDS)[number];
 
 const N = 2600;
 
@@ -105,8 +115,21 @@ export class FlameScene {
   private cloudMeshes = new Map<string, { mesh: THREE.Mesh; label: THREE.Sprite }>();
   private voidBox: THREE.Group | null = null;
   private fadeIn = 1;
+  private partGroups = new Map<string, THREE.Group>();
+  private installedAt = new Map<string, number>();
+  private ghostBox: THREE.Box3Helper | null = null;
+  private fanBlades = new THREE.Group();
+  private coilMat = new THREE.MeshStandardMaterial({ color: 0x6b5a4a, emissive: 0x000000, metalness: 0.6, roughness: 0.4 });
+  private coilGlow!: THREE.Sprite;
+  private gentle = false;
+  private time = 0;
 
-  constructor(private canvas: HTMLCanvasElement, initial: SceneState, opts: { compact?: boolean } = {}) {
+  private panelLeft = false;
+  private earthLabel!: THREE.Sprite;
+  private orbitLabel!: THREE.Sprite;
+
+  constructor(private canvas: HTMLCanvasElement, initial: SceneState, opts: { compact?: boolean; panelLeft?: boolean } = {}) {
+    this.panelLeft = !!opts.panelLeft;
     this.state = initial;
     this.reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -128,6 +151,7 @@ export class FlameScene {
     this.scene.add(key);
 
     this.buildDuct();
+    this.buildRig();
     if (opts.compact) this.duct.children.filter((c) => (c as THREE.Sprite).isSprite).forEach((c) => (c.visible = false)); // caption explains instead
     this.buildBench();
     this.buildFlame();
@@ -147,7 +171,8 @@ export class FlameScene {
     const box = new THREE.BoxGeometry(8, 3.6, 3.6);
     const glass = new THREE.Mesh(box, new THREE.MeshPhysicalMaterial({ color: 0x5b8cff, transparent: true, opacity: 0.06, roughness: 0.1, depthWrite: false, side: THREE.DoubleSide }));
     const edges = new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: 0x56d4e4, transparent: true, opacity: 0.55 }));
-    this.duct.add(glass, edges);
+    const ductPart = this.part("duct");
+    ductPart.add(glass, edges);
     // flow straightener at the inlet
     const grid = new THREE.Group();
     for (let i = -3; i <= 3; i++) {
@@ -157,19 +182,135 @@ export class FlameScene {
       h.position.set(-4, i * 0.5, 0);
       grid.add(v, h);
     }
-    this.duct.add(grid);
+    this.part("straightener").add(grid);
     const label = textSprite("BASS-II flow duct, ISS glovebox (illustration)", "#8f9ab1", 30, 500);
-    label.position.set(0, 2.25, 0);
+    label.position.set(0, 3.25, 0);
     this.duct.add(label);
+  }
+
+  private part(id: string) {
+    let g = this.partGroups.get(id);
+    if (!g) {
+      g = new THREE.Group();
+      g.name = id;
+      this.partGroups.set(id, g);
+      this.duct.add(g);
+    }
+    return g;
+  }
+
+  private buildRig() {
+    const metal = new THREE.MeshStandardMaterial({ color: 0x3a4766, metalness: 0.7, roughness: 0.35 });
+    const dark = new THREE.MeshStandardMaterial({ color: 0x1c2438, metalness: 0.4, roughness: 0.6 });
+    const lensMat = new THREE.MeshStandardMaterial({ color: 0x0b0f1a, metalness: 0.9, roughness: 0.15, emissive: 0x112244 });
+
+    // variable-speed fan at the inlet
+    const fan = this.part("fan");
+    const housing = new THREE.Mesh(new THREE.CylinderGeometry(1.45, 1.45, 0.55, 40, 1, true), new THREE.MeshStandardMaterial({ color: 0x2c3a58, metalness: 0.6, roughness: 0.4, side: THREE.DoubleSide }));
+    housing.rotation.z = Math.PI / 2;
+    housing.position.x = -4.7;
+    fan.add(housing);
+    for (let k = 0; k < 5; k++) {
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.25, 0.32), metal);
+      blade.position.y = 0.62;
+      const arm = new THREE.Group();
+      arm.rotation.x = (k / 5) * Math.PI * 2;
+      blade.rotation.y = 0.5;
+      arm.add(blade);
+      this.fanBlades.add(arm);
+    }
+    this.fanBlades.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), metal));
+    this.fanBlades.position.x = -4.7;
+    fan.add(this.fanBlades);
+
+    // sample holder frame (BASS sample holders carry a built-in igniter)
+    const holder = this.part("holder");
+    const bar = (w: number, d: number, x: number, z: number) => {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.08, d), metal);
+      m.position.set(x, -0.62, z);
+      holder.add(m);
+    };
+    bar(5.6, 0.12, 0.3, 0.68);
+    bar(5.6, 0.12, 0.3, -0.68);
+    bar(0.12, 1.48, -2.5, 0);
+    bar(0.12, 1.48, 3.1, 0);
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.2, 0.1), dark);
+    rail.position.set(0.3, 0.05, -0.68);
+    holder.add(rail);
+
+    // Kanthal hot-wire igniter coil at the leading edge
+    const igniter = this.part("igniter");
+    const pts: THREE.Vector3[] = [];
+    for (let t = 0; t <= 1; t += 0.01) pts.push(new THREE.Vector3(Math.cos(t * Math.PI * 12) * 0.09, Math.sin(t * Math.PI * 12) * 0.09, (t - 0.5) * 1.0));
+    const coil = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 200, 0.018, 6), this.coilMat);
+    coil.position.set(-0.95, -0.5, 0);
+    igniter.add(coil);
+    const lever = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 1.6), dark);
+    lever.position.set(-0.95, -0.5, 1.2);
+    igniter.add(lever);
+
+    // Nikon still camera at the top window
+    const still = this.part("still");
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.55, 0.7), dark);
+    body.position.set(0.3, 2.45, 0);
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, 0.45, 24), lensMat);
+    lens.position.set(0.3, 2.0, 0);
+    still.add(body, lens);
+
+    // Panasonic video camera at the front window
+    const video = this.part("video");
+    const vbody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 0.6), dark);
+    vbody.position.set(0.3, -0.2, 2.65);
+    const vlens = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.2, 0.4, 24), lensMat);
+    vlens.rotation.x = Math.PI / 2;
+    vlens.position.set(0.3, -0.2, 2.15);
+    video.add(vbody, vlens);
+
+    // thermopile radiometer, downstream top back corner, looking upstream
+    const rad = this.part("radiometer");
+    const rbody = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.5, 20), metal);
+    rbody.rotation.z = Math.PI / 2;
+    rbody.position.set(3.55, 1.45, -1.45);
+    rad.add(rbody);
+
+    // nozzle for N2 flow (oxygen control)
+    const nozzle = this.part("nozzle");
+    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.4, 12), new THREE.MeshStandardMaterial({ color: 0x8fb0ff, metalness: 0.5, roughness: 0.3 }));
+    tube.rotation.z = Math.PI / 2;
+    tube.position.set(-3.1, -1.45, 1.1);
+    nozzle.add(tube);
+
+    // perforated copper plate at the exit
+    const exit = this.part("exit");
+    const holes = document.createElement("canvas");
+    holes.width = holes.height = 128;
+    const hc = holes.getContext("2d")!;
+    hc.fillStyle = "#fff";
+    hc.fillRect(0, 0, 128, 128);
+    hc.fillStyle = "#000";
+    for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) {
+      hc.beginPath();
+      hc.arc(8 + i * 16, 8 + j * 16, 4.5, 0, Math.PI * 2);
+      hc.fill();
+    }
+    const plate = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.5, 3.5),
+      new THREE.MeshStandardMaterial({ color: 0xb87333, metalness: 0.8, roughness: 0.35, alphaMap: new THREE.CanvasTexture(holes), transparent: true, side: THREE.DoubleSide }),
+    );
+    plate.rotation.y = Math.PI / 2;
+    plate.position.x = 4.02;
+    exit.add(plate);
   }
 
   private buildBench() {
     const plate = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.6, 0.08, 64), new THREE.MeshStandardMaterial({ color: 0x121b30, roughness: 0.9 }));
     plate.position.y = -0.9;
     this.bench.add(plate);
-    const label = textSprite("On Earth (illustration)", "#8f9ab1", 30, 500);
-    label.position.set(0, 2.4, 0);
-    this.bench.add(label);
+    this.earthLabel = textSprite("On Earth (illustration)", "#8f9ab1", 30, 500);
+    this.orbitLabel = textSprite("In orbit (illustration)", "#8f9ab1", 30, 500);
+    this.earthLabel.position.set(0, 2.4, 0);
+    this.orbitLabel.position.set(0, 2.4, 0);
+    this.bench.add(this.earthLabel, this.orbitLabel);
   }
 
   private buildFlame() {
@@ -203,6 +344,10 @@ export class FlameScene {
     this.glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(g), color: 0xf0a044, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.5 }));
     this.glow.scale.set(1.6, 1.6, 1);
     this.flameGroup.add(this.glow);
+    this.coilGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.glow.material.map, color: 0xff7a2a, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 }));
+    this.coilGlow.position.set(-0.95, -0.5, 0);
+    this.coilGlow.scale.set(1, 1, 1);
+    this.duct.add(this.coilGlow);
     this.light = new THREE.PointLight(0xf0a044, 4, 8, 1.6);
     this.flameGroup.add(this.light);
     for (let i = 0; i < N; i++) this.age[i] = this.life[i] = 1;
@@ -284,6 +429,22 @@ export class FlameScene {
     }
     (this.sample.material as THREE.MeshStandardMaterial).color.set(s.material === "fabric" ? 0xb9a98c : 0xc9d1e3);
     if (s.outcome !== "quench" && s.outcome !== "blowoff") this.p.lift = 0;
+    const installed = new Set(s.parts ?? PART_IDS);
+    for (const [id, g] of this.partGroups) {
+      const was = g.visible;
+      g.visible = installed.has(id);
+      if (g.visible && !was && !immediate) this.installedAt.set(id, this.time);
+    }
+    if (this.ghostBox) this.duct.remove(this.ghostBox);
+    this.ghostBox = null;
+    if (s.ghost && this.partGroups.has(s.ghost) && !installed.has(s.ghost)) {
+      const g = this.partGroups.get(s.ghost)!;
+      g.visible = true;
+      const box = new THREE.Box3().setFromObject(g).expandByScalar(0.12);
+      g.visible = false;
+      this.ghostBox = new THREE.Box3Helper(box, 0x56d4e4);
+      this.duct.add(this.ghostBox);
+    }
     if (immediate) {
       this.p.grav = s.gravity === "earth" ? 1 : 0;
       this.p.o2 = s.o2;
@@ -293,6 +454,12 @@ export class FlameScene {
     } else if (s.outcome === "burning" || s.outcome === "dim") {
       this.p.life = Math.max(this.p.life, 0.3);
     }
+  }
+
+  /** Gentle motion: no auto-rotation, fewer particles. */
+  setGentle(on: boolean) {
+    this.gentle = on;
+    this.controls.autoRotate = !on && !this.reduced;
   }
 
   /** A sudden gust of ventilation: NASA warns a small flame may flare up. */
@@ -321,6 +488,27 @@ export class FlameScene {
 
   private step(dt: number) {
     const s = this.state, p = this.p, k = 1 - Math.exp(-dt * 2.2);
+    this.time += dt;
+    for (const [id, t0] of this.installedAt) {
+      const g = this.partGroups.get(id)!;
+      const t = Math.min(1, (this.time - t0) / 0.55);
+      const back = 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2); // ease-out-back
+      g.scale.setScalar(0.4 + 0.6 * back);
+      g.position.y = (1 - t) * 1.6;
+      if (t >= 1) {
+        g.scale.setScalar(1);
+        g.position.y = 0;
+        this.installedAt.delete(id);
+      }
+    }
+    if (this.ghostBox) (this.ghostBox.material as THREE.LineBasicMaterial).opacity = 0.45 + 0.45 * Math.sin(this.time * 5);
+    if (this.ghostBox) (this.ghostBox.material as THREE.LineBasicMaterial).transparent = true;
+    this.fanBlades.rotation.x += dt * (0.4 + p.flow * 0.9);
+    const heat = s.igniter ?? 0;
+    this.coilMat.emissive.setRGB(heat * 1.0, heat * 0.42, heat * 0.12);
+    (this.coilGlow.material as THREE.SpriteMaterial).opacity = heat * 0.8;
+    this.coilGlow.visible = this.partGroups.get("igniter")!.visible;
+    this.sample.visible = s.view !== "duct" || this.partGroups.get("holder")!.visible;
     p.grav = lerp(p.grav, s.gravity === "earth" ? 1 : 0, k);
     p.o2 = lerp(p.o2, s.o2, k);
     p.flow = lerp(p.flow, s.flow, k);
@@ -334,6 +522,8 @@ export class FlameScene {
     // views
     this.duct.visible = s.view === "duct";
     this.bench.visible = s.view === "bench";
+    this.earthLabel.visible = s.gravity === "earth";
+    this.orbitLabel.visible = s.gravity !== "earth";
     this.flameGroup.visible = s.view !== "cloud";
     this.cloudGroup.visible = s.view === "cloud";
     if (this.fadeIn < 1) {
@@ -342,7 +532,7 @@ export class FlameScene {
     }
 
     // spawn
-    const rate = (s.view === "cloud" ? 0 : 900) * p.life * (s.outcome === "dim" ? 0.35 : 1) * (1 + p.gust * 1.5);
+    const rate = (s.view === "cloud" ? 0 : this.gentle ? 450 : 900) * p.life * (s.outcome === "dim" ? 0.35 : 1) * (1 + p.gust * 1.5);
     let n = rate * dt;
     while (n > 0 && (n >= 1 || Math.random() < n)) {
       this.spawn(this.next, s);
@@ -396,8 +586,17 @@ export class FlameScene {
     this.streaks.geometry.attributes.position.needsUpdate = true;
 
     // camera framing
-    const camTarget = s.view === "cloud" ? new THREE.Vector3(0, s.voidRegion ? 1.2 : 0.2, 0) : new THREE.Vector3(0, s.view === "bench" ? 0.4 : 0, 0);
+    // framing: with a side panel on a wide screen, push the subject right and pull the camera back
+    const wide = this.panelLeft && this.camera.aspect > 1.3;
+    const shiftX = wide ? (s.view === "bench" ? -1.4 : -2.2) : 0;
+    const camTarget = s.view === "cloud" ? new THREE.Vector3(shiftX, s.voidRegion ? 1.2 : 0.2, 0) : new THREE.Vector3(shiftX, s.view === "bench" ? 0.4 : 0.3, 0);
     this.controls.target.lerp(camTarget, k);
+    if (this.panelLeft) {
+      const want = s.view === "bench" ? 8.5 : s.view === "cloud" ? 11 : 13.5;
+      const off = this.camera.position.clone().sub(this.controls.target);
+      off.setLength(lerp(off.length(), want, k));
+      this.camera.position.copy(this.controls.target).add(off);
+    }
   }
 
   private loop = () => {
