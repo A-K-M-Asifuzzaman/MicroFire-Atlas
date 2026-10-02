@@ -4,10 +4,11 @@ import { ScrollStory } from "@/components/ScrollStory";
 import { EvidenceConstellation } from "@/components/world/EvidenceConstellation";
 import { GravityTeaser } from "@/components/world/GravityTeaser";
 import { SparkJourney } from "@/components/world/CinematicWorld";
+import { RealFlameReveal } from "@/components/world/RealFlameReveal";
 import { StationMap } from "@/components/StationMap";
 import { Legend } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
-import { experiments, findings, sources } from "@/lib/data";
+import { evidenceRecords, experiments, findings, saffireRuns, sources } from "@/lib/data";
 
 const FATES = ["bass2-B16", "bass2-B20", "bass2-B19"];
 const WHY = ["low-flow-sensitivity", "dim-blue-low-flow", "tiny-flame-undetected", "low-g-burns-lower-o2"];
@@ -22,8 +23,8 @@ const STEPS = [
     body: "Units are converted by tested code. Every quoted finding is matched against the source text at build time and fails the build if it isn't there.",
   },
   {
-    title: "Rank tests against your scenario",
-    body: "Mission Lab scores how close each test is to the oxygen, airflow and material you describe, and shows the arithmetic.",
+    title: "Sort the evidence for your mission",
+    body: "Mission Evidence places every test on the Evidence Ladder (direct, analogous or mechanistic) and names what is missing.",
   },
   {
     title: "Interpret with citations",
@@ -33,11 +34,12 @@ const STEPS = [
 
 export default function Home() {
   const why = WHY.map((id) => findings.find((f) => f.id === id)!);
-  const materials = new Set(experiments.map((e) => e.material)).size;
+  const materials = new Set(evidenceRecords.map((r) => r.material)).size;
 
   return (
     <>
       <SparkJourney />
+      <RealFlameReveal />
       <section className="home-gravity mx-auto max-w-7xl px-5 py-16 grid gap-8 lg:grid-cols-2 items-center">
         <div><p className="text-signal">Your first mystery</p><h2 className="display text-4xl mt-3">What happens when<br />gravity changes?</h2><p className="text-muted mt-5 max-w-md">Try the switch. This illustration helps you imagine a change; real flames depend on their fuel, airflow, and surroundings too.</p><Link href="/story" className="story-cta inline-flex mt-7">Build the 3D experiment</Link></div>
         <GravityTeaser />
@@ -101,8 +103,8 @@ export default function Home() {
         <div>
           <h2 className="display text-2xl sm:text-3xl">How the atlas works</h2>
           <p className="mt-4 text-muted">
-            {experiments.length} test records across {materials} materials, drawn from {sources.length} NASA documents, with{" "}
-            {findings.length} quoted findings checked against the original text.
+            {experiments.length} BASS-II test records and {saffireRuns.length} Saffire runs across {materials} materials, drawn from {sources.length} NASA
+            documents, with {findings.length} quoted findings checked against the original text.
           </p>
         </div>
         <ol className="grid gap-8 sm:grid-cols-2">
@@ -116,19 +118,18 @@ export default function Home() {
         </ol>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="border border-rule-strong rounded-sm p-8 sm:p-10 grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
-          <div>
-            <h2 className="display text-2xl">Moon and Mars are where the evidence thins out</h2>
-            <p className="mt-3 text-muted max-w-[70ch]">
-              Every test in this atlas was run in orbit. Partial-gravity data exists but is scarce: NASA describes its LUCI
-              sounding-rocket experiment as the first combustion tests longer than 25 seconds in simulated lunar gravity.{" "}
-              <Cite sourceId="luci" />
-            </p>
+      <section className="home-thesis" aria-labelledby="thesis">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-20 text-center">
+          <p className="text-signal text-sm">Where the evidence stops</p>
+          <h2 id="thesis" className="display text-4xl sm:text-5xl mt-3">Good science does not hide what it doesn&apos;t know.</h2>
+          <p className="mt-5 text-lg text-muted max-w-[62ch] mx-auto">
+            Every test row in this atlas ran in microgravity. No test reached the 34 % oxygen NASA proposes for Moon and Mars habitats, and long
+            burns at lunar gravity are only beginning. MicroFire Atlas shows that gap instead of guessing across it. <Cite sourceId="luci" />
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link href="/mission?context=moon-base" className="story-cta">Explore the evidence</Link>
+            <Link href="/gaps" className="border border-rule-strong px-5 py-3 rounded-sm hover:border-signal">See the Research Frontier</Link>
           </div>
-          <Link href="/gaps" className="border border-rule-strong px-5 py-3 rounded-sm hover:border-signal whitespace-nowrap">
-            See the evidence gaps
-          </Link>
         </div>
       </section>
     </>

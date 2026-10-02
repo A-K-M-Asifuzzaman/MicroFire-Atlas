@@ -20,7 +20,7 @@ export function CinematicWorld({ world, priority = false }: { world: World; prio
 }
 
 const STOPS = [
-  { world: "portal", label: "Follow the spark", title: "A tiny flame.\nA universe of questions.", line: "Come aboard with Tala and PIX. Watch real space flames, uncover clues, and find out what we still don't know.", call: "Catch the spark", crew: "I'm Tala. Ready to become a flame detective?" },
+  { world: "portal", label: "Follow the spark", title: "Fire behaves differently\nwhen nothing rises.", line: "Come aboard with Tala and PIX. Watch real NASA flames, uncover clues, and find out what we still don't know.", call: "Follow the Spark", crew: "I'm Tala. Ready to become a flame detective?" },
   { world: "lab", label: "Enter the laboratory", title: "Your eyes.\nA computer's outline.", line: "Look closely at NASA footage. Trace the flame, inspect a measurement, and check the source behind it.", call: "Head for the Moon", crew: "Let's turn a beautiful mystery into something we can measure." },
   { world: "moon", label: "Follow the evidence", title: "The next question\nis yours to find.", line: "Which experiments give a Moon habitat useful clues? Discover why a close match is never a promise of safety.", call: "Begin the adventure", crew: "Finding what we don't know is a discovery, too." },
 ] as const;
@@ -75,7 +75,7 @@ export function SparkJourney() {
           <p>{scene.line}</p>
           <div className={styles.actions}>
             {stop < 2 ? <button className="story-cta" onClick={() => choose(stop + 1)}>{scene.call} <span aria-hidden="true">✦</span></button> : <Link href="/expedition" className="story-cta">{scene.call} <span aria-hidden="true">↗</span></Link>}
-            <Link href="/expedition" className={styles.direct}>Jump into the adventure</Link>
+            <Link href={stop === 0 ? "/atlas" : "/expedition"} className={styles.direct}>{stop === 0 ? "Explore NASA evidence" : "Jump into the adventure"}</Link>
           </div>
         </div>
         <div className={styles.guide}>

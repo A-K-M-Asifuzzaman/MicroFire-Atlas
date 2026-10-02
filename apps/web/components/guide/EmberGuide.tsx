@@ -161,6 +161,17 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
   const total = DISCOVERIES.length;
   const nextUp = DISCOVERIES.find((d) => !s.found.includes(d.id));
 
+  // A tip greets the explorer, then tucks itself away once they start scrolling (Tala's avatar reopens it).
+  const pageId = page?.id;
+  useEffect(() => {
+    if (!tipOpen || !pageId) return;
+    const onScroll = () => {
+      if (scrollY > innerHeight * 0.6) setS((x) => ({ ...x, tips: [...new Set([...x.tips, pageId])] }));
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    return () => removeEventListener("scroll", onScroll);
+  }, [tipOpen, pageId]);
+
   return (
     <ExplorerCtx.Provider value={ctx}>
       {children}

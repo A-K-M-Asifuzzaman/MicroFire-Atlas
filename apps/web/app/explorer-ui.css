@@ -200,3 +200,6 @@ html[data-motion="gentle"] .station-destination, html[data-motion="gentle"] .tes
 @media (min-width: 861px) { .station-menu-button { display: none !important; } }
 html[data-motion="gentle"] .nav-panel { animation: none; }
 @media (prefers-reduced-motion: reduce) { .nav-panel { animation: none; } }
+/* Home: closing thesis */
+.home-thesis { position: relative; margin-top: 64px; border-top: 1px solid var(--rule); background: radial-gradient(ellipse at 50% 0%, #ffcf6b14, transparent 60%), radial-gradient(ellipse at 50% 100%, #17305a66, transparent 60%); }
+.home-thesis h2 { text-wrap: balance; }
