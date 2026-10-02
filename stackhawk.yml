@@ -26,6 +26,8 @@ hawk:
       - /ask
       - /story
       - /expedition
+      - /saffire
+      - /mission?context=moon-base
       - /analyze
       - /analyze/saffire-vi-pmma
 tags:
