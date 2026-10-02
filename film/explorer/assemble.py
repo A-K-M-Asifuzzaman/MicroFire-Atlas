@@ -1,31 +1,14 @@
-"""Builds the final film from the captured frames, the narration and a generated music bed.
+"""Builds the final film from the rendered scenes, the narration and a generated music bed.
 
-    python3 narrate.py && node capture.mjs && python3 assemble.py
-Output: MicroFire-Atlas-explorer-film.mp4 (1920x1080, 30 fps, AAC, soft English subtitles).
+    python3 narrate.py && node capture.mjs all && python3 assemble.py
+Output: MicroFire-Atlas-explorer-film.mp4 (3840x2160, 60 fps, AAC, soft English subtitles).
 """
-import json, os, re, subprocess
+import json, re, subprocess
 
-FPS = 30
 timed = json.load(open("build/timed.json"))
 run = lambda *a: subprocess.run(["ffmpeg", "-v", "error", "-y", *a], check=True)
 
-# 1. each scene: variable-rate frames -> constant 30 fps, trimmed to the narration, short fades
-for i, sc in enumerate(timed):
-    d = json.load(open(f"build/frames/{sc['id']}/frames.json"))
-    fr, dur = d["frames"], sc["dur"]
-    with open(f"build/{sc['id']}.txt", "w") as f:
-        for k, x in enumerate(fr):
-            end = fr[k + 1]["t"] if k + 1 < len(fr) else dur
-            if end <= 0:
-                continue
-            f.write(f"file 'frames/{sc['id']}/{x['name']}'\nduration {max(end - max(x['t'], 0), 0.001):.4f}\n")
-        f.write(f"file 'frames/{sc['id']}/{fr[-1]['name']}'\n")
-    fin = 0.8 if i == 0 else 0.18
-    fout = 1.4 if i == len(timed) - 1 else 0.18
-    run("-f", "concat", "-safe", "0", "-i", f"build/{sc['id']}.txt",
-        "-vf", f"fps={FPS},scale=1920:1080,format=yuv420p,trim=0:{dur},setpts=PTS-STARTPTS,fade=t=in:st=0:d={fin},fade=t=out:st={dur - fout:.3f}:d={fout}",
-        "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-r", str(FPS), f"build/{sc['id']}.mp4")
-
+# 1. scenes: capture.mjs renders each one frame by frame (4K, 60 fps, fades included); join them losslessly
 with open("build/scenes.txt", "w") as f:
     f.writelines(f"file '{sc['id']}.mp4'\n" for sc in timed)
 run("-f", "concat", "-safe", "0", "-i", "build/scenes.txt", "-c", "copy", "build/video.mp4")

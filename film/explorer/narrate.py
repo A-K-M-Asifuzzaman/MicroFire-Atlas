@@ -9,11 +9,13 @@ import json, os, subprocess
 VOICE = os.environ.get("VOICE", "en-US-AvaMultilingualNeural")
 RATE = os.environ.get("RATE", "+4%")
 EDGE = os.environ.get("EDGE_TTS", "edge-tts")
-LEAD, GAP, TAIL = 0.5, 0.42, 0.8  # seconds: before the first line, between lines, after the last
+LEAD, GAP, TAIL, END_TAIL = 0.5, 0.42, 0.8, 3.4  # seconds; the final scene keeps a longer tail for the end card
 os.makedirs("build", exist_ok=True)
 dur = lambda f: float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f], capture_output=True, text=True, check=True).stdout)
 out = []
-for sc in json.load(open("script.json")):
+scenes = json.load(open("script.json"))
+for sc in scenes:
+    tail = END_TAIL if sc is scenes[-1] else TAIL
     t, parts, lines = LEAD, [], []
     for i, (text, *cap) in enumerate(sc["lines"]):
         mp3 = f"build/{sc['id']}-{i}.mp3"
@@ -22,7 +24,7 @@ for sc in json.load(open("script.json")):
         d = dur(mp3)
         lines.append({"text": text, "cap": cap[0] if cap else None, "at": round(t, 3), "dur": round(d, 3)})
         parts.append((mp3, t))
-        t += d + (GAP if i < len(sc["lines"]) - 1 else TAIL)
+        t += d + (GAP if i < len(sc["lines"]) - 1 else tail)
     # place each line at its time on a silent bed
     ins = sum((["-i", f] for f, _ in parts), [])
     flt = ";".join(f"[{i}]adelay={int(at*1000)}|{int(at*1000)},aformat=sample_rates=48000:channel_layouts=stereo[a{i}]" for i, (_, at) in enumerate(parts))

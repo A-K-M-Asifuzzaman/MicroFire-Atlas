@@ -1,199 +1,261 @@
 /**
- * Records the real site, scene by scene, with Chrome's screencast (crisp JPEG frames + timestamps).
- * Every action is timed to the narration in build/timed.json, so the clicks land on the spoken line.
- * Vox-style key-phrase captions are drawn as an overlay during capture (bypassCSP is a recording-only setting).
+ * Renders the real site frame by frame on a virtual clock, so the film is perfectly smooth at any resolution.
  *
- *   SITE=http://localhost:3417 node capture.mjs [sceneId]
+ * Real-time screen capture stutters whenever Chrome pauses. Here nothing runs in real time:
+ * - Playwright's clock drives the page's timers, requestAnimationFrame and Date (three.js, React timers);
+ * - every CSS animation and transition is paused and set to the virtual time each frame (Web Animations API);
+ * - playing videos are seeked to the virtual time each frame;
+ * - scrolling and the cursor are tweened by this script, and clicks happen between frames.
+ * Each frame is screenshotted at 2x (3840x2160) and piped straight into ffmpeg: build/<scene>.mp4.
+ * Scene timing comes from the narration (build/timed.json), so picture and voice line up exactly.
+ *
+ *   SITE=http://localhost:3417 node capture.mjs [sceneId|all] [maxFrames]
+ * The overlay (captions, cursor, explainer, end card) is recording-only; bypassCSP is a recording-only setting.
  */
 import { chromium } from "playwright";
-import { mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { spawn } from "node:child_process";
+import { readFileSync } from "node:fs";
 
 const SITE = process.env.SITE ?? "http://localhost:3417";
-const timed = JSON.parse(readFileSync("build/timed.json", "utf8"));
-const only = process.argv[2];
+const FPS = +(process.env.FPS ?? 60);
+const SCALE = +(process.env.SCALE ?? 2); // 2 -> 3840x2160
 const W = 1920, H = 1080;
-
+const timed = JSON.parse(readFileSync("build/timed.json", "utf8"));
+const [only, maxFrames] = [process.argv[2], +(process.argv[3] ?? 0)];
 const OVERLAY = readFileSync(new URL("./overlay.js", import.meta.url), "utf8");
 
-// A real window on the GPU: headless software rendering only reaches ~9 fps at 1080p.
-const b = await chromium.launch({ headless: process.env.HEADED ? false : true, channel: process.env.HEADED ? undefined : "chromium", args: ["--window-position=0,0", "--window-size=1920,1080", "--use-angle=metal", "--enable-gpu", "--autoplay-policy=no-user-gesture-required", "--ignore-gpu-blocklist"] });
-const ctx = await b.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1, bypassCSP: true });
-await ctx.addInitScript(OVERLAY);
-const p = await ctx.newPage();
+/** Runs inside the page each frame: CSS animations and videos follow the virtual clock; `fade` blacks out. */
+const DRIVE = `window.__drive = async (fade) => {
+  const now = performance.now();
+  for (const a of document.getAnimations()) {
+    if (a.__born == null) { a.__born = now; a.pause(); }
+    a.currentTime = now - a.__born;
+  }
+  const seeks = [];
+  for (const v of document.querySelectorAll("video")) {
+    if (v.paused || v.readyState < 1) { v.__vt0 = null; continue; }
+    if (v.__vt0 == null) { v.__vt0 = now; v.__ct0 = v.currentTime; v.playbackRate = 0.0625; }
+    const target = Math.min(v.__ct0 + (now - v.__vt0) / 1000, (v.duration || 1e9) - 0.05);
+    if (Math.abs(v.currentTime - target) > 0.001) {
+      seeks.push(new Promise((ok) => { v.addEventListener("seeked", ok, { once: true }); setTimeout(ok, 800); }));
+      v.currentTime = target;
+    }
+  }
+  const f = document.getElementById("vox-fade"); if (f) f.style.opacity = String(fade);
+  await Promise.all(seeks);
+};`;
+const FADE = `addEventListener("DOMContentLoaded", () => { const d = document.createElement("div"); d.id = "vox-fade";
+  d.setAttribute("style", "position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:2147483647"); document.body.append(d); });`;
+
+const b = await chromium.launch({ headless: true, channel: "chromium", args: ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist", "--autoplay-policy=no-user-gesture-required", "--hide-scrollbars"] });
+const ctx = await b.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: SCALE, bypassCSP: true });
 await ctx.addInitScript(() => {
-  try {
+  try { // the state a child has after pressing "Got it" on each page's crew tip
     const k = "microfire-explorer-v2", s = JSON.parse(localStorage.getItem(k) || "{}");
     s.tips = ["home", "story", "atlas", "analyze", "compare", "mission", "gaps", "ask", "methodology", "sources", "experiment", "expedition"];
     localStorage.setItem(k, JSON.stringify(s));
   } catch {}
 });
-p.setDefaultTimeout(6000);
+await ctx.addInitScript(OVERLAY);
+await ctx.addInitScript(DRIVE);
+await ctx.addInitScript(FADE);
+await ctx.clock.install({ time: new Date("2026-10-02T12:00:00Z") });
+await ctx.clock.pauseAt(new Date("2026-10-02T12:00:01Z"));
+const p = await ctx.newPage();
+p.setDefaultTimeout(8000);
 const cdp = await ctx.newCDPSession(p);
 const errs = [];
 p.on("pageerror", (e) => errs.push(String(e).slice(0, 160)));
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const go = async (path) => { await p.goto(SITE + path, { waitUntil: "domcontentloaded", timeout: 30000 }); await sleep(700); };
+const ease = (k) => (k < 0.5 ? 4 * k ** 3 : 1 - (-2 * k + 2) ** 3 / 2);
 const btn = (name) => p.getByRole("button", { name }).first();
-const tryDo = async (label, fn) => { try { await fn(); } catch (e) { errs.push(`${label}: ${String(e).split("\n")[0]}`); } };
-/** Eased scroll by dy pixels over ms, like a hand on a trackpad. */
-const glide = async (dy, ms = 1200) => {
-  const n = Math.max(1, Math.round(ms / 16));
-  for (let i = 1; i <= n; i++) {
-    const e = (k) => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2);
-    await p.mouse.wheel(0, dy * (e(i / n) - e((i - 1) / n)));
-    await sleep(16);
-  }
+const nextBtn = () => btn(/Next discovery|Explore next chapter|See my discoveries/);
+/** Load a page and let it settle on the virtual clock (fonts, images, hydration, entrance animations). */
+const go = async (path) => {
+  await p.goto(SITE + path, { waitUntil: "load", timeout: 45000 });
+  await p.evaluate(() => document.fonts.ready);
+  for (let i = 0; i < 12; i++) { await ctx.clock.runFor(50); await p.evaluate(() => window.__drive?.(0)); }
 };
-/** Scroll just enough to show the element's bottom, never far enough to reveal the site footer. */
-const glideTo = async (sel, ms = 1200) => {
-  const y = await p.locator(sel).first().evaluate((el) => {
-    const foot = [...document.querySelectorAll("footer")].pop();
-    const room = (foot ? foot.getBoundingClientRect().top : document.documentElement.scrollHeight - scrollY) - innerHeight;
-    return Math.max(0, Math.min(el.getBoundingClientRect().bottom - innerHeight * 0.86, room));
-  });
-  if (y > 4) await glide(y, ms);
-};
-/** A visible tap: the cursor glides to the control, a ripple marks the touch, then a click without scroll jumps. */
-const tap = async (loc) => {
-  const el = loc.first();
-  const box = await el.boundingBox();
-  if (box && box.y > 0 && box.y + box.height < H) {
-    const x = box.x + box.width / 2, y = box.y + box.height / 2;
-    await p.mouse.move(x, y, { steps: 22 });
-    await p.evaluate(([x, y]) => window.__voxTap?.(x, y), [x, y]);
-    await sleep(120);
-  }
-  await el.evaluate((n) => n.click());
-};
-const next = () => tap(btn(/Next discovery|Explore next chapter|See my discoveries/));
 
-async function record(id, setup, act, pos) {
-  const sc = timed.find((s) => s.id === id);
-  const dir = `build/frames/${id}`;
-  rmSync(dir, { recursive: true, force: true });
-  mkdirSync(dir, { recursive: true });
+// Ask PIX: the real /api/ask answer is held until the moment the film wants it to land
+let askRelease = null;
+await p.route("**/api/ask", async (route) => {
+  const res = await route.fetch();
+  const body = await res.body();
+  await new Promise((ok) => { askRelease = ok; });
+  await route.fulfill({ response: res, body });
+});
+
+async function render(sc, setup, build, pos = "left") {
   if (setup) await setup();
-  await p.evaluate((x) => { window.__vox?.(""); window.__voxPos?.(x); }, pos ?? "left");
-  const frames = [];
-  let t0 = null, k = 0;
-  const onFrame = ({ data, metadata, sessionId }) => {
-    cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
-    if (t0 == null) return;
-    const name = `${String(k++).padStart(5, "0")}.jpg`;
-    writeFileSync(`${dir}/${name}`, Buffer.from(data, "base64"));
-    frames.push({ name, t: metadata.timestamp - t0 });
+  const events = [], tweens = [];
+  let cursor = { x: W * 0.62, y: H * 0.58 };
+  const at = (t, fn) => events.push({ t: Math.max(0, t), fn });
+  const scrollTween = (t, d, y0, dy) => tweens.push({ t0: t, t1: t + d, apply: (u) => p.evaluate((y) => scrollTo(0, y), y0 + dy * ease(u)) });
+  const S = {
+    L: sc.lines.map((l) => l.at), lines: sc.lines, dur: sc.dur, at,
+    go: (t, path) => at(t, () => go(path)),
+    /** Scroll by dy over d seconds from t. */
+    glide: (t, d, dy) => at(t, async () => scrollTween(t, d, await p.evaluate(() => scrollY), dy)),
+    /** Scroll just enough to show the element's bottom, never far enough to reveal the site footer. */
+    glideTo: (t, d, sel) => at(t, async () => {
+      const [y0, dy] = await p.locator(sel).first().evaluate((el) => {
+        const foot = [...document.querySelectorAll("footer")].pop();
+        const room = (foot ? foot.getBoundingClientRect().top : document.documentElement.scrollHeight - scrollY) - innerHeight;
+        return [scrollY, Math.max(0, Math.min(el.getBoundingClientRect().bottom - innerHeight * 0.86, room))];
+      }).catch(() => [0, 0]);
+      if (dy > 4) scrollTween(t, d, y0, dy);
+    }),
+    /** Glide the cursor to (x, y). */
+    point: (t, d, x, y) => at(t, () => {
+      const a = { ...cursor };
+      cursor = { x, y };
+      tweens.push({ t0: t, t1: t + d, apply: (u) => p.mouse.move(a.x + (x - a.x) * ease(u), a.y + (y - a.y) * ease(u)) });
+    }),
+    /** A visible tap at t: the cursor travels for 0.55 s, a ripple marks the touch, then the control is clicked. */
+    tap: (t, loc, label) => {
+      const t0 = Math.max(0, t - 0.55);
+      at(t0, async () => {
+        const box = await loc().first().boundingBox().catch(() => null);
+        if (!box || box.y < 0 || box.y + box.height > H) return;
+        const a = { ...cursor }, x = box.x + box.width / 2, y = box.y + box.height / 2;
+        cursor = { x, y };
+        tweens.push({ t0, t1: t, apply: (u) => p.mouse.move(a.x + (x - a.x) * ease(u), a.y + (y - a.y) * ease(u)) });
+      });
+      at(t, async () => {
+        try {
+          const el = loc().first();
+          await el.waitFor({ state: "attached", timeout: 8000 });
+          await p.evaluate(([x, y]) => window.__voxTap?.(x, y), [cursor.x, cursor.y]);
+          await el.evaluate((n) => n.click());
+        } catch (e) { errs.push(`${sc.id} ${label}: ${String(e).split("\n")[0]}`); }
+      });
+    },
   };
-  cdp.on("Page.screencastFrame", onFrame);
-  await cdp.send("Page.startScreencast", { format: "jpeg", quality: 90, maxWidth: W, maxHeight: H, everyNthFrame: 1 });
-  t0 = Date.now() / 1000;
-  const start = Date.now();
-  const at = async (s) => { const w = start + s * 1000 - Date.now(); if (w > 0) await sleep(w); };
-  const L = sc.lines.map((l) => l.at);
-  // captions follow the narration, independently of the actions
-  const caps = (async () => {
-    for (const l of sc.lines) {
-      if (!l.cap) continue;
-      await at(l.at + 0.15);
-      // re-applied until the line ends, so a page navigation mid-line keeps its caption
-      const until = start + Math.min(l.at + l.dur + 0.3, sc.dur - 0.3) * 1000;
-      while (Date.now() < until) {
-        await p.evaluate(([t, x]) => { window.__voxPos?.(x); if (window.__voxCap !== t || !document.querySelector("#vox-cap span")) window.__vox?.(t); }, [l.cap, pos ?? "left"]).catch(() => {});
-        await sleep(Math.min(250, Math.max(0, until - Date.now())));
-      }
-      await p.evaluate(() => window.__vox?.("")).catch(() => {});
+  build(S);
+  // captions follow the narration and are re-applied after any navigation
+  let cap = "";
+  if (pos !== "none") for (const l of sc.lines) {
+    if (!l.cap) continue;
+    at(l.at + 0.15, async () => { cap = l.cap; await p.evaluate(([t, x]) => { window.__voxPos?.(x); window.__vox?.(t); }, [cap, pos]); });
+    at(Math.min(l.at + l.dur + 0.3, sc.dur - 0.3), async () => { cap = ""; await p.evaluate(() => window.__vox?.("")); });
+  }
+  events.sort((a, b) => a.t - b.t);
+  await p.evaluate((x) => { window.__vox?.(""); window.__voxPos?.(x); }, pos);
+
+  const N = maxFrames || Math.round(sc.dur * FPS);
+  const ff = spawn("ffmpeg", ["-v", "error", "-y", "-f", "image2pipe", "-framerate", String(FPS), "-i", "-",
+    "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p", "-r", String(FPS), `build/${sc.id}.mp4`], { stdio: ["pipe", "inherit", "inherit"] });
+  const done = new Promise((ok, bad) => ff.on("close", (c) => (c ? bad(new Error("ffmpeg " + c)) : ok())));
+  const fin = sc.id === timed[0].id ? 0.8 : 0.18, fout = sc.id === timed[timed.length - 1].id ? 1.6 : 0.18;
+  const started = Date.now();
+  let ei = 0, askAt = null;
+  for (let n = 0; n < N; n++) {
+    const t = n / FPS;
+    while (ei < events.length && events[ei].t <= t + 1e-6) {
+      const before = p.url();
+      await events[ei++].fn();
+      if (p.url() !== before && cap) await p.evaluate(([c, x]) => { window.__voxPos?.(x); window.__vox?.(c); }, [cap, pos]);
     }
-  })();
-  await act(at, L, sc.dur);
-  await caps;
-  await at(sc.dur + 0.2);
-  // nudge one last frame so the hold ends exactly at the scene end
-  await p.mouse.move(W - 2, H - 2);
-  await sleep(150);
-  await cdp.send("Page.stopScreencast");
-  cdp.off("Page.screencastFrame", onFrame);
-  writeFileSync(`${dir}/frames.json`, JSON.stringify({ dur: sc.dur, frames }));
-  console.log(`${id.padEnd(10)} ${frames.length} frames over ${sc.dur}s`);
+    for (const tw of tweens) if (t >= tw.t0 && t <= tw.t1 + 1 / FPS) await tw.apply(Math.min(1, (t - tw.t0) / (tw.t1 - tw.t0)));
+    if (askRelease) { askAt ??= t + 1.1; if (t >= askAt) { askRelease(); askRelease = null; askAt = null; } }
+    const fade = Math.max(t < fin ? 1 - t / fin : 0, t > sc.dur - fout ? (t - (sc.dur - fout)) / fout : 0);
+    await p.evaluate((f) => window.__drive?.(f), Math.min(1, fade));
+    const { data } = await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 92, optimizeForSpeed: true, clip: { x: 0, y: 0, width: W, height: H, scale: SCALE } });
+    if (!ff.stdin.write(Buffer.from(data, "base64"))) await new Promise((ok) => ff.stdin.once("drain", ok));
+    await ctx.clock.runFor(Math.round(((n + 1) * 1000) / FPS) - Math.round((n * 1000) / FPS));
+    if (n % (FPS * 5) === 0) process.stdout.write(`  ${sc.id} ${t.toFixed(0)}s/${sc.dur.toFixed(0)}s (${((Date.now() - started) / 1000 / (n + 1)).toFixed(2)} s/frame)\n`);
+  }
+  ff.stdin.end();
+  await done;
+  console.log(`${sc.id.padEnd(10)} ${N} frames in ${((Date.now() - started) / 1000).toFixed(0)} s`);
 }
 
 const scenes = {
-  hook: [() => go("/"), async (at, L, dur) => {
-    const card = (st) => p.evaluate((x) => window.__voxCard?.(x), st);
-    await at(L[0]); await card("earth");
-    await at(L[2]); await card("space");
-    await at(L[4]); await card("flow");
-    await at(dur - 1.3); await card("");
+  hook: [() => go("/"), (S) => {
+    const card = (st) => () => p.evaluate((x) => window.__voxCard?.(x), st);
+    S.at(S.L[0], card("earth")); S.at(S.L[2], card("space")); S.at(S.L[4], card("flow")); S.at(S.dur - 1.3, card(""));
   }],
-  problem: [() => go("/experiments/bass2-B20"), async (at, L) => {
-    await at(L[1]); await glide(520, 3000);
-    await at(L[3]); await glide(-520, 2200);
-  }],
-  freefall: [async () => { await go("/story"); await p.evaluate(() => localStorage.clear()); await go("/story"); }, async (at, L) => {
-    await at(0.4); await tryDo("start", () => tap(btn("Start the mission")));
-    await at(L[1]); await tryDo("hello-next", () => tap(p.locator(".game-sheet button.story-cta")));
-    await at(L[1] + 2.6); await tryDo("gravity", () => tap(btn("Switch off gravity")));
-    await at(L[2]); await tryDo("gravity-next", () => tap(p.locator(".game-sheet button.story-cta")));
-    await at(L[2] + 1.6); await tryDo("duct", async () => { const c = p.locator(".game-part", { hasText: "Flow duct" }); await tap(c); await sleep(500); await tap(c); });
-    await at(L[2] + 3.2); await tryDo("quick", () => tap(btn("Quick build")));
+  problem: [() => go("/experiments/bass2-B20"), (S) => { S.glide(S.L[1], 3.0, 520); S.glide(S.L[3], 2.2, -520); }],
+  freefall: [async () => { await go("/story"); await p.evaluate(() => localStorage.clear()); await go("/story"); }, (S) => {
+    const sheetNext = () => p.locator(".game-sheet button.story-cta");
+    const duct = () => p.locator(".game-part", { hasText: "Flow duct" });
+    S.tap(0.6, () => btn("Start the mission"), "start");
+    S.tap(S.L[1], sheetNext, "hello-next");
+    S.tap(S.L[1] + 2.6, () => btn("Switch off gravity"), "gravity");
+    S.tap(S.L[2], sheetNext, "gravity-next");
+    S.tap(S.L[2] + 1.6, duct, "duct-preview");
+    S.tap(S.L[2] + 2.3, duct, "duct-install");
+    S.tap(S.L[2] + 3.4, () => btn("Quick build"), "quick");
   }, "right"],
-  adventure: [async () => { await go("/expedition"); await p.evaluate(() => localStorage.removeItem("microfire-spark-journey-v1")); await go("/expedition"); }, async (at, L) => {
-    await at(L[1] + 1.5); await p.mouse.move(1500, 480, { steps: 25 });
-    await at(L[2]); await tryDo("follow", () => tap(btn(/follow the spark/i)));
+  adventure: [async () => { await go("/expedition"); await p.evaluate(() => localStorage.removeItem("microfire-spark-journey-v1")); await go("/expedition"); }, (S) => {
+    S.point(S.L[1] + 1.2, 1.2, 1500, 480);
+    S.tap(S.L[2], () => btn(/follow the spark/i), "follow");
   }],
-  vision: [null, async (at, L) => {
-    await at(0.3); await tryDo("film", () => tap(p.locator("button", { hasText: "Investigate this flame" }).first()));
-    await at(1.4); await tryDo("play", () => tap(p.getByRole("button", { name: "Play", exact: true })));
-    await at(L[1]); await tryDo("vision", () => tap(p.getByRole("tab", { name: "AI vision" })));
-    await at(L[1] + 2.8); await tryDo("metric", () => tap(p.locator(".exp-metrics button")));
-    await at(L[2]); await tryDo("measure", () => tap(p.getByRole("tab", { name: "Measurements" })));
+  vision: [null, (S) => {
+    S.tap(0.5, () => p.locator("button", { hasText: "Investigate this flame" }), "film");
+    S.tap(1.6, () => p.getByRole("button", { name: "Play", exact: true }), "play");
+    S.tap(S.L[1], () => p.getByRole("tab", { name: "AI vision" }), "vision");
+    S.tap(S.L[1] + 2.8, () => p.locator(".exp-metrics button"), "metric");
+    S.tap(S.L[2], () => p.getByRole("tab", { name: "Measurements" }), "measure");
   }],
-  trace: [null, async (at, L) => {
-    await at(0.2); await tryDo("next", next);
-    await at(L[1]); await tryDo("A", () => tap(btn("Outline A")));
-    await at(L[2]); await tryDo("B", () => tap(btn("Outline B")));
+  trace: [null, (S) => {
+    S.tap(0.5, nextBtn, "next");
+    S.tap(S.L[1], () => btn("Outline A"), "A");
+    S.tap(S.L[2], () => btn("Outline B"), "B");
   }],
-  predict: [null, async (at, L) => {
-    await at(0.2); await tryDo("next", next);
-    await at(L[1] + 1.4); await tryDo("less", () => tap(btn("Less airflow")));
-    await at(L[2] + 0.6); await tryDo("scroll", () => glideTo('[class*="predict"]', 1400));
-    await at(L[3] + 1.0); await tryDo("predict", () => tap(btn("It went out")));
-    await at(L[4] + 1.2); await tryDo("cite", () => glideTo('[class*="record"] blockquote', 1600));
+  predict: [null, (S) => {
+    S.tap(0.5, nextBtn, "next");
+    S.tap(S.L[1] + 1.4, () => btn("Less airflow"), "less");
+    S.glideTo(S.L[2] + 0.6, 1.4, '[class*="predict"]');
+    S.tap(S.L[3] + 1.0, () => btn("It went out"), "predict");
+    S.glideTo(S.L[4] + 1.2, 1.6, '[class*="record"] blockquote');
   }],
-  moon: [null, async (at, L) => {
-    await at(0.2); await tryDo("next", next);
-    await at(L[2]); await tryDo("cand0", () => tap(p.locator('[class*="candidates"] button').nth(0)));
-    await at(L[2] + 1.6); await tryDo("cand1", () => tap(p.locator('[class*="candidates"] button').nth(1)));
-    await at(L[3] + 0.4); await tryDo("scroll", () => glideTo('[class*="candidates"] + [role="status"]', 1200));
-    await at(L[4]); await tryDo("next", next);
-    await at(L[4] + 1.6); await tryDo("answer", () => tap(btn("We need more evidence for these conditions.")));
+  moon: [null, (S) => {
+    S.tap(0.5, nextBtn, "next");
+    S.tap(S.L[2], () => p.locator('[class*="candidates"] button').nth(0), "cand0");
+    S.tap(S.L[2] + 1.6, () => p.locator('[class*="candidates"] button').nth(1), "cand1");
+    S.glideTo(S.L[3] + 0.4, 1.2, '[class*="candidates"] + [role="status"]');
+    S.tap(S.L[4], nextBtn, "next2");
+    S.tap(S.L[4] + 1.6, () => btn("We need more evidence for these conditions."), "answer");
   }],
-  finale: [null, async (at, L) => {
-    await at(0.2); await tryDo("next", next);
-    await at(1.2); await tryDo("ask", () => tap(btn("What changed between B16, B20 and B19?")));
-    await at(L[1]); await tryDo("finale", next);
-    await at(L[2]); await tryDo("debrief", () => glideTo('[class*="debrief"]', 1600));
-    await at(L[2] + 2.2); await tryDo("nick", () => p.getByLabel(/Nickname/).pressSequentially("Ada", { delay: 140 }));
+  finale: [null, (S) => {
+    S.tap(0.5, nextBtn, "next");
+    S.tap(1.7, () => btn("What changed between B16, B20 and B19?"), "ask");
+    S.tap(S.L[1], nextBtn, "finale");
+    S.glideTo(S.L[2], 1.6, '[class*="debrief"]');
+    S.tap(S.L[2] + 2.0, () => p.getByLabel(/Nickname/), "nick");
+    [..."Ada"].forEach((ch, i) => S.at(S.L[2] + 2.3 + i * 0.16, () => p.keyboard.type(ch)));
   }],
-  science: [() => go("/atlas"), async (at, L) => {
-    await at(1.0); await glide(560, 2400);
-    await at(L[1] - 0.3); await go("/experiments/bass2-B16"); await glide(260, 1400);
-    await at(L[2] - 0.3); await go("/methodology");
-    await p.evaluate(() => { const el = [...document.querySelectorAll("p")].find((x) => x.textContent.includes("quoted findings are checked")); if (el) scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.45); });
-    await at(L[3] - 0.3); await go("/gaps"); await glide(300, 2000);
+  science: [() => go("/atlas"), (S) => {
+    S.glide(1.0, 2.4, 560);
+    S.go(S.L[1] - 0.3, "/experiments/bass2-B16");
+    S.glide(S.L[1] + 0.2, 1.4, 260);
+    S.go(S.L[2] - 0.3, "/methodology");
+    S.at(S.L[2] - 0.29, () => p.evaluate(() => {
+      const el = [...document.querySelectorAll("p")].find((x) => x.textContent.includes("quoted findings are checked"));
+      if (el) scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.45);
+    }));
+    S.go(S.L[3] - 0.3, "/gaps");
+    S.glide(S.L[3] + 0.2, 2.0, 300);
   }],
-  close: [() => go("/"), async (at) => { await at(2.5); await p.mouse.move(1500, 300, { steps: 40 }); }],
+  // the finale: an animated end card over the home page, staged on the closing lines
+  close: [() => go("/"), (S) => {
+    const end = (st) => () => p.evaluate((x) => window.__voxEnd?.(x), st);
+    const l1 = S.lines[1], parts = ["Real NASA data. ", "A real adventure. ", "And honest answers about what we still don't know."];
+    const total = parts.join("").length;
+    let acc = 0;
+    S.at(0.1, end(1));                       // space fades in, the spark flies and bursts into the flame constellation
+    S.at(S.L[0], end(2));                    // "MicroFire Atlas" rises letter by letter
+    parts.forEach((x, i) => { S.at(l1.at + (l1.dur * acc) / total, end(3 + i)); acc += x.length; }); // the three promises
+    S.at(S.L[2], end(6));                    // crew, PIX and the link
+  }, "none"],
 };
 
-// warm-up: let the window settle on the main display before the first scene
-await go("/"); await sleep(1500);
-// the first screencast in a fresh window comes out zoomed; burn one before recording
-cdp.on("Page.screencastFrame", ({ sessionId }) => cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {}));
-await cdp.send("Page.startScreencast", { format: "jpeg", quality: 50, maxWidth: W, maxHeight: H });
-await sleep(2500); await cdp.send("Page.stopScreencast"); await sleep(500);
-for (const s of timed) {
-  if (only && s.id !== only) continue;
-  const [setup, act, pos] = scenes[s.id];
-  await record(s.id, setup, act, pos);
+for (const sc of timed) {
+  if (only && only !== "all" && sc.id !== only) continue;
+  const [setup, build, pos] = scenes[sc.id];
+  await render(sc, setup, build, pos);
 }
 console.log(errs.length ? "ISSUES:\n" + errs.join("\n") : "no issues");
 await b.close();
