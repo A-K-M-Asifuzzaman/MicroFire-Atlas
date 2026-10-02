@@ -10,7 +10,9 @@
 .station-nav-link:hover { background: #1a2b44; color: #fff; }
 .station-nav-link[aria-current="page"] { background: #244662; color: #c4f8ff; box-shadow: inset 0 -2px #68dbea; }
 .station-nav-link[aria-current="page"] svg { color: #87e8ef; }
-.station-nav .nav-motion { min-width: 42px; min-height: 40px; margin: 0; border-color: #36506d; }
+.station-nav .nav-motion { width: 40px; height: 40px; min-width: 0; min-height: 0; padding: 0; margin: 0; gap: 0; justify-content: center; border-radius: 50%; border-color: #36506d; flex-shrink: 0; }
+.nav-motion-icon { display: block; }
+.nav-motion-play { transform: translateX(1px); } /* a triangle's visual centre sits right of its box centre */
 .station-nav .nav-motion span:last-child { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); }
 .station-menu-button { display: none; border: 1px solid #4c6a87; border-radius: 12px; padding: 8px 12px; font-size: 14px; align-items: center; gap: 14px; }
 .station-nav-mobile { display: none; }
