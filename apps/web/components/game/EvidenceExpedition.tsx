@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- next/image writes inline style attributes, which the strict CSP blocks */
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CinematicWorld, type World } from "@/components/world/CinematicWorld";
 import { EvidenceConstellation } from "@/components/world/EvidenceConstellation";
 import { FlameVision } from "@/components/FlameVision";
@@ -10,11 +10,12 @@ import { AskPanel } from "@/components/AskPanel";
 import { Cite } from "@/components/Cite";
 import { useExplorer } from "@/components/guide/EmberGuide";
 import { useSound } from "./sound";
-import { experiments, getExperiment } from "@/lib/data";
+import { evidenceRecords, experiments, getExperiment } from "@/lib/data";
+import { ladder } from "@/lib/ontology";
+import { LadderGame, MOON_Q } from "./LadderGame";
 import { getMedia, MEDIA_CONTEXT, type FrameMetrics } from "@/lib/media";
 import { CHANGES, distractors, hop, restoreJourney, JOURNEY_FILMS as FILMS, JOURNEY_TASKS as TASKS, LOG_MAX, RANKS, type Change } from "@/lib/expedition";
 import { saveCertificate } from "./certificate";
-import { rank, outsideEvidence, type Scenario } from "@/lib/relevance";
 import { CREW, type CrewId } from "@/lib/guide";
 import styles from "./EvidenceExpedition.module.css";
 
@@ -24,7 +25,7 @@ const STEPS: { name: string; title: string; line: string; crew: CrewId; world: W
   { name: "Look closely", title: "What can a computer see?", line: "Play the film. Turn on AI vision, then tap a measurement to light up its guide.", crew: "kofi", world: "lab" },
   { name: "Trace", title: "Put your detective eyes to work.", line: "Which outline follows this NASA flame photograph? Compare the edges, then check what the computer traced.", crew: "mei", world: "lab" },
   { name: "Compare", title: "One change. A different clue.", line: "Start with B20. Choose a condition to change, then open the crew's record of another real test.", crew: "mei", world: "constellation" },
-  { name: "Moon mission", title: "Take your clues to the Moon.", line: "Choose a material for a future habitat research question. Which of these records gives the closest clues?", crew: "tala", world: "moon" },
+  { name: "Moon mission", title: "Take your clues to the Moon.", line: "A Moon base might use 34% oxygen at 56.5 kPa. Sort these clues onto the Evidence Ladder: how close can real NASA tests get?", crew: "tala", world: "moon" },
   { name: "The unknown", title: "A missing star is a question.", line: "Our atlas contains tests made in orbit. Can they answer the same question for the Moon?", crew: "mei", world: "constellation" },
   { name: "Ask PIX", title: "Good scientists ask why.", line: "Ask about the tests you explored. PIX retrieves NASA evidence. Open a source and check the answer.", crew: "mei", world: "constellation" },
   { name: "Your discoveries", title: "You followed the evidence.", line: "You made choices, looked closely, and kept the questions that still need answers. That is how scientists learn.", crew: "tala", world: "constellation" },
@@ -37,7 +38,7 @@ const HINTS = [
   "Switch on AI vision, then tap a measurement. I light up what I measured.",
   "Look at the bright edge of the flame. Which outline hugs it best?",
   "Change one thing about test B20, then predict before you peek!",
-  "Pick a material, then look for the record with the most matching conditions.",
+  "Saffire is close, but not exact. Droplets explain how fire works. And one card is a test nobody has done yet!",
   "Can a missing test prove something is safe? Think like a scientist.",
   "Tap a suggested question, then open a source to check my answer.",
   "Save your certificate, or visit a chapter again to find a missing clue.",
@@ -56,8 +57,6 @@ export function EvidenceExpedition({ trace }: { trace: FrameMetrics }) {
   const [ready, setReady] = useState(false);
   const [choice, setChoice] = useState<number | null>(null);
   const [change, setChange] = useState<Change | null>(null);
-  const [material, setMaterial] = useState("PMMA");
-  const [candidate, setCandidate] = useState<string | null>(null);
   const [gap, setGap] = useState<number | null>(null);
   const [notes, setNotes] = useState(false);
   const [log, setLog] = useState<string[]>([]);
@@ -71,10 +70,7 @@ export function EvidenceExpedition({ trace }: { trace: FrameMetrics }) {
   const scene = STEPS[step];
   const item = getMedia(film)!;
   const result = change ? hop(BASE, change, experiments) : null;
-  const scenario: Scenario = { oxygen: 34, pressureKpa: 56.5, gravity: "lunar", material };
-  const ranked = rank(experiments, scenario);
-  const candidates = [ranked[2], ranked[0], ranked[12]];
-  const outside = outsideEvidence(experiments, scenario);
+  const moonGaps = useMemo(() => ladder(evidenceRecords, [], MOON_Q).gaps.map((g) => g.text), []);
   const outlines = distractors(trace.outlines[0]);
   const options = [outlines.shifted, trace.outlines[0], outlines.scaled];
 
@@ -176,17 +172,18 @@ export function EvidenceExpedition({ trace }: { trace: FrameMetrics }) {
               <p className={styles.note}>These are recorded outcomes, not generated flame predictions. Similar conditions alone do not prove cause.</p></>)}
           </div>}
           {step === 5 && <div className={styles.moon}>
-            <div className={styles.scenario}><span>Research scenario · Moon gravity</span><strong>34% O₂ <i>at</i> 56.5 kPa</strong><p>Oxygen percentage and pressure describe different things.</p><Cite sourceId="exploration-atmosphere" /></div>
-            <div className={styles.choices} aria-label="Choose a habitat material">{["PMMA", "SIBAL fabric", "Nomex"].map(m => <button key={m} aria-pressed={material === m} onClick={() => { setMaterial(m); setCandidate(null); }}>{m}</button>)}</div>
-            <div className={styles.candidates}>{candidates.map(r => <button key={r.experiment.id} aria-pressed={candidate === r.experiment.id} onClick={() => { setCandidate(r.experiment.id); if (r.score === ranked[0].score) earn("moon", "moonmatch", `Picked test ${r.experiment.test_id} (${r.experiment.material}) as the closest clue for a Moon habitat`); else sound.play("tick"); }}><strong>{r.experiment.test_id}</strong><span>{r.experiment.material}</span><span>{r.experiment.oxygen_vol_pct ?? "Unknown"}% O₂</span><small>Tested in orbit</small></button>)}</div>
-            {candidate && <div className={styles.feedback} role="status"><strong>{ranked.find(r => r.experiment.id === candidate)!.score === ranked[0].score ? "Closest of these clues!" : "Compare the material and oxygen again."}</strong><p>All three still differ from this lunar scenario. No matching Moon-gravity test is in this atlas.</p><p>Coverage: {Math.round(ranked.find(r => r.experiment.id === candidate)!.coverage * 100)}% of the weighted scenario variables are reported. This is not a safety score.</p></div>}
+            <div className={styles.scenario}><span>Research scenario · Moon gravity · PMMA</span><strong>34% O₂ <i>at</i> 56.5 kPa</strong><p>Oxygen percentage and pressure describe different things.</p><Cite sourceId="exploration-atmosphere" /></div>
+            <LadderGame
+              onTry={(right) => sound.play(right ? "tick" : "wrong")}
+              onDone={(tries) => earn("moon", "moonmatch", `Sorted the Moon-base clues onto the Evidence Ladder in ${tries} tries`)}
+            />
           </div>}
           {step === 6 && <div className={styles.unknown}>
             <div className={styles.questionSky} aria-hidden="true"><i /><i /><i /><i /><i /><span>?</span></div>
             <h2 className="display">What should our notebook say?</h2>
             <div className={styles.answers}>{["The habitat must be safe.", "We need more evidence for these conditions.", "Fire cannot burn on the Moon."].map((answer, i) => <button key={answer} aria-pressed={gap === i} onClick={() => { setGap(i); if (i === 1) earn("gap", "edge", "Wrote in the notebook: we need more evidence for Moon conditions"); else sound.play("wrong"); }}>{answer}</button>)}</div>
             {gap != null && <p className={styles.feedback} role="status">{gap === 1 ? "Exactly. A missing match is an open research question. Our collection cannot settle it." : "A gap cannot prove that something is safe or impossible. What evidence would we still need?"}</p>}
-            <details className={styles.notes}><summary>Which conditions are missing?</summary><ul>{outside.map(x => <li key={x}>{x}</li>)}</ul><Link href="/gaps" className={styles.source}>Explore the full evidence map ↗</Link></details>
+            <details className={styles.notes}><summary>Which conditions are missing?</summary><ul>{moonGaps.map(x => <li key={x}>{x}</li>)}</ul><Link href="/gaps" className={styles.source}>Explore the full evidence map ↗</Link></details>
           </div>}
           {step === 7 && <div className={styles.ask}><AskPanel onAnswered={() => earn("ask", "askpix", "Asked PIX a question and checked the NASA sources")} /></div>}
           {step === 8 && <div className={styles.finale}>
@@ -217,7 +214,7 @@ export function EvidenceExpedition({ trace }: { trace: FrameMetrics }) {
       <small>Clue {reward.n} of {TASKS.length} found</small><strong>{reward.title}</strong>
       {RANKS[reward.n] !== RANKS[reward.n - 1] && <span>New rank: {RANKS[reward.n]}</span>}
     </div>}
-    <dialog ref={dialog} className={styles.notebook} onCancel={() => setNotes(false)} onClose={() => setNotes(false)} aria-labelledby="spark-notes-title"><button className={styles.close} onClick={() => setNotes(false)} aria-label="Close science notes">×</button><h2 id="spark-notes-title" className="display">Our science notebook</h2><p>Scenery and characters are fantasy illustrations. NASA footage, test records, and source quotations are evidence.</p><h3>Your selected film</h3><p>{MEDIA_CONTEXT[film].label}</p><p>{MEDIA_CONTEXT[film].unknown}</p><a className={styles.source} href={item.page_url} target="_blank" rel="noreferrer">NASA film source ↗</a><h3>What the computer measured</h3><p>Classical OpenCV segmentation detects bright warm and blue pixels inside a documented region. Width, height, and area remain in image pixels. This is not a trained fire-prediction model.</p><h3>How records are compared</h3><p>Material, oxygen, flow, pressure and gravity remain separate. Missing variables contribute zero similarity and lower coverage. A close match never certifies a habitat.</p><Link href="/methodology" className={styles.source}>Full method, weights and limitations ↗</Link><h3>Your journey</h3><p>{done.length} discoveries saved in this browser. No account needed.</p><button className="game-btn" onClick={() => { setDone([]); setLog([]); setTries(0); setPredict(null); setChoice(null); setChange(null); setCandidate(null); setGap(null); setNotes(false); go(0); }}>Start this journey again</button></dialog>
+    <dialog ref={dialog} className={styles.notebook} onCancel={() => setNotes(false)} onClose={() => setNotes(false)} aria-labelledby="spark-notes-title"><button className={styles.close} onClick={() => setNotes(false)} aria-label="Close science notes">×</button><h2 id="spark-notes-title" className="display">Our science notebook</h2><p>Scenery and characters are fantasy illustrations. NASA footage, test records, and source quotations are evidence.</p><h3>Your selected film</h3><p>{MEDIA_CONTEXT[film].label}</p><p>{MEDIA_CONTEXT[film].unknown}</p><a className={styles.source} href={item.page_url} target="_blank" rel="noreferrer">NASA film source ↗</a><h3>What the computer measured</h3><p>Classical OpenCV segmentation detects bright warm and blue pixels inside a documented region. Width, height, and area remain in image pixels. This is not a trained fire-prediction model.</p><h3>How records are compared</h3><p>Material, oxygen, flow, pressure and gravity remain separate. Missing variables contribute zero similarity and lower coverage. A close match never certifies a habitat.</p><Link href="/methodology" className={styles.source}>Full method, weights and limitations ↗</Link><h3>Your journey</h3><p>{done.length} discoveries saved in this browser. No account needed.</p><button className="game-btn" onClick={() => { setDone([]); setLog([]); setTries(0); setPredict(null); setChoice(null); setChange(null); setGap(null); setNotes(false); go(0); }}>Start this journey again</button></dialog>
   </section>;
 }
 
