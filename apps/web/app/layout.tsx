@@ -12,6 +12,7 @@ const fredoka = Fredoka({ variable: "--font-fredoka", subsets: ["latin"], axes: 
 const lexend = Lexend({ variable: "--font-lexend", subsets: ["latin"] }); // easy-reading body text
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://microfire-atlas.vercel.app"), // absolute URLs for the share image
   title: { default: "MicroFire Atlas", template: "%s · MicroFire Atlas" },
   description:
     "Explore NASA microgravity fire experiments test by test: find the evidence closest to a mission scenario, compare outcomes, and see where the data stops.",
