@@ -172,3 +172,29 @@ html[data-motion="gentle"] .station-destination, html[data-motion="gentle"] .tes
 .exp-metrics span { font-size:10px;color:#a5bed0; }.exp-metrics strong { font-size:12px;color:#ffe0aa; }
 .home-gravity { display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center; }
 @media(max-width:740px){.home-gravity{grid-template-columns:1fr;gap:25px}.exp-metrics button{padding:9px}.exp-metrics strong{font-size:10px}.exp-metrics span{font-size:9px}}
+/* Five-group navigation */
+.nav-groups { display: flex; align-items: center; gap: 2px; }
+.nav-group { position: relative; }
+.nav-group-btn { display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 7px 12px; border-radius: 12px; color: #b7c8dd; font-size: 13px; font-weight: 600; background: none; border: 0; cursor: pointer; transition: background .18s, color .18s; }
+.nav-group-btn:hover, .nav-group-btn[aria-expanded="true"] { background: #1a2b44; color: #fff; }
+.nav-group-btn[data-current] { color: #c4f8ff; box-shadow: inset 0 -2px #68dbea; }
+.nav-caret { opacity: .75; transition: transform .2s; }
+.nav-group-btn[aria-expanded="true"] .nav-caret { transform: rotate(180deg); }
+.nav-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; width: 340px; display: grid; gap: 4px; padding: 12px; border-radius: 18px; border: 1px solid #3a5470; background: #0f2036f7; box-shadow: 0 24px 60px #000a; animation: navIn .18s ease both; }
+.nav-panel-blurb { padding: 2px 8px 6px; font-size: 12px; color: #8ab7d2; }
+.nav-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px; border-radius: 12px; color: #dbeafa; text-decoration: none; }
+.nav-item:hover, .nav-item:focus-visible { background: #1b334d; }
+.nav-item[aria-current="page"] { background: #244662; box-shadow: inset 3px 0 #68dbea; }
+.nav-item-icon { flex-shrink: 0; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #18304a; color: #87e8ef; }
+.nav-item-icon svg { width: 20px; height: 20px; }
+.nav-item strong { display: block; font-size: 14px; }
+.nav-item small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: #93a9c0; }
+.nav-mobile { grid-template-columns: 1fr !important; gap: 14px !important; }
+.nav-mobile section { display: grid; gap: 6px; }
+.nav-mobile-head { font-weight: 800; font-size: 15px; color: #c4f8ff; }
+.nav-mobile-head span { display: block; font-weight: 400; font-size: 12px; color: #8ab7d2; }
+@keyframes navIn { from { opacity: 0; transform: translateY(-6px); } }
+@media (max-width: 860px) { .nav-groups { display: none; } }
+@media (min-width: 861px) { .station-menu-button { display: none !important; } }
+html[data-motion="gentle"] .nav-panel { animation: none; }
+@media (prefers-reduced-motion: reduce) { .nav-panel { animation: none; } }
