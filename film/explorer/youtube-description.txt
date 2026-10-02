@@ -6,6 +6,7 @@ AI voice disclosure: the voiceover is AI-generated (Microsoft neural text-to-spe
 
 On Earth, a flame stretches up because hot air rises. In orbit nothing rises, and a flame lives or dies on the air moving past it. MicroFire Atlas turns NASA's real microgravity fire experiments into an adventure for explorers aged 8 to 13, with the full evidence underneath for mentors and judges.
 
+Watch: https://www.youtube.com/watch?v=T9LLWsoYPws
 Live site: https://microfire-atlas.vercel.app
 Code: https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas
 

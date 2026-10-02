@@ -4,6 +4,10 @@
 
 Live: **https://microfire-atlas.vercel.app**. Built for the NASA Space Apps Challenge 2026, *Flame in Freefall*.
 
+[![Watch the MicroFire Atlas film: fire in space, explored with real NASA data](film/explorer/thumbnail.jpg)](https://www.youtube.com/watch?v=T9LLWsoYPws)
+
+▶ **Watch the 3-minute film:** https://www.youtube.com/watch?v=T9LLWsoYPws
+
 ## What problem it solves
 
 NASA has studied fire in microgravity for decades, but the results are spread across test tables, figures and reports. A crew-safety researcher or mission planner cannot quickly ask: *"For this material and this cabin atmosphere, what did NASA actually observe, and how sure can we be?"*
@@ -13,6 +17,28 @@ MicroFire Atlas puts NASA's microgravity fire tests on one map, test by test. It
 ## Why microgravity fire matters
 
 On Earth, hot gas rises and draws fresh air into a flame. In orbit nothing rises, so a flame is fed only by the ventilation flow. NASA's BASS experiments found flames "especially sensitive to air flow speed in the range 0 to 5 cm/s". At the lowest speeds, flames became "dim blue and very stable" and could burn for a long time. Every quote on the site links to its NASA source.
+
+## For young explorers (ages 8–13)
+
+The same evidence is open to children through two guided adventures. Every task is hands-on, and every reveal is a real NASA record.
+
+- **Mission Freefall** (`/story`) has eight chapters, each with its own job:
+  - flip gravity off and watch the flame change;
+  - build NASA's BASS-II wind tunnel from the report's own part descriptions;
+  - light a sample at test B20's real settings;
+  - turn the airflow down between B16's recorded endpoints;
+  - push the fan to B19's logged positions only.
+- **Follow the Spark** (`/expedition`) has nine chapters over illustrated worlds:
+  - measure a real NASA film with computer vision;
+  - find the computer's outline among made-up ones;
+  - change one condition of B20, **predict first**, then see NASA's record and its PDF page;
+  - take the clues to a Moon-habitat scenario (34 % O₂ at 56.5 kPa);
+  - learn that a missing test is a question, not a promise of safety;
+  - ask PIX, the evidence robot, and check its sources.
+- **Guides and rewards**: crew guides (Tala, Kofi, Dr. Mei) and PIX give hints. A clue meter and explorer ranks track progress, and an evidence constellation lights up with each discovery. The debrief lists exactly what the child did, with an optional certificate.
+- **Access**: Pause motion, reduced-motion support and a 2D fallback without WebGL.
+
+Characters and scenery are illustrations and are labelled as such. Only NASA footage, photographs, test records and quotations are evidence.
 
 ## NASA data used
 
@@ -34,12 +60,13 @@ Run `python3 pipelines/fetch_sources.py` to download every PDF from NTRS. Hashes
 - **Compare Lab**: five presets that hold conditions constant where NASA's tables allow. Each separates observed facts, our interpretation, and data gaps.
 - **Mission Lab**: ranks tests against a cabin scenario (oxygen, airflow, pressure, gravity, material) with a transparent **Mission Relevance** score and a separate **Evidence Confidence** checklist. It flags scenarios outside the tested range.
 - **Evidence gaps**: an oxygen × airflow map of observed, sparse and empty regions.
+- **Flame Vision**: real NASA films and photographs with classical OpenCV segmentation (outline, area, width and height in image pixels).
 - **Ask**: citation-checked answers (see below).
 - **Methodology** and **Sources** pages generated from the code and manifest.
 
 ## Where AI is used
 
-Only on the Ask page. Deterministic search first builds an evidence package of tests and verbatim NASA quotes. Claude (Opus 5.5, structured output) answers only from that package. Every claim is typed as observed, derived, interpretation or data gap, and is checked:
+Language-model AI is used only on Ask (and Ask PIX in the adventure, which calls the same endpoint). Flame Vision, called "AI vision" for children, is classical OpenCV computer vision, not a trained model. On Ask, deterministic search first builds an evidence package of tests and verbatim NASA quotes. Claude (Opus 5.5, structured output) answers only from that package. Every claim is typed as observed, derived, interpretation or data gap, and is checked:
 
 - citations not in the package are removed;
 - numbers must appear in the cited evidence.
@@ -66,7 +93,7 @@ Without `ANTHROPIC_API_KEY`, or on any error, the page shows the evidence only. 
 - 56 tests, three materials (PMMA, SIBAL fabric, Nomex), thin samples, all run in orbit near 1 atm.
 - Many flows ended at fan settings with no recorded velocity.
 - Outcome codes are our reading of short crew notes.
-- No flame video analysis yet.
+- Flame Vision measures in image pixels only, and the films are not tied to specific test rows.
 - Scores are project heuristics, **not NASA ratings or fire-risk predictions**.
 
 ## Run it
@@ -95,7 +122,12 @@ HawkScan (StackHawk) DAST runs against the site and `/api/ask` (`stackhawk.yml`,
 
 ## Demo film
 
-`film/` builds a 240-second narrated film from the same data and code. See `film/README.md`.
+- **Watch:** https://www.youtube.com/watch?v=T9LLWsoYPws
+- `film/explorer/` renders the 3:08 explorer film and its thumbnail (see `film/explorer/README.md`):
+  - real site footage, rendered frame by frame at 4K and 60 fps;
+  - a disclosed AI voiceover;
+  - every number checked against the data.
+- `film/` builds the original 240-second data film (see `film/README.md`).
 
 
 ## Attribution
