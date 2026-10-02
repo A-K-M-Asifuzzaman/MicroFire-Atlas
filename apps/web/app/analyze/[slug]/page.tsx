@@ -17,7 +17,7 @@ export default async function AnalyzePage({ params }: PageProps<"/analyze/[slug]
   const item = getMedia((await params).slug);
   if (!item) notFound();
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
+    <div className="explorer-page media-detail mx-auto max-w-7xl px-4 sm:px-6 py-10">
       <p className="text-sm text-muted">
         <Link href="/analyze" className="link">Flame Vision</Link> / {MEDIA_CONTEXT[item.slug]?.label}
       </p>

@@ -5,8 +5,9 @@ export const metadata: Metadata = { title: "Sources" };
 
 export default function SourcesPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-12">
-      <h1 className="display text-3xl sm:text-4xl">Sources</h1>
+    <div className="explorer-page sources-page mx-auto max-w-5xl px-4 sm:px-6 py-12">
+      <p className="text-signal text-sm">The station library</p>
+      <h1 className="display text-4xl sm:text-5xl mt-3">Follow every clue to its source.</h1>
       <p className="mt-3 text-muted max-w-[70ch]">
         Every NASA document the atlas draws on, from the NASA Technical Reports Server. Hashes let you confirm you hold the
         same file. Copyright status is NTRS&apos;s own determination.
@@ -15,7 +16,7 @@ export default function SourcesPage() {
         {sources.map((s) => {
           const n = findings.filter((f) => f.source_id === s.source_id).length;
           return (
-            <li key={s.source_id} className="border-t border-rule pt-6">
+            <li key={s.source_id} className="source-document">
               <h2 className="text-lg font-semibold max-w-[70ch]">{s.title}</h2>
               <p className="mt-1 text-sm text-muted">
                 {s.authors.join(", ")}

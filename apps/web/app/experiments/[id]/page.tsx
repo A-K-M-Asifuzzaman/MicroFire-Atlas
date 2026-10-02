@@ -79,7 +79,7 @@ export default async function ExperimentPage({ params }: PageProps<"/experiments
   const gases = e.co2_vol_pct && e.co2_vol_pct.some((v) => v != null);
 
   return (
-    <article className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+    <article className="explorer-page experiment-page mx-auto max-w-7xl px-4 sm:px-6 py-12">
       <p className="text-sm text-muted">
         <Link href="/atlas" className="link">
           Atlas

@@ -460,6 +460,9 @@ a {
 .game-btn:hover {
   border-color: var(--signal);
 }
+@media (max-width: 639px) {
+  .game-topbar .game-btn { min-width: 44px; min-height: 44px; padding: .45rem; }
+}
 .game-pop {
   padding: 0.9rem 1rem;
   border-radius: 14px;
@@ -926,8 +929,11 @@ html[data-motion="gentle"] .guide-ember {
 .const-gap .const-halo { stroke-dasharray: 0.7 0.5; }
 .const-q { font-size: 2.6px; font-weight: 700; fill: var(--ink); pointer-events: none; }
 .const-gap .const-core { fill: transparent; }
-.const-label { font-size: 2.1px; fill: var(--muted); pointer-events: none; }
-.const-node-on .const-label { fill: var(--ink); }
+.const-label { font-size: 2.3px; fill: var(--ink); pointer-events: none; opacity: 0; transition: opacity 0.2s; paint-order: stroke; stroke: var(--void); stroke-width: 0.6px; }
+.const-node:hover .const-label,
+.const-node:focus-visible .const-label,
+.const-node-last .const-label { opacity: 1; }
+.const-map { max-height: 72vh; }
 .const-node { cursor: pointer; outline: none; }
 .const-node:hover .const-halo,
 .const-node:focus-visible .const-halo { stroke: var(--signal); stroke-width: 0.5; }
@@ -960,7 +966,7 @@ html[data-motion="gentle"] .guide-ember {
 .sky-calm .sky-plate { opacity: 0.45; animation: none; }
 .sky-calm .sky-scrim { background: linear-gradient(0deg, var(--void) 5%, rgba(5, 9, 20, 0.6) 60%, rgba(5, 9, 20, 0.75)); }
 .sky-floater { position: absolute; right: 30%; top: 6%; width: clamp(110px, 14vw, 210px); }
-.sky-story .sky-floater { right: 6%; top: 10%; }
+.sky-story .sky-floater { display: none; }
 .sky-floater-img { width: 100%; height: auto; animation: astro-drift 13s ease-in-out infinite alternate; filter: drop-shadow(0 0 30px rgba(86, 212, 228, 0.25)); }
 .sky-credit { position: absolute; right: 10px; bottom: 6px; font-size: 10px; color: var(--faint); }
 @media (max-width: 1023px) {
@@ -995,6 +1001,24 @@ html[data-motion="gentle"] .sky *, html[data-motion="gentle"] .sky-floater-img {
 html[data-motion="gentle"] .crew-img { animation: none; }
 
 /* ---------- Mission Freefall: task sheet, stages and chapter mechanics ---------- */
+.game-bay { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at 63% 62%, rgba(36,78,122,.18), transparent 52%), linear-gradient(115deg, rgba(16,29,49,.4), transparent 52%); }
+.game-bay-window { position: absolute; top: 11%; right: 17%; width: min(43vw, 550px); height: min(42vh, 320px); border: 12px solid rgba(50,68,91,.75); border-radius: 34px; background: linear-gradient(rgba(9,24,47,.22),rgba(9,24,47,.22)), url('/art/sky.webp') 66% 45% / 125% auto; box-shadow: 0 0 0 2px rgba(118,208,231,.35), 0 0 0 19px rgba(29,44,67,.4), inset 0 0 70px #080d1b, 0 25px 70px rgba(0,0,0,.42); opacity: .35; animation: game-window-pan 28s ease-in-out infinite alternate; }
+.game-bay-window::after { content: ""; position: absolute; inset: 13px; border: 1px solid rgba(176,220,238,.23); border-radius: 17px; }
+.game-bay-strut { position: absolute; top: -15%; bottom: -20%; left: 13%; width: 22px; transform: rotate(17deg); background: linear-gradient(90deg, rgba(5,11,22,.35), rgba(83,119,150,.22) 45%, rgba(5,11,22,.3)); box-shadow: 2px 0 rgba(106,176,201,.17), 0 0 0 9px rgba(12,24,42,.14); }
+.game-bay-light { position: absolute; left: 32%; right: 20%; bottom: 12%; height: 1px; background: linear-gradient(90deg, transparent, rgba(95,193,219,.36), transparent); box-shadow: 0 0 18px 3px rgba(58,143,188,.12); }
+.game-bay[data-view="cloud"] .game-bay-window, .game-bay[data-view="cloud"] .game-bay-strut, .game-bay[data-view="cloud"] .game-bay-light { display: none; }
+.game-bay[data-view="cloud"] { background: radial-gradient(ellipse at 60% 44%, rgba(32,79,119,.2), transparent 55%); }
+.game-scene-label { position: absolute; z-index: 13; top: 82px; left: 50%; translate: -50% 0; padding: 5px 12px; border: 1px solid rgba(119,205,227,.35); border-radius: 100px; color: #eaf4fa; background: rgba(8,20,35,.86); font-size: 12px; font-weight: 800; letter-spacing: .02em; pointer-events: none; }
+.game-scene-label span { color: #a7bacb; font-weight: 500; }
+@keyframes game-window-pan { to { background-position: 54% 38%; } }
+@media (max-width: 1023px) {
+  .game-bay-window { top: 19%; right: 6%; width: 72%; height: 28%; border-width: 8px; border-radius: 24px; opacity: .25; }
+  .game-bay-strut { left: -8%; width: 13px; opacity: .5; }
+  .game-bay-light { left: 8%; right: 8%; bottom: 44%; }
+  .game-scene-label { left: auto; right: 12px; top: 77px; translate: none; font-size: 11px; }
+}
+html[data-motion="gentle"] .game-bay *, html[data-motion="gentle"] .game-bay *::after { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .game-bay *, .game-bay *::after { animation: none !important; } }
 .game-sheet {
   position: absolute; z-index: 20; left: 24px; bottom: 24px; width: 500px;
   max-height: calc(100% - 6.5rem); overflow-y: auto;
@@ -1072,11 +1096,58 @@ html[data-motion="gentle"] .crew-img { animation: none; }
   animation: trip-in 1.2s ease both;
 }
 
-.crew-row { display: flex; align-items: flex-end; gap: 0.5rem; }
-.crew-row-item { margin: 0; display: flex; flex-direction: column; align-items: center; animation: crew-in 0.7s cubic-bezier(.2, 1.3, .4, 1) both; }
-.crew-row-item:nth-child(2) { animation-delay: 0.12s; }
-.crew-row-item:nth-child(3) { animation-delay: 0.24s; }
-.crew-row-item img { height: clamp(150px, 22vw, 250px); width: auto; filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.6)); }
-.crew-row-item figcaption { text-align: center; font-size: 13px; line-height: 1.2; }
-.crew-row-item figcaption span { display: block; color: var(--muted); font-size: 11px; }
-html[data-motion="gentle"] .app2d *, html[data-motion="gentle"] .crew-row-item, html[data-motion="gentle"] .crew-card { animation: none !important; }
+.mission-intro-inner { min-height: calc(100vh - 3.5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(390px, .82fr); align-content: center; align-items: center; column-gap: clamp(20px, 5vw, 80px); }
+.mission-intro-copy { position: relative; z-index: 2; padding-block: 24px; }
+.mission-intro-kicker { color: var(--signal); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.mission-intro-kicker span { color: var(--flame); margin-right: 7px; }
+.mission-intro-title { margin-top: 19px; font-size: clamp(64px, 7vw, 102px); letter-spacing: -.045em; }
+.mission-intro-title em { color: #ffca79; font-style: normal; text-shadow: 0 12px 55px rgba(240, 160, 68, .3); }
+.mission-intro-deck { margin-top: 25px; max-width: 46ch; color: #c4cfe0; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.55; }
+.mission-intro-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 30px; }
+.mission-intro-actions .story-cta { display: inline-flex; align-items: center; gap: 22px; min-height: 54px; font-size: 17px; }
+.mission-intro-crew { position: relative; height: clamp(410px, 48vw, 560px); isolation: isolate; }
+.mission-crew-orbit { position: absolute; inset: 0 2% 12% 2%; border: 1px solid rgba(105, 214, 232, .28); border-radius: 50%; background: radial-gradient(ellipse at 55% 60%, rgba(75, 144, 212, .18), transparent 55%); box-shadow: 0 0 0 18px rgba(90, 170, 218, .035), inset 0 0 70px rgba(91, 140, 255, .14); transform: rotate(-15deg) scaleY(.87); }
+.mission-crew-orbit::before, .mission-crew-orbit::after { content: ""; position: absolute; inset: 13%; border: 1px dashed rgba(98, 198, 226, .3); border-radius: 50%; }
+.mission-crew-orbit::after { inset: -7%; border: 1px solid rgba(255, 201, 120, .13); }
+.mission-crew-orbit span { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: #8ce9ef; box-shadow: 0 0 18px #65d5e8; }
+.mission-crew-orbit span:nth-child(1) { top: 15%; left: 14%; }.mission-crew-orbit span:nth-child(2) { top: 32%; right: 2%; width: 7px; height: 7px; }.mission-crew-orbit span:nth-child(3) { bottom: 16%; left: 3%; width: 6px; height: 6px; background: #ffd083; }
+.mission-crew-actor { position: absolute; z-index: 2; height: 87%; max-width: 68%; object-fit: contain; object-position: bottom; right: 1%; bottom: 40px; filter: drop-shadow(0 24px 26px rgba(0,0,0,.65)) drop-shadow(0 0 30px rgba(107, 208, 231, .18)); animation: crew-spotlight .6s cubic-bezier(.2,1.2,.3,1) both, crew-hover 6s ease-in-out .6s infinite alternate; }
+@keyframes crew-spotlight { from { opacity: 0; transform: translate(45px, 25px) rotate(9deg) scale(.86); } to { opacity: 1; transform: none; } }
+@keyframes crew-hover { to { translate: 0 -10px; } }
+.mission-crew-speech { position: absolute; z-index: 3; bottom: 97px; left: 0; width: min(65%, 300px); padding: 16px 18px; border-radius: 20px 20px 6px 20px; background: rgba(11, 23, 42, .94); border: 1px solid rgba(105, 214, 232, .52); box-shadow: 0 16px 44px rgba(0,0,0,.45); color: #edf3fb; font-size: 14px; line-height: 1.48; backdrop-filter: blur(9px); }
+.mission-crew-name { color: #80e5ee; font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 6px; }
+.mission-crew-name span { color: #aab7cb; font-weight: 500; }
+.mission-crew-select { position: absolute; z-index: 4; inset: auto 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mission-crew-choice { text-align: left; padding: 9px 12px; border: 1px solid rgba(120, 156, 190, .4); border-radius: 13px; background: rgba(9, 18, 33, .9); transition: transform .2s, border-color .2s, background .2s; }
+.mission-crew-choice:hover, .mission-crew-choice:focus-visible { transform: translateY(-4px); border-color: var(--signal); }
+.mission-crew-choice-active { border-color: #70e0ec; background: rgba(48, 105, 135, .5); box-shadow: inset 0 2px rgba(129, 226, 239, .38); }
+.mission-crew-choice span { display: block; color: #f0f4fb; font-size: 13px; font-weight: 800; }
+.mission-crew-choice small { display: block; color: #9fb2c8; font-size: 10px; }
+.mission-intro-path { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(8, minmax(0,1fr)); gap: 10px; margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(105, 214, 232, .2); }
+.mission-intro-path li { position: relative; display: flex; align-items: flex-start; gap: 6px; color: #b3c0d1; font-size: 11px; line-height: 1.25; }
+.mission-intro-path li::before { content: ""; position: absolute; top: -24px; left: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 12px var(--signal); }
+.mission-intro-path li:first-child::before { background: var(--flame); box-shadow: 0 0 13px var(--flame); }
+.mission-intro-path .num { color: #83e1ec; font-weight: 800; }
+@media (max-width: 900px) {
+  .mission-intro-inner { grid-template-columns: 1fr; min-height: 0; align-content: start; padding-top: 32px; }
+  .mission-intro-copy { padding-block: 16px; }
+  .mission-intro-title { font-size: clamp(54px, 11vw, 78px); }
+  .mission-intro-crew { height: 340px; margin-top: 16px; }
+  .mission-crew-actor { max-width: 55%; }
+  .mission-intro-path { grid-template-columns: repeat(4, 1fr); gap: 18px 12px; margin-top: 28px; }
+  .mission-intro-path li::before { display: none; }
+}
+@media (max-width: 480px) {
+  .mission-intro-kicker { font-size: 10px; }
+  .mission-intro-title { font-size: 56px; }
+  .mission-intro-deck { margin-top: 16px; font-size: 16px; }
+  .mission-intro-actions { margin-top: 22px; }
+  .mission-intro-crew { height: 300px; }
+  .mission-crew-actor { height: 80%; max-width: 62%; right: -2%; bottom: 41px; }
+  .mission-crew-speech { width: 61%; bottom: 75px; padding: 9px 11px; font-size: 11px; }
+  .mission-crew-name { font-size: 9px; }
+  .mission-crew-choice { padding: 7px 8px; }
+  .mission-crew-choice small { font-size: 9px; }
+  .mission-intro-path { grid-template-columns: repeat(2, 1fr); gap: 13px 18px; }
+}
+html[data-motion="gentle"] .app2d *, html[data-motion="gentle"] .mission-intro-crew *, html[data-motion="gentle"] .crew-card { animation: none !important; transition: none !important; }

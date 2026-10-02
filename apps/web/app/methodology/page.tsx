@@ -31,7 +31,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 export default function MethodologyPage() {
   const sc = scalesFrom(experiments);
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
+    <div className="explorer-page method-page mx-auto max-w-7xl px-4 sm:px-6 py-12 grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
       <nav aria-label="On this page" className="text-sm lg:sticky lg:top-6 lg:self-start">
         <ul className="space-y-2 text-muted">
           {[
@@ -210,7 +210,7 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             <li>Many flows ended at fan settings with no recorded velocity, so exact quench and blowoff speeds are often unknown.</li>
             <li>Outcome codes are our reading of short crew and ground notes.</li>
             <li>Spread rates appear in NASA figures, not tables, and are not transcribed.</li>
-            <li>No flame video is included yet, so there is no image analysis on this site.</li>
+            <li>Flame Vision measures published NASA media in pixels. Without calibration, it cannot report physical flame size or speed.</li>
             <li>Nothing here is a fire-risk prediction or a NASA safety rating.</li>
           </ul>
         </Section>

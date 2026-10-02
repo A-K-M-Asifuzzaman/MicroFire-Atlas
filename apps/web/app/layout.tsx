@@ -5,6 +5,7 @@ import { connection } from "next/server";
 import { Nav } from "@/components/Nav";
 import { ExplorerProvider } from "@/components/guide/EmberGuide";
 import "./globals.css";
+import "./explorer-ui.css";
 
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] }); // data tables and numbers
 const fredoka = Fredoka({ variable: "--font-fredoka", subsets: ["latin"], axes: ["wdth"] }); // friendly headings
@@ -26,7 +27,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 bg-panel px-3 py-2">
           Skip to content
         </a>
-        <header className="border-b border-rule">
+        <header className="site-header">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 h-14 flex items-center justify-between gap-6">
             <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="MicroFire Atlas home">
               <Mark />
@@ -38,7 +39,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main id="main" className="flex-1">
           {children}
         </main>
-        <footer className="border-t border-rule mt-24">
+        <footer className="site-footer mt-24">
+          <div className="footer-invitation mx-auto max-w-7xl px-4 sm:px-6"><div><p className="display text-2xl">Keep asking. Keep exploring.</p><p className="text-muted text-sm mt-2">Every discovery starts with a good question.</p></div><Link href="/ask" className="story-cta">Ask the evidence</Link></div>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 text-sm text-muted grid gap-3 sm:grid-cols-2">
             <p>
               Built from public NASA technical reports. Not affiliated with or endorsed by NASA. Scores on this site

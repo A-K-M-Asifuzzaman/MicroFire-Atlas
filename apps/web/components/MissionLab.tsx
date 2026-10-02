@@ -98,8 +98,9 @@ export function MissionLab() {
   };
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[300px_minmax(0,1fr)]">
-      <aside aria-label="Scenario" className="space-y-7 lg:sticky lg:top-6 lg:self-start">
+    <div className="mission-workspace grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <aside aria-label="Scenario" className="control-desk space-y-7 lg:self-start">
+        <div><h2 className="display text-2xl">Your cabin controls</h2><p className="text-sm text-muted mt-2">Choose a starting point, then change the conditions.</p></div>
         <fieldset data-guide="contexts">
           <legend className="text-sm text-muted">Start from a mission context</legend>
           <div className="mt-2 grid gap-2">
@@ -213,7 +214,7 @@ export function MissionLab() {
               See the formula
             </Link>
           </p>
-          <ol className="mt-4 divide-y divide-rule border-y border-rule">
+          <ol className="ranked-records mt-4">
             {top.map((r, i) => {
               const e = r.experiment;
               const conf = confidence(e, experiments);

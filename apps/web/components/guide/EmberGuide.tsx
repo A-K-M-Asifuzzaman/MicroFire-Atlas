@@ -147,13 +147,14 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
     }),
     [s.mode, s.gentle, s.found, discover],
   );
-  const hidden = path.startsWith("/story"); // the game has Ember built in
+  const hidden = path.startsWith("/story") || path.startsWith("/expedition"); // adventures have a scene guide
   const kid = s.mode === "kid";
   const mood: Mood = current?.mood ?? (fact != null ? "surprised" : kid ? "happy" : "curious");
   const factItem = fact != null ? FUN_FACTS[fact % FUN_FACTS.length] : null;
   const factQuote = factItem ? findings.find((f) => f.id === factItem.finding) : null;
   const goal = page ? GOALS[page.id] : undefined;
   const crew = goal ? CREW[goal.crew] : undefined;
+  const hasSceneGuide = ["atlas", "analyze", "compare", "mission", "gaps", "ask"].includes(page?.id ?? "");
   const tipOpen = !!page && !s.tips.includes(page.id);
   const setTip = (open: boolean) =>
     page && setS((x) => ({ ...x, tips: open ? x.tips.filter((t) => t !== page.id) : [...new Set([...x.tips, page.id])] }));
@@ -163,7 +164,7 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
   return (
     <ExplorerCtx.Provider value={ctx}>
       {children}
-      {!hidden && ready && goal && crew && (
+      {!hidden && !hasSceneGuide && ready && goal && crew && (
         <div className={`crew-tip ${tipOpen ? "crew-tip-open" : ""}`}>
           {tipOpen ? (
             <div className="crew-card" role="note" aria-label={`${crew.name}'s tip`}>

@@ -121,22 +121,34 @@ export const FUN_FACTS: { finding: string; text: string }[] = [
 /**
  * Discoveries: the only thing that earns an Explorer star. Each is a learning action
  * (not a page visit) and each node in the evidence constellation opens a real place.
- * x/y place the star on the constellation (0-100 box); the list order is the journey.
+ * The list order is the journey (Act I: Mission Freefall, Act II: the Evidence Expedition);
+ * stars are placed around a teardrop so the finished constellation is a flame.
  */
 export type Discovery = { id: string; label: string; href: string; x: number; y: number; kind: "act" | "record" | "gap" | "source" };
-export const DISCOVERIES: Discovery[] = [
-  { id: "gravity", label: "Saw a flame change without gravity", href: "/story", x: 8, y: 70, kind: "act" },
-  { id: "built", label: "Built NASA's BASS-II wind tunnel", href: "/story", x: 20, y: 48, kind: "act" },
-  { id: "fixed", label: "Fixed the setup before the test", href: "/story", x: 30, y: 72, kind: "act" },
-  { id: "b20", label: "Lit a sample at test B20's real settings", href: "/experiments/bass2-B20", x: 40, y: 40, kind: "record" },
-  { id: "b16", label: "Watched how test B16 ended", href: "/experiments/bass2-B16", x: 52, y: 62, kind: "record" },
-  { id: "b19", label: "Watched how test B19 ended", href: "/experiments/bass2-B19", x: 58, y: 28, kind: "record" },
-  { id: "fabric", label: "Lined up the fabric quench records", href: "/atlas", x: 68, y: 52, kind: "record" },
-  { id: "clue", label: "Pinned a real crew-log clue", href: "/story", x: 76, y: 22, kind: "record" },
-  { id: "quiet", label: "Found the hidden dim flame", href: "/story", x: 82, y: 68, kind: "act" },
-  { id: "source", label: "Opened a real NASA report page", href: "/sources", x: 90, y: 40, kind: "source" },
-  { id: "edge", label: "Found where the evidence stops", href: "/gaps", x: 95, y: 14, kind: "gap" },
+const JOURNEY: Omit<Discovery, "x" | "y">[] = [
+  { id: "gravity", label: "Saw a flame change without gravity", href: "/story", kind: "act" },
+  { id: "built", label: "Built NASA's BASS-II wind tunnel", href: "/story", kind: "act" },
+  { id: "fixed", label: "Fixed the setup before the test", href: "/story", kind: "act" },
+  { id: "b20", label: "Lit a sample at test B20's real settings", href: "/experiments/bass2-B20", kind: "record" },
+  { id: "b16", label: "Watched how test B16 ended", href: "/experiments/bass2-B16", kind: "record" },
+  { id: "b19", label: "Watched how test B19 ended", href: "/experiments/bass2-B19", kind: "record" },
+  { id: "fabric", label: "Lined up the fabric quench records", href: "/atlas", kind: "record" },
+  { id: "clue", label: "Pinned a real crew-log clue", href: "/story", kind: "record" },
+  { id: "quiet", label: "Found the hidden dim flame", href: "/story", kind: "act" },
+  { id: "realflame", label: "Picked a real NASA flame video", href: "/expedition", kind: "record" },
+  { id: "aivision", label: "Used AI Vision to measure a real flame", href: "/analyze", kind: "act" },
+  { id: "hop", label: "Changed one thing between two real tests", href: "/expedition", kind: "record" },
+  { id: "difference", label: "Spotted the difference NASA recorded", href: "/compare", kind: "record" },
+  { id: "moonmatch", label: "Found the closest evidence for a Moon habitat", href: "/mission", kind: "act" },
+  { id: "edge", label: "Found where the evidence stops", href: "/gaps", kind: "gap" },
+  { id: "askpix", label: "Asked PIX a question with sources", href: "/ask", kind: "act" },
+  { id: "source", label: "Opened a real NASA report page", href: "/sources", kind: "source" },
 ];
+/** Teardrop: x = sin θ · sin(θ/2), y = cos θ, tip at the top; the journey starts at the bottom. */
+export const DISCOVERIES: Discovery[] = JOURNEY.map((d, i) => {
+  const t = Math.PI + (2 * Math.PI * (i + 0.5)) / JOURNEY.length; // half-step offset: one star sits on the tip
+  return { ...d, x: +(50 + 40 * Math.sin(t) * Math.abs(Math.sin(t / 2))).toFixed(2), y: +(52 - 46 * Math.cos(t)).toFixed(2) };
+});
 export const discovery = (id: string) => DISCOVERIES.find((d) => d.id === id);
 
 /**

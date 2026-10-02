@@ -31,7 +31,7 @@ test("discoveries are unique, placed in the box and open real routes", async () 
   assert.equal(new Set(DISCOVERIES.map((d) => d.id)).size, DISCOVERIES.length);
   for (const d of DISCOVERIES) {
     assert.ok(d.x >= 0 && d.x <= 100 && d.y >= 0 && d.y <= 100, d.id);
-    assert.match(d.href, /^\/(story|atlas|gaps|sources|experiments\/bass2-B\d+)?$/, d.id);
+    assert.match(d.href, /^\/(story|atlas|gaps|sources|expedition|analyze|compare|mission|ask|experiments\/bass2-B\d+)?$/, d.id);
   }
 });
 
@@ -41,4 +41,10 @@ test("every guide page has a crew goal", async () => {
     assert.ok(GOALS[p.id], `no goal for ${p.id}`);
     assert.ok(CREW[GOALS[p.id].crew]);
   }
+});
+
+test("the constellation is a closed flame: no two stars share a place", async () => {
+  const { DISCOVERIES } = await import("./guide.ts");
+  const seen = new Set(DISCOVERIES.map((d) => `${Math.round(d.x)},${Math.round(d.y)}`));
+  assert.equal(seen.size, DISCOVERIES.length);
 });

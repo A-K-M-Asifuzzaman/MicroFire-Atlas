@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cite, Quote } from "@/components/Cite";
 import { GapMap } from "@/components/GapMap";
 import { findings } from "@/lib/data";
+import { RouteStage } from "@/components/world/RouteStage";
 
 export const metadata: Metadata = { title: "Evidence gaps" };
 
@@ -10,14 +11,14 @@ const GAP_QUOTES = ["luci-first-lunar", "low-g-burns-lower-o2", "exploration-atm
 export default function GapsPage() {
   const quotes = GAP_QUOTES.map((id) => findings.find((f) => f.id === id)!);
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-      <h1 className="display text-3xl sm:text-4xl">Where the evidence stops</h1>
-      <p className="mt-3 text-muted max-w-[70ch]">
+    <div className="explorer-page mx-auto max-w-7xl px-4 sm:px-6 py-12">
+      <RouteStage kind="gaps" />
+      <p className="mt-6 text-sm text-muted max-w-[78ch]">
         Safer exploration starts with knowing what NASA&apos;s tests actually covered. Dense cells are well observed;
         dashed cells have no test at all.
       </p>
 
-      <div className="mt-10">
+      <div id="gaps-tool" className="scroll-mt-20 mt-8">
         <GapMap />
       </div>
 

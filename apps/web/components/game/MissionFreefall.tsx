@@ -5,15 +5,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CloudPoint, FlameScene, PartId, SceneState } from "@/components/three/FlameScene";
 import { Cite } from "@/components/Cite";
 import { Apparatus2D } from "@/components/game/Apparatus2D";
+import { CrewDirector, type CrewCue } from "@/components/game/CrewDirector";
 import { Ember, EmberSays, type Form, type Mood } from "@/components/game/Ember";
 import { Sparks } from "@/components/game/Sparks";
 import { useSound } from "@/components/game/sound";
 import { useExplorer } from "@/components/guide/EmberGuide";
 import { EvidenceConstellation } from "@/components/world/EvidenceConstellation";
-import { LivingSky } from "@/components/world/LivingSky";
+import { CinematicWorld } from "@/components/world/CinematicWorld";
 import { experiments, findings, getExperiment } from "@/lib/data";
 import { blockedBy, CHAPTERS, FABRIC_QUENCH, LAB_TARGET, LOG_CLUES, MOON, MOON_AIR, PARTS, PREDICTIONS, type ChapterId } from "@/lib/game";
-import { CREW } from "@/lib/guide";
+import { CREW, type CrewId } from "@/lib/guide";
 
 /* ---------------- screens ---------------- */
 
@@ -42,6 +43,7 @@ type Save = {
   observed: Record<string, boolean>;
   labLit: boolean;
   gravityToggled: boolean;
+  gravityOn: boolean;
   pinned: string | null;
   quietFound: boolean;
   gusted: boolean;
@@ -50,7 +52,7 @@ type Save = {
 };
 const FRESH: Save = {
   screen: 0, reached: 0, installed: [], fixes: { sample: false, fan: false }, answers: {}, observed: {}, labLit: false,
-  gravityToggled: false, pinned: null, quietFound: false, gusted: false, placed: [], marker: false,
+  gravityToggled: false, gravityOn: true, pinned: null, quietFound: false, gusted: false, placed: [], marker: false,
 };
 const KEY = "microfire-mission-freefall-v2";
 
@@ -85,6 +87,7 @@ export function MissionFreefall() {
   const sceneRef = useRef<FlameScene | null>(null);
   const { gentle, setGentle, discover } = useExplorer();
   const [started, setStarted] = useState(false);
+  const [titleGuide, setTitleGuide] = useState<CrewId>("tala");
   const [save, setSave] = useState<Save>(FRESH);
   const [hasSave, setHasSave] = useState(false);
   const [noGL, setNoGL] = useState(false);
@@ -125,9 +128,11 @@ export function MissionFreefall() {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
-        const s = { ...FRESH, ...JSON.parse(raw) } as Save;
+        const old = JSON.parse(raw) as Partial<Save>;
+        const s = { ...FRESH, ...old, gravityToggled: old.gravityOn == null ? false : old.gravityToggled } as Save;
         // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore from storage
         setSave(s);
+        setGravityOn(s.gravityOn);
         setHasSave(s.screen > 0);
       }
     } catch {}
@@ -144,7 +149,7 @@ export function MissionFreefall() {
   const start = useCallback(
     (fresh = false) => {
       setNoGL(!document.createElement("canvas").getContext("webgl2"));
-      if (fresh) setSave(FRESH);
+      if (fresh) { setSave(FRESH); setGravityOn(true); }
       setStarted(true);
       window.scrollTo(0, 0);
       sound.play("whoosh");
@@ -165,7 +170,7 @@ export function MissionFreefall() {
   const sceneState = useMemo((): SceneState => {
     const base = { cloud } as const;
     if (screen.id === "debrief" && recap != null) {
-      if (recap === 0) return { ...base, view: "duct", gravity: "orbit", o2: 16.5, flow: 5, outcome: "burning", labels: true };
+      if (recap === 0) return { ...base, view: "duct", gravity: "orbit", o2: 16.5, flow: 5, outcome: "burning" };
       if (recap === 1) return { ...base, view: "cloud", gravity: "orbit", o2: 18, flow: 5, outcome: "none", highlight: [save.pinned ?? LAB_TARGET.testId] };
       return { ...base, view: "cloud", gravity: "orbit", o2: 34, flow: 5, outcome: "none", voidRegion: { y: 2.9, label: "34 % O₂, 56.5 kPa: no atlas tests here" } };
     }
@@ -175,9 +180,9 @@ export function MissionFreefall() {
       case "gravity":
         return { ...base, view: "bench", gravity: gravityOn ? "earth" : "orbit", o2: 21, flow: 0, outcome: gravityOn ? "burning" : "dim" };
       case "build":
-        return { ...base, view: "duct", gravity: "orbit", o2: 21, flow: 0, outcome: "none", parts: save.installed, ghost: selected ?? drag?.part ?? null, labels: true };
+        return { ...base, view: "duct", gravity: "orbit", o2: 21, flow: 0, outcome: "none", parts: save.installed, ghost: selected ?? drag?.part ?? null };
       case "check":
-        return { ...base, view: "duct", gravity: "orbit", o2: 21, flow: 4, outcome: "none", labels: true, sampleLoose: !save.fixes.sample, fanReversed: !save.fixes.fan };
+        return { ...base, view: "duct", gravity: "orbit", o2: 21, flow: 4, outcome: "none", sampleLoose: !save.fixes.sample, fanReversed: !save.fixes.fan };
       case "lab":
         return { ...base, view: "duct", gravity: "orbit", o2, flow, outcome: save.labLit && !igniting ? "burning" : "none", igniter: igniting ? heat : save.labLit ? 0.2 : 0, focus: save.labLit };
       case "b16":
@@ -472,22 +477,61 @@ export function MissionFreefall() {
     return { form, mood: m[screen.id] ?? "curious" };
   })();
 
+  const crewCue: CrewCue = (() => {
+    switch (screen.id) {
+      case "hello": return { crew: "tala", phase: "welcome", pose: "welcome", line: "Welcome aboard! Ember has one strange flame to show you.", aim: "Tap Let's go, then change gravity." };
+      case "gravity": return save.gravityToggled
+        ? { crew: "tala", phase: "seen", pose: "cheer", line: "You saw the illustration change. Now let's investigate real tests.", aim: "Continue to the wind tunnel." }
+        : { crew: "tala", phase: "try", pose: "point", line: "Watch Ember when gravity changes. What do you notice?", aim: "Tap Switch off gravity." };
+      case "build": return allBuilt
+        ? { crew: "kofi", phase: "built", pose: "cheer", line: "All ten parts are in place. Our experiment is ready for a check.", aim: "Open the setup check." }
+        : { crew: "kofi", phase: installed.size ? "building" : "begin", pose: "point", line: installed.size ? `${installed.size} of ten parts installed. Find what fits next.` : "Let's build the BASS-II wind tunnel. The flow duct goes first.", aim: "Tap a part to preview it, then tap again to install." };
+      case "check": return fixed
+        ? { crew: "kofi", phase: "fixed", pose: "cheer", line: "Both practice mix-ups are fixed. Time to run a recorded test.", aim: "Continue to the ignition lab." }
+        : { crew: "kofi", phase: "checking", pose: "focus", line: "Two things look wrong in this practice setup. Can you spot them?", aim: "Check the sample and the fan." };
+      case "lab": return save.labLit
+        ? { crew: "kofi", phase: "lit", pose: "cheer", line: "Ignition! You matched the settings recorded for test B20.", aim: "Open B20's result and source." }
+        : inBand
+          ? { crew: "kofi", phase: "matched", pose: "point", line: "The oxygen and fan now match B20's recorded settings.", aim: "Fire the igniter coil." }
+          : { crew: "kofi", phase: "setting", pose: "focus", line: "Set the controls to B20's starting conditions.", aim: "16.5% oxygen · 5 cm/s airflow." };
+      case "b16": return save.observed.b16
+        ? { crew: "mei", phase: "result", pose: "wonder", line: "B16 quenched as the flow fell. Another slow-air flame can behave differently.", aim: "Read B16's crew note and source." }
+        : { crew: "mei", phase: save.answers.b16 == null ? "guess" : "turn", pose: save.answers.b16 == null ? "focus" : "point", line: save.answers.b16 == null ? "What happened when the B16 fan slowed? Make your prediction." : "Now turn the fan down, as the crew did.", aim: save.answers.b16 == null ? "Choose one prediction." : "Hold the fan dial to reveal the record." };
+      case "b19": return save.observed.b19
+        ? { crew: "mei", phase: "result", pose: "wonder", line: "B19 started at 10 cm/s, then blew out after the fan changed.", aim: "Read B19's crew note and source." }
+        : { crew: "mei", phase: save.answers.b19 == null ? "guess" : "lever", pose: save.answers.b19 == null ? "focus" : "point", line: save.answers.b19 == null ? "Would more airflow keep B19 burning? Make your prediction." : "Now move between the two recorded fan positions.", aim: save.answers.b19 == null ? "Choose one prediction." : "Switch from 5 to 10 cm/s." };
+      case "fabric": return save.observed.fabric
+        ? { crew: "mei", phase: "result", pose: "cheer", line: "You lined up six real fabric records. Look at where each flame went out.", aim: "Inspect the plotted values and sources." }
+        : { crew: "mei", phase: save.answers.fabric == null ? "guess" : "place", pose: "point", line: save.answers.fabric == null ? "How might oxygen change the airflow needed for a flame?" : `${save.placed.length} of six records placed. Compare their oxygen and flow.`, aim: save.answers.fabric == null ? "Choose a prediction." : "Place the remaining record cards." };
+      case "log": return save.pinned
+        ? { crew: "mei", phase: "pinned", pose: "cheer", line: `You pinned the crew note for ${exp(save.pinned).test_id}.`, aim: "Open its full record or continue." }
+        : { crew: "mei", phase: "search", pose: "focus", line: "These clues come from real crew notes. Which one catches your eye?", aim: "Pin one note to your notebook." };
+      case "quiet": return save.quietFound
+        ? { crew: "mei", phase: save.gusted ? "gusted" : "found", pose: "wonder", line: save.gusted ? "Airflow changed the scene. Compare that illustration with the cited finding." : "You found the dim flame. Some low-flow flames can stay lit.", aim: save.gusted ? "Read the source before continuing." : "Try the gust, then inspect the evidence." }
+        : { crew: "mei", phase: "seek", pose: "focus", line: "A flame can be hard to see when it is dim and blue.", aim: "Find the flame in the chamber." };
+      case "moon": return save.answers.moon != null
+        ? { crew: "tala", phase: "gap", pose: "wonder", line: "These atlas rows do not cover the proposed Moon-base air. That's a real question to keep.", aim: "Open the evidence gap or finish the mission." }
+        : { crew: "tala", phase: save.marker ? "marked" : "map", pose: "point", line: save.marker ? "Your marker sits beyond the conditions in this atlas. What can we honestly say?" : "Let's mark the proposed habitat air on our evidence map.", aim: save.marker ? "Choose the evidence answer." : "Mark 34% oxygen at 56.5 kPa." };
+      case "debrief": return { crew: "tala", phase: "debrief", pose: "cheer", line: "Look at your evidence trail. Which NASA clue would you show someone else?", aim: "Revisit a test or explore the atlas." };
+    }
+  })();
+
   /* ---------- title screen ---------- */
   if (!started)
     return (
-      <section className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden flex items-center">
-        <LivingSky variant="story" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] items-center w-full">
-          <div>
-            <p className="text-signal text-sm font-semibold">Mission Freefall, a MicroFire Atlas adventure</p>
-            <h1 className="display text-5xl sm:text-6xl lg:text-7xl mt-4 max-w-[12ch]">Build it. Light it. Call it.</h1>
-            <p className="mt-6 text-lg text-muted max-w-[48ch]">
+      <section className="mission-intro relative min-h-[calc(100vh-3.5rem)] overflow-hidden">
+        <CinematicWorld world="portal" priority />
+        <div className="mission-intro-inner relative mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-14">
+          <div className="mission-intro-copy">
+            <p className="mission-intro-kicker"><span aria-hidden="true">✦</span> Mission Freefall · eight chapters of discovery</p>
+            <h1 className="display mission-intro-title">Build it.<br />Light it.<br /><em>Call it.</em></h1>
+            <p className="mission-intro-deck">
               Assemble NASA&apos;s real space-station fire experiment, light a sample, and guess what the flames did before the
               crew&apos;s own notes show you.
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div className="mission-intro-actions">
               <button onClick={() => start()} className="story-cta">
-                {hasSave ? "Continue mission" : "Start the mission"}
+                {hasSave ? "Continue mission" : "Start the mission"} <span aria-hidden="true">↗</span>
               </button>
               {hasSave && (
                 <button onClick={() => start(true)} className="border border-rule-strong px-5 py-3 rounded-full hover:border-signal bg-void/60">
@@ -499,30 +543,26 @@ export function MissionFreefall() {
                 Sound effects
               </label>
             </div>
-            <ol className="mt-10 grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-muted max-w-xl">
-              {CHAPTERS.map((c) => (
-                <li key={c.id} className="flex gap-3">
-                  <span className="num text-signal">{c.n}</span>
-                  {c.title}
-                </li>
-              ))}
-            </ol>
           </div>
-          <div className="flex flex-col items-center gap-5">
-            <div className="crew-row" aria-label="Your crew">
+          <div className="mission-intro-crew" aria-label="Meet your mission crew">
+            <div className="mission-crew-orbit" aria-hidden="true"><span /><span /><span /></div>
+            {/* eslint-disable-next-line @next/next/no-img-element -- original illustrated character cutout */}
+            <img key={titleGuide} src={CREW[titleGuide].img} alt="" className="mission-crew-actor" decoding="async" />
+            <div className="mission-crew-speech" aria-live="polite">
+              <p className="mission-crew-name">{CREW[titleGuide].name} <span>· {CREW[titleGuide].job.split(":")[0]}</span></p>
+              <p>{{ tala: "I'll guide you from the station to the edge of what these tests can tell us. Ready to meet Ember?", kofi: "We'll build the BASS-II wind tunnel, check its parts, then set up a recorded test.", mei: "I'll help you make a prediction, read the crew's notes, and find the NASA evidence." }[titleGuide]}</p>
+            </div>
+            <div className="mission-crew-select" role="group" aria-label="Choose a crew guide">
               {(["tala", "kofi", "mei"] as const).map((id) => (
-                <figure key={id} className="crew-row-item">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- illustrated character */}
-                  <img src={CREW[id].img} alt="" />
-                  <figcaption><b>{CREW[id].name}</b><span>{CREW[id].job.split(":")[0]}</span></figcaption>
-                </figure>
+                <button type="button" key={id} className={`mission-crew-choice ${titleGuide === id ? "mission-crew-choice-active" : ""}`} aria-pressed={titleGuide === id} onClick={() => setTitleGuide(id)}>
+                  <span>{CREW[id].name}</span><small>{CREW[id].job.split(":")[0]}</small>
+                </button>
               ))}
             </div>
-            <div className="ember-bubble max-w-sm">
-              <p className="text-[11px] font-semibold text-signal">Ember, your flame guide</p>
-              <p className="mt-1">Hi, I&apos;m Ember! Your crew built this mission from NASA&apos;s real reports. Take gravity away and I change completely. Come and see.</p>
-            </div>
           </div>
+          <ol className="mission-intro-path" aria-label="Eight mission chapters">
+            {CHAPTERS.map((c) => <li key={c.id}><span className="num">{c.n}</span><span>{c.title}</span></li>)}
+          </ol>
         </div>
       </section>
     );
@@ -535,7 +575,9 @@ export function MissionFreefall() {
 
   return (
     <section className={`fixed inset-x-0 bottom-0 top-14 z-30 overflow-clip bg-void game-${screen.id}`} aria-label="Mission Freefall">
+      <div className="game-cinematic-backdrop"><CinematicWorld world={screen.id === "moon" ? "moon" : screen.id === "debrief" || screen.id === "log" ? "constellation" : "lab"} /></div>
       <div className="absolute inset-0 story-stars" aria-hidden="true" />
+      <div className="game-bay" data-view={sceneState.view} aria-hidden="true"><span className="game-bay-window" /><span className="game-bay-strut" /><span className="game-bay-light" /></div>
       {screen.id === "moon" && <div className="moon-window" aria-hidden="true" />}
       <div data-stage className="absolute inset-0">
         {twoD ? (
@@ -546,7 +588,9 @@ export function MissionFreefall() {
           <canvas ref={canvasRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" aria-hidden="true" />
         )}
       </div>
+      {sceneState.view === "bench" && <p className="game-scene-label" aria-live="polite">{sceneState.gravity === "earth" ? "On Earth" : "In orbit"} <span>· illustration</span></p>}
       <Sparks burst={burst} />
+      <CrewDirector cue={crewCue} />
       {banner && (
         <div className="pointer-events-none absolute inset-0 z-40 grid place-items-center" role="status">
           <div className="game-banner">
@@ -560,7 +604,7 @@ export function MissionFreefall() {
       <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 game-topbar">
         <div className="min-w-0">
           <p className="text-xs text-muted num">Chapter {chapter.n} of {CHAPTERS.length}</p>
-          <p className="display text-lg truncate">{chapter.title}</p>
+          <p className="display text-lg leading-tight">{chapter.title}</p>
         </div>
         <ol className="hidden md:flex items-center gap-1.5" aria-label="Chapters">
           {CHAPTERS.map((c, k) => {
@@ -582,8 +626,8 @@ export function MissionFreefall() {
           })}
         </ol>
         <div className="flex items-center gap-2">
-          {!twoD && <button onClick={() => sceneRef.current?.recenter()} className="game-btn" title="Point the camera back at the experiment">Recenter</button>}
-          <button onClick={() => setNotesOpen((o) => !o)} aria-expanded={notesOpen} className="game-btn">Notebook</button>
+          {!twoD && <button onClick={() => sceneRef.current?.recenter()} className="game-btn" title="Point the camera back at the experiment" aria-label="Recenter experiment"><span className="hidden sm:inline">Recenter</span><span className="sm:hidden" aria-hidden="true">◎</span></button>}
+          <button onClick={() => setNotesOpen((o) => !o)} aria-expanded={notesOpen} aria-label="Notebook" className="game-btn"><span className="hidden sm:inline">Notebook</span><span className="sm:hidden" aria-hidden="true">▤</span></button>
           <button onClick={() => setSettingsOpen((o) => !o)} aria-expanded={settingsOpen} className="game-btn" aria-label="Settings">⚙</button>
         </div>
       </div>
@@ -648,7 +692,7 @@ export function MissionFreefall() {
           </EmberSays>
 
           {screen.id === "gravity" && (
-            <button onClick={() => { setGravityOn((g) => !g); update({ gravityToggled: true }); sound.play("whoosh"); discover("gravity"); }} className="mt-4 story-action">
+            <button onClick={() => { const next = !gravityOn; setGravityOn(next); update({ gravityToggled: true, gravityOn: next }); sound.play("whoosh"); discover("gravity"); }} className="mt-4 story-action">
               {gravityOn ? "Switch off gravity" : "Switch gravity back on"}
             </button>
           )}

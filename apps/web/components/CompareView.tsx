@@ -47,8 +47,9 @@ export function CompareView() {
     : [];
 
   return (
-    <div className="space-y-10">
-      <nav data-guide="presets" aria-label="Comparison presets" className="flex flex-wrap gap-2">
+    <div className="comparison-workspace space-y-10">
+      <div><h2 className="display text-2xl mb-4">Choose a mystery</h2>
+      <nav data-guide="presets" aria-label="Comparison presets" className="comparison-presets flex flex-wrap gap-2">
         {PRESETS.map((p) => (
           <Link
             key={p.id}
@@ -64,6 +65,7 @@ export function CompareView() {
         ))}
         <span className={`text-sm px-3 py-2 ${preset ? "text-faint" : "text-ink"}`}>{preset ? "or pick your own below" : "Your own selection"}</span>
       </nav>
+      </div>
 
       {preset && (
         <header>
@@ -76,7 +78,7 @@ export function CompareView() {
         <p className="text-muted">Pick two to four tests below to compare them side by side.</p>
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
-          <div data-guide="matrix" className="overflow-x-auto">
+          <div data-guide="matrix" className="instrument-panel data-table overflow-x-auto">
             <table className="w-full text-[15px]">
               <caption className="sr-only">Conditions and outcomes of the selected tests. Values that differ between tests are highlighted.</caption>
               <thead>
@@ -156,7 +158,7 @@ export function CompareView() {
       )}
 
       {preset && (
-        <section data-guide="observed" className="grid gap-px bg-rule border border-rule lg:grid-cols-3" aria-label="What the comparison shows">
+        <section data-guide="observed" className="comparison-findings grid gap-4 lg:grid-cols-3" aria-label="What the comparison shows">
           <div className="bg-void p-6">
             <h3 className="font-semibold">Observed</h3>
             <p className="text-xs text-faint mt-1">Recorded in NASA&apos;s tables and reports</p>
@@ -194,7 +196,7 @@ export function CompareView() {
         </section>
       )}
 
-      <section className="border-t border-rule pt-8">
+      <section className="control-desk">
         <h3 className="font-semibold">Pick your own tests</h3>
         <label className="block mt-3 max-w-md">
           <span className="text-sm text-muted">Search by test ID or material</span>

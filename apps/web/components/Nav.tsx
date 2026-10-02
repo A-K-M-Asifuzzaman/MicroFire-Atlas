@@ -4,17 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useExplorer } from "@/components/guide/EmberGuide";
+import { STATIONS, StationIcon } from "@/components/StationMap";
 
-const LINKS = [
-  { href: "/story", label: "Play" },
-  { href: "/atlas", label: "Atlas" },
-  { href: "/analyze", label: "Flame Vision" },
-  { href: "/compare", label: "Compare" },
-  { href: "/mission", label: "Mission Lab" },
-  { href: "/gaps", label: "Evidence gaps" },
-  { href: "/ask", label: "Ask" },
-  { href: "/methodology", label: "Method" },
-];
+const LINKS = [...STATIONS, { href: "/methodology", label: "Method", icon: "map", title: "How it works", detail: "Check our methods and sources." }];
 
 export function Nav() {
   const path = usePathname();
@@ -28,11 +20,9 @@ export function Nav() {
         href={l.href}
         onClick={() => setOpen(false)}
         aria-current={active ? "page" : undefined}
-        className={`px-3 py-2 text-sm rounded-sm transition-colors ${
-          active ? "text-ink bg-panel-2" : "text-muted hover:text-ink"
-        }`}
+        className="station-nav-link"
       >
-        {l.label}
+        <StationIcon name={l.icon} /><span>{l.label}</span>
       </Link>
     );
   });
@@ -48,19 +38,20 @@ export function Nav() {
     </button>
   );
   return (
-    <nav aria-label="Main" className="flex items-center gap-2">
-      <div className="hidden md:flex items-center gap-1">{items}</div>
+    <nav aria-label="Main" className="station-nav" onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}>
+      <div className="station-nav-desktop">{items}</div>
       {motion}
       <button
-        className="md:hidden text-sm text-muted px-3 py-2 border border-rule rounded-sm"
+        className="station-menu-button"
         aria-expanded={open}
         aria-controls="mobile-nav"
         onClick={() => setOpen((o) => !o)}
       >
-        Menu
+        {open ? "Close" : "Explore"} <span aria-hidden="true">{open ? "×" : "☰"}</span>
       </button>
       {open && (
-        <div id="mobile-nav" className="md:hidden absolute left-0 right-0 top-14 z-40 bg-panel border-b border-rule flex flex-col p-2">
+        <div id="mobile-nav" className="station-nav-mobile">
+          <p className="display text-xl">Pick your next discovery</p>
           {items}
         </div>
       )}

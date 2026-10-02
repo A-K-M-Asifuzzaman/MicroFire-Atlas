@@ -68,7 +68,7 @@ varying vec4 vColor;
 void main() {
   float d = length(gl_PointCoord - 0.5);
   float a = smoothstep(0.5, 0.0, d);
-  gl_FragColor = vec4(vColor.rgb, vColor.a * a * a);
+  gl_FragColor = vec4(vColor.rgb, min(1.0, vColor.a * a * a * 2.5));
 }`;
 
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
@@ -138,8 +138,6 @@ export class FlameScene {
   private time = 0;
 
   private panelLeft = false;
-  private earthLabel!: THREE.Sprite;
-  private orbitLabel!: THREE.Sprite;
   private partTags = new Map<string, THREE.Sprite>();
   private seekRing!: THREE.Sprite;
   private recentering = 0;
@@ -161,8 +159,8 @@ export class FlameScene {
     this.controls.autoRotate = false; // no constant orbit: the camera only moves to frame a new task
     this.controls.target.set(0, 0.2, 0);
 
-    this.scene.add(new THREE.AmbientLight(0x8fa3c8, 0.6));
-    const key = new THREE.DirectionalLight(0xbfd2ff, 0.8);
+    this.scene.add(new THREE.AmbientLight(0x8fa3c8, 0.85));
+    const key = new THREE.DirectionalLight(0xbfd2ff, 1.1);
     key.position.set(4, 6, 5);
     this.scene.add(key);
 
@@ -188,7 +186,7 @@ export class FlameScene {
     // BASS flow duct: square cross-section, roughly 2.2× longer than wide (7.6 cm × 17 cm test section).
     const box = new THREE.BoxGeometry(8, 3.6, 3.6);
     const glass = new THREE.Mesh(box, new THREE.MeshPhysicalMaterial({ color: 0x5b8cff, transparent: true, opacity: 0.06, roughness: 0.1, depthWrite: false, side: THREE.DoubleSide }));
-    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: 0x56d4e4, transparent: true, opacity: 0.55 }));
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: 0x56d4e4, transparent: true, opacity: 0.82 }));
     const ductPart = this.part("duct");
     ductPart.add(glass, edges);
     // flow straightener at the inlet
@@ -325,11 +323,14 @@ export class FlameScene {
     const g = new THREE.Group();
     const box = new THREE.BoxGeometry(13.5, 7.4, 6.6);
     g.add(new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: 0x2c3a58, transparent: true, opacity: 0.7 })));
-    const floor = new THREE.Mesh(new THREE.BoxGeometry(13.5, 0.18, 6.6), new THREE.MeshStandardMaterial({ color: 0x182340, metalness: 0.3, roughness: 0.8 }));
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(13.5, 0.18, 6.6), new THREE.MeshStandardMaterial({ color: 0x263956, metalness: 0.3, roughness: 0.8 }));
     floor.position.y = -3.7;
     g.add(floor);
+    const grid = new THREE.GridHelper(13, 13, 0x3c91a8, 0x24445f);
+    grid.position.y = -3.59;
+    g.add(grid);
     for (const x of [-3.2, 3.2]) {
-      const port = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.12, 12, 40), new THREE.MeshStandardMaterial({ color: 0x3a4766, metalness: 0.6, roughness: 0.4 }));
+      const port = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.12, 12, 40), new THREE.MeshStandardMaterial({ color: 0x577b9a, emissive: 0x0a2232, metalness: 0.6, roughness: 0.4 }));
       port.position.set(x, -1.2, 3.3);
       g.add(port);
     }
@@ -379,11 +380,6 @@ export class FlameScene {
     const plate = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.6, 0.08, 64), new THREE.MeshStandardMaterial({ color: 0x121b30, roughness: 0.9 }));
     plate.position.y = -0.9;
     this.bench.add(plate);
-    this.earthLabel = textSprite("On Earth (illustration)", "#8f9ab1", 30, 500);
-    this.orbitLabel = textSprite("In orbit (illustration)", "#8f9ab1", 30, 500);
-    this.earthLabel.position.set(0, 2.4, 0);
-    this.orbitLabel.position.set(0, 2.4, 0);
-    this.bench.add(this.earthLabel, this.orbitLabel);
   }
 
   private buildFlame() {
@@ -400,7 +396,7 @@ export class FlameScene {
       uniforms: { uScale: { value: 300 } },
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
     });
     const pts = new THREE.Points(this.geo, mat);
     pts.frustumCulled = false;
@@ -562,7 +558,7 @@ export class FlameScene {
   private spawn(i: number, s: SceneState) {
     const p = this.p;
     const front = this.sample.position.x - 1.2 + p.lift * 3.5;
-    const z = rand(-0.5, 0.5);
+    const z = rand(0.15, 0.7); // front edge of the illustrated sample, visible from the default camera
     this.pos.set([front + rand(-0.15, 0.15), this.sample.position.y + 0.04 + p.lift * 0.4, z], i * 3);
     const strength = 0.5 + (p.o2 - 14) / 14; // brighter with more oxygen
     const earthUp = rand(1.4, 2.4) * strength;
@@ -573,7 +569,7 @@ export class FlameScene {
     this.vel.set([lerp(ox, rand(-0.15, 0.15), p.grav) + drift * (1 - p.grav), lerp(oy, earthUp, p.grav), lerp(oz, rand(-0.15, 0.15), p.grav)], i * 3);
     this.age[i] = 0;
     this.life[i] = lerp(rand(1.2, 2.2), rand(0.6, 1.1), p.grav) * (1 + p.gust * 0.6);
-    this.size[i] = rand(0.12, 0.28) * (0.6 + strength * 0.5) * (1 + p.gust * 0.8) * (1 + p.grav * 0.35); // world units
+    this.size[i] = rand(0.12, 0.28) * (0.6 + strength * 0.5) * (1 + p.gust * 0.8) * (0.65 + p.grav * 0.7); // world units
   }
 
   private step(dt: number) {
@@ -619,8 +615,6 @@ export class FlameScene {
     // views
     this.duct.visible = s.view === "duct";
     this.bench.visible = s.view === "bench";
-    this.earthLabel.visible = s.gravity === "earth";
-    this.orbitLabel.visible = s.gravity !== "earth";
     this.flameGroup.visible = s.view !== "cloud";
     this.cloudGroup.visible = s.view === "cloud";
     if (this.fadeIn < 1) {
@@ -629,7 +623,7 @@ export class FlameScene {
     }
 
     // spawn
-    const rate = (s.view === "cloud" ? 0 : this.gentle ? 450 : 900) * p.life * (s.outcome === "dim" ? 0.35 : 1) * (1 + p.gust * 1.5);
+    const rate = (s.view === "cloud" ? 0 : this.gentle ? 450 : 900) * p.life * (s.outcome === "dim" ? 0.35 : 1) * (0.45 + p.grav * 0.55) * (1 + p.gust * 1.5);
     let n = rate * dt;
     while (n > 0 && (n >= 1 || Math.random() < n)) {
       this.spawn(this.next, s);
@@ -666,13 +660,13 @@ export class FlameScene {
     this.geo.attributes.aSize.needsUpdate = true;
 
     const fx = this.sample.position.x - 1.2 + p.lift * 3.5;
-    this.glow.position.set(fx, -0.1 + p.grav * 0.5, 0);
+    this.glow.position.set(fx, -0.1 + p.grav * 0.5, 0.55);
     (this.glow.material as THREE.SpriteMaterial).color.set(0xf0a044).lerp(new THREE.Color(0x5b8cff), p.blue);
-    (this.glow.material as THREE.SpriteMaterial).opacity = (0.28 * p.life * (1 + p.gust) + p.flash * 0.7) * p.seek;
+    (this.glow.material as THREE.SpriteMaterial).opacity = ((0.2 + 0.08 * p.grav) * p.life * (1 + p.gust) + p.flash * 0.7) * p.seek;
     this.glow.scale.setScalar(1.6 + p.flash * 3);
     this.light.position.copy(this.glow.position);
-    this.light.intensity = (5 * p.life * (1 + p.gust) + p.flash * 30) * p.seek;
-    this.seekRing.position.set(fx, -0.3, 0);
+    this.light.intensity = ((2 + 3 * p.grav) * p.life * (1 + p.gust) + p.flash * 30) * p.seek;
+    this.seekRing.position.set(fx, -0.3, 0.55);
     (this.seekRing.material as THREE.SpriteMaterial).opacity = s.seek === "found" ? 0.55 + 0.35 * Math.sin(this.time * 3) * (this.gentle ? 0 : 1) : 0;
     this.light.color.copy((this.glow.material as THREE.SpriteMaterial).color);
 
@@ -694,10 +688,10 @@ export class FlameScene {
     const wide = this.panelLeft && aspect > 1.3;
     const portrait = aspect < 0.9;
     const half = s.view === "bench" ? { w: 2.2, h: 2.0 } : s.view === "cloud" ? { w: 4.8, h: 3.4 } : s.focus ? { w: 3.7, h: 1.9 } : { w: 7.3, h: 4.1 };
-    const visAspect = wide ? aspect * 0.62 : aspect;
+    const visAspect = portrait && s.view === "bench" ? Math.max(aspect, 0.55) : portrait && s.view === "duct" ? Math.max(aspect, 0.36) : wide ? aspect * 0.62 : aspect;
     const tan = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
     const want = Math.max(half.h / tan, half.w / (tan * visAspect)) * (portrait ? 1.08 : 1.15);
-    const shiftX = wide ? -(want * tan * aspect) * 0.34 : 0;
+    const shiftX = portrait && s.view === "bench" ? -0.9 : wide ? -(want * tan * aspect) * 0.34 : 0;
     const liftY = portrait && this.panelLeft ? -want * tan * 0.42 : 0;
     const baseY = s.view === "cloud" ? (s.voidRegion ? 1.2 : 0.2) : s.view === "bench" ? 0.6 : s.focus ? -0.3 : 0.1;
     const camTarget = new THREE.Vector3(shiftX + (s.focus ? 0.3 : 0), baseY + liftY, 0);

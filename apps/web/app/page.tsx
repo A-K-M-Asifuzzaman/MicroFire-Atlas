@@ -3,11 +3,11 @@ import { FlowO2Plot } from "@/components/FlowO2Plot";
 import { ScrollStory } from "@/components/ScrollStory";
 import { EvidenceConstellation } from "@/components/world/EvidenceConstellation";
 import { GravityTeaser } from "@/components/world/GravityTeaser";
-import { LivingSky } from "@/components/world/LivingSky";
-import { StartMission } from "@/components/world/StartMission";
+import { SparkJourney } from "@/components/world/CinematicWorld";
+import { StationMap } from "@/components/StationMap";
 import { Legend } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
-import { experiments, findings, getExperiment, sources } from "@/lib/data";
+import { experiments, findings, sources } from "@/lib/data";
 
 const FATES = ["bass2-B16", "bass2-B20", "bass2-B19"];
 const WHY = ["low-flow-sensitivity", "dim-blue-low-flow", "tiny-flame-undetected", "low-g-burns-lower-o2"];
@@ -34,42 +34,16 @@ const STEPS = [
 export default function Home() {
   const why = WHY.map((id) => findings.find((f) => f.id === id)!);
   const materials = new Set(experiments.map((e) => e.material)).size;
-  const b19 = getExperiment("bass2-B19")!;
 
   return (
     <>
-      <section data-guide="hero" className="relative overflow-hidden">
-        <LivingSky variant="home" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-16 grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center min-h-[calc(100vh-3.5rem)]">
-          <div>
-            <p className="text-signal text-sm font-semibold">A space-station science mission for explorers</p>
-            <h1 className="display text-5xl sm:text-6xl lg:text-[4.6rem] max-w-[12ch] mt-3">Can you light a fire in space?</h1>
-            <p className="mt-6 text-lg text-muted max-w-[48ch]">
-              Build NASA&apos;s real fire experiment, switch gravity off, and find out what astronauts saw. Every clue comes
-              from NASA&apos;s own reports.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <StartMission />
-              <Link href="/atlas" className="border border-rule-strong px-5 py-3 rounded-full hover:border-signal bg-void/60">
-                Explore real tests
-              </Link>
-            </div>
-            <figure className="clue-card mt-10 max-w-lg">
-              <p className="text-xs font-semibold text-flame">Real NASA clue · test {b19.test_id}</p>
-              <p className="mt-1.5 text-[17px]">
-                A flame on the space station started in a gentle {b19.flow_initial_cm_s} cm/s breeze. Then the crew&apos;s log says:
-              </p>
-              <blockquote className="mt-2 text-[17px] text-ink">“{b19.observations_verbatim}”</blockquote>
-              <figcaption className="mt-2 text-sm text-muted">
-                “Pot” is the fan&apos;s dial setting. Blown out by moving air, in space? The mission shows you why.{" "}
-                <Cite sourceId="bass2-summary" page={b19.provenance.record.pdf_page} where="Table A.1" />
-              </figcaption>
-            </figure>
-          </div>
-          <GravityTeaser />
-        </div>
+      <SparkJourney />
+      <section className="home-gravity mx-auto max-w-7xl px-5 py-16 grid gap-8 lg:grid-cols-2 items-center">
+        <div><p className="text-signal">Your first mystery</p><h2 className="display text-4xl mt-3">What happens when<br />gravity changes?</h2><p className="text-muted mt-5 max-w-md">Try the switch. This illustration helps you imagine a change; real flames depend on their fuel, airflow, and surroundings too.</p><Link href="/story" className="story-cta inline-flex mt-7">Build the 3D experiment</Link></div>
+        <GravityTeaser />
       </section>
 
+      <StationMap />
       <section className="border-y border-rule bg-panel/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center">
           <div>
@@ -92,7 +66,7 @@ export default function Home() {
           <div>
             <h2 className="display text-2xl sm:text-3xl">Every test on one map</h2>
             <p className="mt-3 text-muted">
-              Each dot is a real burn aboard the ISS, placed by its oxygen level and airflow and coloured by what NASA
+              Each dot is a real test aboard the ISS, placed by its oxygen level and airflow and coloured by what NASA
               recorded. Select any dot to open its record.
             </p>
             <p className="mt-4 text-sm text-muted">

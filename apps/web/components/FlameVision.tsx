@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FLAG_TEXT, MEDIA_CONTEXT, type Analysis, type FrameMetrics, type MediaItem } from "@/lib/media";
+import { useExplorer } from "@/components/guide/EmberGuide";
 
 type Mode = "raw" | "vision" | "measure";
 type Highlight = "area" | "extent" | "centroid" | null;
@@ -20,7 +21,8 @@ export function frameAt(frames: FrameMetrics[], t: number) {
   return lo > 0 && Math.abs(frames[lo - 1].t - t) < Math.abs(frames[lo].t - t) ? frames[lo - 1] : frames[lo];
 }
 
-export function FlameVision({ item, initialMode = "vision", compact = false }: { item: MediaItem; initialMode?: Mode; compact?: boolean }) {
+export function FlameVision({ item, initialMode = "vision", compact = false, onInspect }: { item: MediaItem; initialMode?: Mode; compact?: boolean; onInspect?: () => void }) {
+  const { discover } = useExplorer();
   const ctx = MEDIA_CONTEXT[item.slug];
   const video = useRef<HTMLVideoElement>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -82,7 +84,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false }: {
                 key={m}
                 role="tab"
                 aria-selected={mode === m}
-                onClick={() => setMode(m)}
+                onClick={() => { setMode(m); if (m !== "raw" && f) discover("aivision"); }}
                 className={`px-4 py-1.5 rounded-full text-sm ${mode === m ? "bg-signal text-void font-semibold" : "text-muted hover:text-ink"}`}
               >
                 {label}
@@ -191,10 +193,14 @@ export function FlameVision({ item, initialMode = "vision", compact = false }: {
           </div>
         )}
 
+        {compact && f && <div className="exp-metrics" aria-label="Inspect a measurement">
+          {([['area', 'Flame area', `${f.area_px.toLocaleString()} pixels`], ['extent', 'Width × height', `${f.width_px ?? '—'} × ${f.height_px ?? '—'} px`], ['centroid', 'Flame center', 'Locate it']] as const).map(([key, label, value]) => <button key={key} aria-pressed={hl === key} onClick={() => { setMode('measure'); setHl(key); discover('aivision'); onInspect?.(); }}><span>{label}</span><strong>{value}</strong></button>)}
+          <p>Pixels are picture units, not centimetres. Outline: computer vision, not a prediction.</p>
+        </div>}
         {error && <p className="mt-3 text-sm text-flame">{error}</p>}
         {!analysis && !error && <p className="mt-3 text-sm text-muted animate-pulse">Loading measurements…</p>}
 
-        {mode === "measure" && analysis && isVideo && (
+        {mode === "measure" && analysis && isVideo && !compact && (
           <div data-guide="fv-charts" className="mt-6 grid gap-6 md:grid-cols-2">
             <Chart
               title="Flame area, share of the analysed region"
