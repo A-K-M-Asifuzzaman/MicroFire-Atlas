@@ -25,6 +25,7 @@ hawk:
       - /sources
       - /ask
       - /story
+      - /expedition
       - /analyze
       - /analyze/saffire-vi-pmma
 tags:
