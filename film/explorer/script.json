@@ -1,0 +1,213 @@
+[
+ {
+  "id": "hook",
+  "lines": [
+   [
+    "Light a match on Earth, and the flame stretches up.",
+    "On Earth, flames reach up"
+   ],
+   [
+    "Hot air rises... and pulls fresh air in behind it."
+   ],
+   [
+    "Now take gravity away.",
+    "Now remove gravity"
+   ],
+   [
+    "Nothing rises. The flame turns round, and blue..."
+   ],
+   [
+    "and it lives or dies on one thing: the air moving past it.",
+    "Airflow decides everything"
+   ]
+  ]
+ },
+ {
+  "id": "problem",
+  "lines": [
+   [
+    "NASA has studied fire in space for decades.",
+    "Decades of NASA fire research"
+   ],
+   [
+    "But the answers are buried in test tables and long reports."
+   ],
+   [
+    "Not exactly kid-friendly.",
+    "Not exactly kid-friendly"
+   ],
+   [
+    "So we asked: what if an eight-year-old could investigate those real experiments... like a detective?",
+    "What if kids could investigate?"
+   ]
+  ]
+ },
+ {
+  "id": "freefall",
+  "lines": [
+   [
+    "Meet MicroFire Atlas.",
+    "MicroFire Atlas"
+   ],
+   [
+    "You start in Mission Freefall. Flip gravity off... and watch the flame change right in front of you.",
+    "Flip gravity off"
+   ],
+   [
+    "Then you build NASA's real wind tunnel, piece by piece.",
+    "Build NASA's BASS-II tunnel"
+   ]
+  ]
+ },
+ {
+  "id": "adventure",
+  "lines": [
+   [
+    "Then the adventure opens up.",
+    "Then: the adventure"
+   ],
+   [
+    "A crew of guides walks you through it. And PIX, our little evidence robot, gives you a hint whenever you're stuck.",
+    "Meet PIX, your hint robot"
+   ],
+   [
+    "Every chapter has one real job to do."
+   ]
+  ]
+ },
+ {
+  "id": "vision",
+  "lines": [
+   [
+    "This is a real NASA film.",
+    "Real NASA footage"
+   ],
+   [
+    "Switch on AI vision, and the computer outlines the flame and measures it, in pixels.",
+    "AI vision measures the flame"
+   ],
+   [
+    "No made-up numbers. And we tell you it's an estimate.",
+    "No made-up numbers"
+   ]
+  ]
+ },
+ {
+  "id": "trace",
+  "lines": [
+   [
+    "Now, a detective game. Which outline really matches this NASA photo?",
+    "Spot the real outline"
+   ],
+   [
+    "Two of them are fakes."
+   ],
+   [
+    "Get it right... and a clue lights up. Your explorer rank goes up, too.",
+    "Clues raise your rank"
+   ]
+  ]
+ },
+ {
+  "id": "predict",
+  "lines": [
+   [
+    "And here's my favourite part.",
+    "The best part"
+   ],
+   [
+    "Start with test B20. Turn the airflow down.",
+    "Change one thing"
+   ],
+   [
+    "The atlas finds the real experiment, test B16... but it hides what happened."
+   ],
+   [
+    "So you have to predict first.",
+    "Predict first"
+   ],
+   [
+    "Then NASA's own words appear, with the exact page they came from. That's how real science works.",
+    "Then check NASA's record"
+   ]
+  ]
+ },
+ {
+  "id": "moon",
+  "lines": [
+   [
+    "Next stop: the Moon.",
+    "Next stop: the Moon"
+   ],
+   [
+    "NASA has proposed thirty-four percent oxygen, at fifty-six and a half kilopascals, for future habitats.",
+    "34% O₂ at 56.5 kPa"
+   ],
+   [
+    "So which real test is the closest clue? Pick one..."
+   ],
+   [
+    "and you discover something big. None of our tests match.",
+    "No test matches"
+   ],
+   [
+    "And a missing test doesn't mean safe. It means a question nobody has answered yet.",
+    "A gap is a question, not a promise"
+   ]
+  ]
+ },
+ {
+  "id": "finale",
+  "lines": [
+   [
+    "You can ask PIX anything, and every answer links back to NASA's evidence.",
+    "Every answer cites NASA"
+   ],
+   [
+    "And at the end, you don't get a generic score.",
+    "No generic score"
+   ],
+   [
+    "You get a list of exactly what you did... and a certificate with your name on it.",
+    "Your actions, your certificate"
+   ]
+  ]
+ },
+ {
+  "id": "science",
+  "lines": [
+   [
+    "And for mentors and judges, the full science is right underneath.",
+    "Full science underneath"
+   ],
+   [
+    "Fifty-six tests from NASA's BASS-II report, each linked to its page.",
+    "56 tests, page-cited"
+   ],
+   [
+    "Thirty-three NASA findings, each quote checked word for word against its source.",
+    "33 findings, checked word for word"
+   ],
+   [
+    "A mission planner, and an honest map of where the evidence runs out.",
+    "An honest evidence-gap map"
+   ]
+  ]
+ },
+ {
+  "id": "close",
+  "lines": [
+   [
+    "MicroFire Atlas.",
+    "MicroFire Atlas"
+   ],
+   [
+    "Real NASA data. A real adventure. And honest answers about what we still don't know."
+   ],
+   [
+    "Come follow the spark.",
+    "Follow the spark"
+   ]
+  ]
+ }
+]

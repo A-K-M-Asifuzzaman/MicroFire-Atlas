@@ -1,0 +1,31 @@
+TITLE
+MicroFire Atlas | Follow the Spark | NASA Space Apps Challenge 2026 | Flame in Freefall
+
+DESCRIPTION
+AI voice disclosure: the voiceover is AI-generated (Microsoft neural text-to-speech, voice "Ava"). Our team wrote the script. Every number and quote comes from NASA technical reports.
+
+On Earth, a flame stretches up because hot air rises. In orbit nothing rises, and a flame lives or dies on the air moving past it. MicroFire Atlas turns NASA's real microgravity fire experiments into an adventure for explorers aged 8 to 13, with the full evidence underneath for mentors and judges.
+
+Live site: https://microfire-atlas.vercel.app
+Code: https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas
+
+Chapters
+0:00 Fire without gravity
+0:19 The problem
+0:36 Mission Freefall
+0:50 The adventure begins
+1:04 AI vision on a real NASA film
+1:17 Spot the real outline
+1:31 Predict, then check NASA's record
+1:53 The Moon, and a science gap
+2:18 Ask PIX, and your certificate
+2:32 The science underneath
+2:53 Follow the spark
+
+What's inside
+- 56 tests transcribed from NASA's BASS-II Summary Report, each linked to its PDF page
+- 33 NASA findings, each quote checked word for word against its source at build time
+- Predict-first comparisons between real tests (for example B20 → B16 as the airflow is turned down)
+- An honest map of where the evidence runs out, including NASA's proposed 34% O2 at 56.5 kPa habitat air
+
+Characters, scenery and the opening explainer are illustrations. NASA footage, photographs and test records are evidence. Not affiliated with or endorsed by NASA.
