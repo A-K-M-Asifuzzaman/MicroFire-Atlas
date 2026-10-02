@@ -5,6 +5,7 @@
  */
 import type { Experiment, Finding } from "./types";
 import { outsideEvidence, rank, type Scenario } from "./relevance.ts";
+import { KIND_LABEL } from "./ontology.ts";
 
 export type EvidenceItem = {
   key: string; // "E:bass2-B19" or "F:low-flow-sensitivity"
@@ -86,7 +87,7 @@ function findingItem(f: Finding): EvidenceItem {
   return {
     key: `F:${f.id}`,
     kind: "finding",
-    title: `${f.kind === "observed" ? "Reported observation" : "Authors' interpretation"} (${f.source_id})`,
+    title: `${KIND_LABEL[f.kind]} (${f.source_id})`,
     text: `"${f.quote}" (source: ${f.source_id}, ${f.pdf_page ? `PDF page ${f.pdf_page}` : "abstract"})`,
     href: "/sources",
   };
