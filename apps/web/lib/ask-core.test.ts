@@ -24,7 +24,7 @@ test("named tests are always in the evidence package", () => {
 test("partial-gravity questions bring the partial-gravity quotes and an outside-evidence note", () => {
   const ev = buildEvidence("Would PMMA burn on Mars at 21%?", exps, finds);
   assert.ok(ev.items.some((i) => i.key === "F:low-g-burns-lower-o2"));
-  assert.ok(ev.outside.some((o) => o.includes("martian")));
+  assert.ok(ev.outside.some((o) => /martian/i.test(o)));
 });
 
 test("citation check removes invented IDs and flags unsupported numbers", () => {
@@ -50,4 +50,38 @@ test("citation check removes invented IDs and flags unsupported numbers", () => 
 test("malformed model output is rejected", () => {
   assert.equal(isRawAnswer({ summary: "x", claims: [{ text: "y", type: "FACT", cites: [] }] }), false);
   assert.equal(isRawAnswer({ summary: "x", claims: [] }), true);
+});
+
+const saffire = read("saffire");
+
+test("Saffire runs and findings join questions about scale, smoke or exploration air", () => {
+  const big = buildEvidence("How big were the Saffire fires, and what about the smoke?", exps, finds, saffire);
+  assert.ok(big.items.some((i) => i.key.startsWith("S:")));
+  assert.ok(big.items.some((i) => i.key === "F:saffire-smoke-main-hazard"));
+  const moon = buildEvidence("Would PMMA burn at 34% oxygen and 56.5 kPa on the Moon?", exps, finds, saffire);
+  const keys = moon.items.map((i) => i.key);
+  assert.ok(keys.includes("S:saffire-vi-3") && keys.includes("S:saffire-vi-4"));
+  assert.ok(moon.items.filter((i) => i.kind === "test").every((i) => i.rung === "analogous")); // nothing is direct for the Moon
+  const named = buildEvidence("What happened in Saffire VI-2?", exps, finds, saffire);
+  assert.equal(named.items.find((i) => i.key.startsWith("S:"))?.key, "S:saffire-vi-2");
+});
+
+test("droplet and gas-flame findings are labelled mechanistic", () => {
+  const ev = buildEvidence("What did the FLEX droplet tests find about the oxygen limit?", exps, finds, saffire);
+  const flex = ev.items.filter((i) => i.family === "flex");
+  assert.ok(flex.length > 0 && flex.every((i) => i.rung === "mechanistic"));
+});
+
+test("validators catch unit swaps, gravity mix-ups, causal wording and predictions", () => {
+  const ev = buildEvidence("What happened in Saffire 1-1 and test B16 on the Moon?", exps, finds, saffire);
+  const run = (text: string, type: "OBSERVED" | "INTERPRETATION" | "DATA_GAP", cites: string[]) =>
+    checkAnswer({ summary: "", claims: [{ text, type, cites }] }, ev.items)[0];
+  assert.equal(run("Saffire 1-1 spread at 1.8 mm/s.", "OBSERVED", ["S:saffire-1-1"]).verified, true);
+  assert.match(run("Saffire 1-1 spread at 1.8 cm/s.", "OBSERVED", ["S:saffire-1-1"]).issues.join(), /Unit mismatch/);
+  assert.match(run("Saffire 1-1 burned at lunar gravity for 420 s.", "OBSERVED", ["S:saffire-1-1"]).issues.join(), /Moon or Mars/);
+  assert.equal(run("Saffire 1-1 was not a lunar-gravity test.", "OBSERVED", ["S:saffire-1-1"]).verified, true);
+  assert.match(run("Reducing the airflow caused B16 to go out.", "INTERPRETATION", ["E:bass2-B16"]).issues.join(), /Causal/);
+  assert.match(run("PMMA will burn on the Moon.", "INTERPRETATION", ["E:bass2-B16"]).issues.join(), /prediction/);
+  assert.equal(run("We cannot say whether PMMA would burn on the Moon.", "DATA_GAP", []).verified, true);
+  assert.match(run("This material is safe for a Moon base.", "INTERPRETATION", ["E:bass2-B16"]).issues.join(), /safety wording/);
 });

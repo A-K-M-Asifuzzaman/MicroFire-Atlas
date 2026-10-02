@@ -2,13 +2,18 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import type { CheckedClaim, ClaimType, EvidenceItem } from "@/lib/ask-core";
+import type { CheckedClaim, ClaimType, EvidenceItem, EvidenceRung } from "@/lib/ask-core";
 import { buildEvidence } from "@/lib/ask-core";
-import { experiments, findings } from "@/lib/data";
+import { experiments, findings, saffireRuns } from "@/lib/data";
+import { FAMILIES } from "@/lib/ontology";
 import { useExplorer } from "@/components/guide/EmberGuide";
+import styles from "./AskPanel.module.css";
 
 type Result = {
   mode?: "ai" | "evidence-only";
+  provider?: string;
+  cached?: boolean;
+  aiStatus?: "coming-soon";
   reason?: string;
   summary?: string;
   claims?: CheckedClaim[];
@@ -19,11 +24,20 @@ type Result = {
 
 const SUGGESTED = [
   "What changed between B16, B20 and B19?",
-  "Show PMMA tests near 16.5% oxygen and 10 cm/s",
+  "What evidence exists for PMMA at 34% oxygen and 56.5 kPa on the Moon?",
+  "How big were the Saffire fires, and what about the smoke?",
   "What does NASA report about flames at very low airflow?",
   "Would a fabric fire behave the same on the Moon?",
-  "Where did fabric flames quench as oxygen dropped?",
+  "What did the FLEX droplet tests find about the oxygen limit?",
 ];
+
+const RUNG: Record<EvidenceRung, { label: string; note: string }> = {
+  direct: { label: "Direct", note: "matches every condition asked" },
+  analogous: { label: "Analogous", note: "solid fuels, differing in named ways" },
+  mechanistic: { label: "Mechanistic", note: "droplets or gas flames: mechanisms only" },
+  context: { label: "Context", note: "background, not results" },
+};
+const RUNG_ORDER: EvidenceRung[] = ["direct", "analogous", "mechanistic", "context"];
 
 const TYPE_LABEL: Record<ClaimType, { label: string; cls: string }> = {
   OBSERVED: { label: "Observed", cls: "border-flame/70 text-flame" },
@@ -53,7 +67,7 @@ export function AskPanel({ onAnswered }: { onAnswered?: () => void } = {}) {
       setResult(answer);
       if (!answer.error && answer.evidence?.length) { discover("askpix"); onAnswered?.(); }
     } catch {
-      const local = buildEvidence(q, experiments, findings);
+      const local = buildEvidence(q, experiments, findings, saffireRuns);
       setResult({ mode: "evidence-only", reason: "Offline evidence notebook: these saved NASA records match your question. No AI answer was generated.", evidence: local.items, outside: local.outside });
       if (local.items.length) { discover("askpix"); onAnswered?.(); }
     } finally {
@@ -63,6 +77,11 @@ export function AskPanel({ onAnswered }: { onAnswered?: () => void } = {}) {
 
   const evidence = result?.evidence ?? [];
   const byKey = new Map(evidence.map((i) => [i.key, i]));
+  const tests = evidence.filter((i) => i.kind === "test");
+  const familyCounts = [...tests.reduce((m, i) => m.set(i.family ?? "bass2", (m.get(i.family ?? "bass2") ?? 0) + 1), new Map<string, number>())];
+  const findingCount = evidence.filter((i) => i.kind === "finding" && i.rung !== "mechanistic").length;
+  const mechanistic = evidence.filter((i) => i.rung === "mechanistic").length;
+  const direct = tests.filter((i) => i.rung === "direct").length;
 
   return (
     <div className="question-workspace grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
@@ -115,48 +134,73 @@ export function AskPanel({ onAnswered }: { onAnswered?: () => void } = {}) {
           {result?.error && <p className="text-flame">{result.error}</p>}
           {result && !result.error && (
             <>
-              {result.outside && result.outside.length > 0 && (
-                <div className="border border-flame/60 rounded-sm p-4 mb-6 text-[15px]">
-                  <p className="font-semibold text-flame">Direct evidence under these exact conditions is limited</p>
-                  <ul className="mt-1 text-muted">
-                    {result.outside.map((o) => (
-                      <li key={o}>{o}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <section className={styles.found} aria-label="Evidence found">
+                <p className={styles.foundKicker}>Evidence found, before any AI writing</p>
+                <ul className={styles.counts}>
+                  <li><strong>{tests.length}</strong> NASA test record{tests.length === 1 ? "" : "s"}
+                    <span className={styles.chips}>{familyCounts.map(([f, n]) => <span key={f} className={styles.fam} data-family={f}>{n} {FAMILIES[f as keyof typeof FAMILIES]?.name ?? f}</span>)}</span>
+                  </li>
+                  <li><strong>{findingCount}</strong> verified NASA finding{findingCount === 1 ? "" : "s"}</li>
+                  {mechanistic > 0 && <li><strong>{mechanistic}</strong> mechanistic (droplet or gas flame)</li>}
+                  <li><strong>{direct}</strong> direct match{direct === 1 ? "" : "es"}{tests.length > 0 && direct === 0 ? ": nearest evidence only" : ""}</li>
+                </ul>
+                {result.outside && result.outside.length > 0 && (
+                  <div className={styles.gaps}>
+                    <p>What this evidence does not cover</p>
+                    <ul>{result.outside.map((o) => <li key={o}>{o}</li>)}</ul>
+                  </div>
+                )}
+              </section>
               {result.mode === "ai" ? (
                 <section>
                   <h2 className="display text-xl">Answer</h2>
                   <p className="mt-3 text-[17px]">{result.summary}</p>
-                  <ol className="mt-6 space-y-4">
+                  <ol className={styles.claims}>
                     {result.claims?.map((c, i) => (
-                      <li key={i} className={`border-l-2 pl-4 ${c.verified ? "border-rule-strong" : "border-flame"}`}>
-                        <span className={`inline-block text-xs border rounded-sm px-1.5 py-0.5 ${TYPE_LABEL[c.type].cls}`}>{TYPE_LABEL[c.type].label}</span>
-                        <p className="mt-1.5 text-[16px]">{c.text}</p>
-                        <p className="mt-1 flex flex-wrap gap-2 text-sm">
-                          {c.cites.map((k) => (
-                            <button key={k} onClick={() => setFocus(k)} className="link">
-                              {byKey.get(k)?.title ?? k}
-                            </button>
-                          ))}
-                        </p>
+                      <li key={i} className={styles.claim} data-verified={c.verified}>
+                        <div className={styles.claimHead}>
+                          <span className={`inline-block text-xs border rounded-sm px-1.5 py-0.5 ${TYPE_LABEL[c.type].cls}`}>{TYPE_LABEL[c.type].label}</span>
+                          <span className={styles.check}>{c.verified ? "✓ checked against the evidence" : "⚠ not verified"}</span>
+                        </div>
+                        <p className="mt-2 text-[16px]">{c.text}</p>
+                        {c.cites.length > 0 && (
+                          <p className={styles.citeRow}>
+                            {c.cites.map((k) => (
+                              <button key={k} onClick={() => setFocus(focus === `${i}:${k}` ? null : `${i}:${k}`)} aria-expanded={focus === `${i}:${k}`} className={styles.citeChip} data-family={byKey.get(k)?.family}>
+                                {byKey.get(k)?.title ?? k}
+                              </button>
+                            ))}
+                          </p>
+                        )}
+                        {c.cites.map((k) => focus === `${i}:${k}` && byKey.get(k) && (
+                          <div key={k} className={styles.citeDetail}>
+                            <p className={styles.citeMeta}>
+                              {FAMILIES[byKey.get(k)!.family ?? "context"].name} · {RUNG[byKey.get(k)!.rung ?? "context"].label}: {RUNG[byKey.get(k)!.rung ?? "context"].note}
+                            </p>
+                            <p>{byKey.get(k)!.text}</p>
+                            <Link href={byKey.get(k)!.href} className="link text-sm">{byKey.get(k)!.kind === "test" ? "Open the full record" : "See all sources"}</Link>
+                          </div>
+                        ))}
                         {!c.verified && (
-                          <p className="mt-1 text-sm text-flame">Not verified: {c.issues.join("; ")}. Treat this claim with caution.</p>
+                          <p className="mt-2 text-sm text-flame">Not verified: {c.issues.join("; ")}. Treat this claim with caution.</p>
                         )}
                       </li>
                     ))}
                   </ol>
                   <p className="mt-6 text-xs text-faint">
-                    Written by a language model from the evidence on the right only. Every citation and number was checked
-                    against that evidence; unverified claims are marked.
+                    Written by a language model{result.provider ? ` (${result.provider})` : ""} from the evidence listed here only{result.cached ? ", served from the answer cache" : ""}. Every
+                    citation, number and unit was checked, and causal, safety and prediction wording is flagged.
                   </p>
                 </section>
               ) : (
-                <section>
-                  <h2 className="display text-xl">Matching evidence</h2>
-                  <p className="mt-2 text-muted">{result.reason}</p>
-                </section>
+                result.aiStatus === "coming-soon" ? (
+                  <AiComingSoon />
+                ) : (
+                  <section>
+                    <h2 className="display text-xl">Matching evidence</h2>
+                    <p className="mt-2 text-muted">{result.reason}</p>
+                  </section>
+                )
               )}
             </>
           )}
@@ -172,28 +216,66 @@ export function AskPanel({ onAnswered }: { onAnswered?: () => void } = {}) {
         {evidence.length === 0 ? (
           <div className="notebook-empty"><span aria-hidden="true">✧</span><h3 className="display text-xl">Your clues will appear here.</h3><p>Ask a question, read the answer, then check the NASA records that support it.</p><ol><li>Ask something you wonder about</li><li>Look for the evidence labels</li><li>Open a source and check it</li></ol></div>
         ) : (
-          <ul className="mt-4 space-y-3">
-            {evidence.map((i) => (
-              <li
-                key={i.key}
-                id={i.key}
-                className={`border rounded-sm p-3 text-sm ${focus === i.key ? "border-signal bg-panel" : "border-rule"}`}
-              >
-                <p className="font-medium">
-                  {i.kind === "test" ? (
-                    <Link href={i.href} className="link">
-                      {i.title}
-                    </Link>
-                  ) : (
-                    i.title
-                  )}
-                </p>
-                <p className="mt-1 text-muted">{i.text}</p>
-              </li>
+          <div className="mt-4 space-y-5">
+            {RUNG_ORDER.filter((r) => evidence.some((i) => (i.rung ?? "context") === r)).map((r) => (
+              <section key={r}>
+                <h3 className={styles.rungHead}>{RUNG[r].label} <span>{RUNG[r].note}</span></h3>
+                <ul className="mt-2 space-y-3">
+                  {evidence.filter((i) => (i.rung ?? "context") === r).map((i) => (
+                    <li key={i.key} id={i.key} className={`border rounded-sm p-3 text-sm ${focus?.endsWith(`:${i.key}`) ? "border-signal bg-panel" : "border-rule"}`}>
+                      <p className="font-medium flex flex-wrap items-center gap-2">
+                        {i.family && <span className={styles.fam} data-family={i.family}>{FAMILIES[i.family].name}</span>}
+                        {i.kind === "test" ? <Link href={i.href} className="link">{i.title}</Link> : i.title}
+                      </p>
+                      <p className="mt-1 text-muted">{i.text}</p>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
+          </div>
         )}
       </aside>
     </div>
+  );
+}
+
+/** Shown until an AI key is configured: the evidence step works today, the writing and checking steps are coming. */
+function AiComingSoon() {
+  const steps: [string, string, boolean][] = [
+    ["Find the evidence", "NASA records chosen by rules, not by AI", true],
+    ["Write a short answer", "only from the evidence found", false],
+    ["Check every claim", "citations, numbers, units, causes and predictions", false],
+  ];
+  return (
+    <section className={styles.soon} aria-labelledby="ai-soon">
+      <div className={styles.soonHead}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- next/image writes inline styles, which the strict CSP blocks */}
+        <img src="/art/pix.webp" alt="" width={96} height={80} className={styles.soonPix} />
+        <div>
+          <p className={styles.soonKicker}>PIX is getting its AI brain</p>
+          <h2 id="ai-soon" className="display text-2xl">AI synthesis is coming soon</h2>
+          <p className="mt-2 text-[15px] text-muted max-w-[52ch]">
+            Soon PIX will write a short answer from the evidence found, and every claim will be checked against NASA&apos;s records before you see it.
+            The evidence is ready now.
+          </p>
+        </div>
+      </div>
+      <ol className={styles.steps}>
+        {steps.map(([t, n, live], i) => (
+          <li key={t} data-live={live}>
+            <span className={styles.stepDot}>{live ? "✓" : i + 1}</span>
+            <strong>{t}</strong>
+            <small>{n}</small>
+            <em>{live ? "Live now" : "Coming soon"}</em>
+          </li>
+        ))}
+      </ol>
+      <div className={styles.ghosts} aria-hidden="true">
+        {["Observed", "Derived", "Data gap"].map((t) => (
+          <div key={t} className={styles.ghost}><span>{t}</span><i /><i /></div>
+        ))}
+      </div>
+    </section>
   );
 }

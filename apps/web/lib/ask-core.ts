@@ -3,16 +3,22 @@
  * anything but the evidence package built here, and every claim it returns is checked
  * against that package before it reaches the page.
  */
-import type { Experiment, Finding } from "./types";
-import { outsideEvidence, rank, type Scenario } from "./relevance.ts";
-import { KIND_LABEL } from "./ontology.ts";
+import type { Experiment, Finding, SaffireRun } from "./types";
+import { rank, type Scenario } from "./relevance.ts";
+import { differences, FAMILIES, fromBass, fromSaffire, KIND_LABEL, ladder, SOURCE_FAMILY, type FamilyId, type MissionQuestion } from "./ontology.ts";
 
+export type EvidenceRung = "direct" | "analogous" | "mechanistic" | "context";
 export type EvidenceItem = {
-  key: string; // "E:bass2-B19" or "F:low-flow-sensitivity"
+  key: string; // "E:bass2-B19", "S:saffire-vi-2" or "F:low-flow-sensitivity"
   kind: "test" | "finding";
   title: string;
   text: string;
   href: string;
+  family?: FamilyId;
+  /** Where this item sits on the Evidence Ladder for the question (tests), or its physical regime (findings). */
+  rung?: EvidenceRung;
+  /** Gravity the item was measured in; lets the checker refuse microgravity data phrased as lunar. */
+  gravity?: "microgravity" | "partial";
 };
 
 export type ClaimType = "OBSERVED" | "DERIVED" | "INTERPRETATION" | "DATA_GAP";
@@ -38,11 +44,19 @@ const TOPIC_WORDS: [RegExp, string][] = [
   [/\b(detect|smoke|sensor|alarm|unnoticed|undetected)/i, "detection"],
   [/\b(confine|duct|baffle|scale|saffire|large)/i, "confinement"],
   [/\b(thick|thin|width|wide|narrow|geometry|size)/i, "geometry"],
+  [/\b(large|big|scale|cargo|cygnus|saffire|spacecraft fire)/i, "scale"],
+  [/\b(smoke|toxic|carbon monoxide|co₂|co2|alarm|fumes)/i, "smoke"],
+  [/\b(extinguish|suppress|put (it )?out|fight|diluent)/i, "suppression"],
+  [/\b(nomex|silicone|rated|screening|6001|which materials?)/i, "materials-screening"],
+  [/\b(droplet|liquid fuel|heptane|methanol|flex)\b/i, "droplet"],
+  [/\b(gas flame|gaseous|spherical flame|acme)\b/i, "gas-flame"],
 ];
+
+const SAFFIRE_ID = /\b(?:saffire[\s-]*)?((?:IV|VI|V)-\d|[12]-\d)\b/gi;
 
 const TEST_ID = /\b(B\d{1,2}|F\d|GMT\d{2,3}-T\d{1,2}[ab]?)\b/gi;
 
-export function parseQuestion(q: string): { scenario: Scenario; topics: Set<string>; testIds: string[] } {
+export function parseQuestion(q: string): { scenario: Scenario; topics: Set<string>; testIds: string[]; saffireIds: string[] } {
   const scenario: Scenario = {};
   const o2 = q.match(/(\d{1,2}(?:\.\d+)?)\s*%/);
   if (o2) scenario.oxygen = Number(o2[1]);
@@ -55,7 +69,9 @@ export function parseQuestion(q: string): { scenario: Scenario; topics: Set<stri
   for (const [re, m] of MATERIAL_WORDS) if (re.test(q)) scenario.material = m;
   const topics = new Set(TOPIC_WORDS.filter(([re]) => re.test(q)).map(([, t]) => t));
   const testIds = [...q.matchAll(TEST_ID)].map((m) => m[1].toUpperCase());
-  return { scenario, topics, testIds };
+  // "2-7" alone is too ambiguous; plain digit samples count only when the word Saffire is in the question
+  const saffireIds = [...q.matchAll(SAFFIRE_ID)].map((m) => m[1].toUpperCase()).filter((id) => /^[IV]/.test(id) || /saffire/i.test(q));
+  return { scenario, topics, testIds, saffireIds };
 }
 
 function testItem(e: Experiment): EvidenceItem {
@@ -80,49 +96,114 @@ function testItem(e: Experiment): EvidenceItem {
     title: `${e.investigation} test ${e.test_id}`,
     text: parts.filter(Boolean).join("; "),
     href: `/experiments/${e.id}`,
+    family: "bass2",
+    gravity: "microgravity",
   };
 }
 
+function saffireItem(r: SaffireRun): EvidenceItem {
+  const c = r.provenance.results ?? r.provenance.conditions ?? r.provenance.outcome;
+  const parts = [
+    `Saffire flight ${r.flight.replace("Saffire-", "")}, sample ${r.sample}`,
+    `material ${r.material_verbatim}`,
+    r.width_cm != null || r.length_cm != null ? `sample ${r.width_cm != null ? `${r.width_cm} cm wide, ` : ""}${r.length_cm ?? "?"} cm long` : "",
+    r.thickness_mm != null ? `thickness ${r.thickness_mm} mm` : "",
+    r.flow_cm_s != null ? `${r.flow_direction} flow ${r.flow_cm_s} cm/s` : "airflow not stated",
+    r.pressure_kpa != null ? `pressure ${r.pressure_kpa} kPa` : "pressure not stated",
+    r.o2_pct != null ? `oxygen ${r.o2_basis === "recorded" ? "" : "about "}${r.o2_pct} %` : "oxygen not stated",
+    r.burn_duration_s != null ? `burn duration ${r.burn_duration_s} s` : "",
+    r.spread_rate_mm_s != null ? `spread rate ${r.spread_rate_mm_s} mm/s` : "",
+    r.heat_release_avg_w != null ? `average heat release ${r.heat_release_avg_w} W` : "",
+    `outcome: ${r.outcome_label}`,
+    r.provenance.outcome ? `NASA: "${r.provenance.outcome.quote}"` : "",
+    c ? `source: ${c.source_id}, PDF page ${c.pdf_page}` : "",
+    "large-scale fire in microgravity inside an uncrewed Cygnus cargo vehicle in orbit, not aboard the ISS",
+  ];
+  return { key: `S:${r.id}`, kind: "test", title: `Saffire ${r.flight.replace("Saffire-", "")} sample ${r.sample}`, text: parts.filter(Boolean).join("; "), href: `/saffire#${r.id}`, family: "saffire", gravity: "microgravity" };
+}
+
 function findingItem(f: Finding): EvidenceItem {
+  const family = SOURCE_FAMILY[f.source_id] ?? "context";
+  const phase = FAMILIES[family].phase;
+  const rung: EvidenceRung = phase == null ? "context" : phase === "solid" ? "analogous" : "mechanistic";
+  const regime = rung === "mechanistic" ? ` (${FAMILIES[family].name}: ${FAMILIES[family].fuel}; mechanistic evidence only, not solid-material behaviour)` : "";
   return {
     key: `F:${f.id}`,
     kind: "finding",
     title: `${KIND_LABEL[f.kind]} (${f.source_id})`,
-    text: `"${f.quote}" (source: ${f.source_id}, ${f.pdf_page ? `PDF page ${f.pdf_page}` : "abstract"})`,
+    text: `"${f.quote}" (source: ${f.source_id}, ${f.pdf_page ? `PDF page ${f.pdf_page}` : "abstract"})${regime}`,
     href: "/sources",
+    family,
+    rung,
+    gravity: f.topics.includes("partial-gravity") && family !== "saffire" ? "partial" : "microgravity",
   };
 }
 
-/** Deterministic evidence package for a question. */
-export function buildEvidence(q: string, exps: Experiment[], finds: Finding[]) {
-  const { scenario, topics, testIds } = parseQuestion(q);
+const toQuestion = (s: Scenario): MissionQuestion => ({ material: s.material, oxygen: s.oxygen, pressureKpa: s.pressureKpa, gravity: s.gravity, flow: s.flow });
+
+/** Deterministic evidence package for a question. Saffire runs join when the question reaches their regime. */
+export function buildEvidence(q: string, exps: Experiment[], finds: Finding[], saffire: SaffireRun[] = []) {
+  const { scenario, topics, testIds, saffireIds } = parseQuestion(q);
   const named = exps.filter((e) => testIds.includes(e.test_id.toUpperCase()));
   const hasScenario = Object.keys(scenario).length > 0;
   const ranked = hasScenario ? rank(exps, scenario).slice(0, 10).map((r) => r.experiment) : [];
   const tests = [...new Map([...named, ...ranked].map((e) => [e.id, e])).values()].slice(0, 12);
+
+  // Saffire: named runs, plus the closest runs when the question is about scale, smoke, low pressure or high oxygen
+  const wantsSaffire =
+    saffireIds.length > 0 || topics.has("scale") || topics.has("smoke") || (scenario.pressureKpa ?? 101) < 90 || (scenario.oxygen ?? 21) > 22 || topics.has("materials-screening");
+  const sq = toQuestion(scenario);
+  const saffirePicked = !wantsSaffire
+    ? []
+    : [
+        ...saffire.filter((r) => saffireIds.includes(r.sample.toUpperCase())),
+        ...saffire
+          .map((r) => ({ r, d: differences(fromSaffire(r), sq) }))
+          .sort((a, b) => a.d.length - b.d.length || a.r.id.localeCompare(b.r.id))
+          .slice(0, 4)
+          .map((x) => x.r),
+      ];
+  const saffireRuns = [...new Map(saffirePicked.map((r) => [r.id, r])).values()].slice(0, 6);
 
   const scored = finds
     .map((f) => ({
       f,
       s:
         f.topics.filter((t) => topics.has(t)).length +
-        (Array.isArray(f.experiments) && f.experiments.some((id) => tests.some((e) => e.id === id)) ? 2 : 0),
+        (Array.isArray(f.experiments) && f.experiments.some((id) => tests.some((e) => e.id === id) || saffireRuns.some((r) => r.id === id)) ? 2 : 0),
     }))
     .filter((x) => x.s > 0)
     .sort((a, b) => b.s - a.s || a.f.id.localeCompare(b.f.id))
     .slice(0, 8)
     .map((x) => x.f);
 
+  // every test is placed on the ladder for this question; the closest evidence comes first
+  const placedTests = [
+    ...tests.map((e) => ({ item: testItem(e), d: hasScenario ? differences(fromBass(e), sq).length : 1 })),
+    ...saffireRuns.map((r) => ({ item: saffireItem(r), d: hasScenario ? differences(fromSaffire(r), sq).length : 1 })),
+  ]
+    .map((x, i) => ({ ...x, i }))
+    .sort((a, b) => (hasScenario ? a.d - b.d : 0) || a.i - b.i)
+    .map(({ item, d }) => ({ ...item, rung: (d === 0 && hasScenario ? "direct" : "analogous") as EvidenceRung }));
+  // gaps come from the ladder over every family, so a Saffire run at 31 % oxygen counts as tested ground
+  const records = [...exps.map(fromBass), ...saffire.map(fromSaffire)];
   return {
-    items: [...tests.map(testItem), ...scored.map(findingItem)],
+    items: [...placedTests, ...scored.map(findingItem)],
     scenario,
-    outside: hasScenario ? outsideEvidence(exps, scenario) : [],
+    outside: hasScenario ? ladder(records, [], sq).gaps.map((g) => g.text) : [],
   };
 }
 
+
 export const SYSTEM_PROMPT = `You answer questions about NASA microgravity fire experiments for MicroFire Atlas.
 
-Use only the evidence items in the user message. They are transcribed NASA test records and verbatim quotes from NASA reports. Do not use outside knowledge for facts, numbers, test IDs or citations.
+Use only the evidence items in the user message. They are transcribed NASA test records (BASS-II "E:" keys, Saffire "S:" keys) and verbatim quotes from NASA reports ("F:" keys). Do not use outside knowledge for facts, numbers, test IDs or citations.
+
+Each item carries an evidence rung for this question:
+- direct: same material, gravity and conditions within tolerance;
+- analogous: solid-fuel evidence that differs in named ways (say how it differs);
+- mechanistic: droplet or gas-flame physics; use it only to explain mechanisms, never to describe how a solid material behaves;
+- context: background or objectives, not results.
 
 Return a short summary and a list of claims. Each claim has a type:
 - OBSERVED: something NASA recorded or reported. Cite the evidence keys that state it.
@@ -135,6 +216,9 @@ Rules:
 - Copy numbers exactly as they appear in the cited items.
 - All tests were run in microgravity aboard the ISS. Never present them as Moon or Mars measurements; if asked about other gravity levels, say what the cited partial-gravity quotes report and add a DATA_GAP claim.
 - These are past test outcomes, not predictions or safety ratings. Do not give operational crew advice.
+- Never write that something causes, proves, ensures or guarantees an outcome, or that a material or habitat is safe, unless a cited NASA quote says so. Say "was recorded with" or "differed in" instead.
+- Never predict ("will burn", "would ignite"). If asked, say what was recorded and add a DATA_GAP claim.
+- Saffire fires were large-scale and ran in an uncrewed Cygnus cargo vehicle, not aboard the ISS. Keep units exactly as written (mm/s, cm/s, kPa, %).
 - If the evidence does not answer the question, say so in the summary and return DATA_GAP claims.
 - Keep the summary under 80 words and use at most 6 claims.`;
 
@@ -161,16 +245,29 @@ export const ANSWER_SCHEMA = {
 } as const;
 
 export function userMessage(q: string, items: EvidenceItem[], outside: string[]) {
-  const list = items.map((i) => `[${i.key}] ${i.text}`).join("\n");
+  const list = items.map((i) => `[${i.key}]${i.rung ? ` (${i.rung})` : ""} ${i.text}`).join("\n");
   const notes = outside.length ? `\nScenario notes from the atlas:\n${outside.map((o) => `- ${o}`).join("\n")}\n` : "";
   return `Evidence items:\n${list || "(none matched this question)"}\n${notes}\nQuestion: ${q}`;
 }
 
 const NUMBER = /\d+(?:\.\d+)?/g;
+/** Number + unit pairs. Longer units first so "mm/s" is never read as "mm". */
+const UNIT_PAIR = /(\d+(?:\.\d+)?)\s*(mm\/s|cm\/s|m\/s|kPa|psi|atm|mm|cm|kW|W|%)(?![a-zA-Z/])/g;
+const pairs = (t: string) => [...t.matchAll(UNIT_PAIR)].map((m) => [m[1], m[2]] as const);
+const OTHER_GRAVITY = /\b(moon|lunar|mars|martian|partial[- ]gravity)\b/i;
+const NEGATED = /\b(not|no|never|none|only|without|lack|cannot|can't|unknown|untested)\b/i;
+const CAUSAL = /\b(caus(?:e|es|ed|ing)|prov(?:e|es|ed|en|ing)|ensur(?:e|es|ed)|guarantee[sd]?|leads? to|led to|makes? (?:it |them )?safe|made (?:it |them )?safe|(?:is|are) safe|safe to use|demonstrates? safety)\b/i;
+const PREDICTION = /\b(will|would|is (?:likely|expected|predicted) to|are (?:likely|expected|predicted) to|predicts?)\b[^.]{0,40}?\b(burn|ignite|spread|go out|extinguish|quench|blow off|catch fire)/i;
+const UNCERTAIN = /\b(cannot|can't|unknown|not known|no evidence|whether|untested|would need|needs? to be tested)\b/i;
 
 /**
- * Citation check. A claim is verified only if every cite exists in the package and, for
- * OBSERVED and DERIVED claims, every number in the claim appears in at least one cited item.
+ * Claim checker. A claim is verified only if:
+ * - every cite exists in the evidence package;
+ * - OBSERVED and DERIVED claims cite something, every number appears in a cited item, and every
+ *   number-with-unit keeps the unit the evidence gives (no mm/s quietly becoming cm/s);
+ * - no microgravity evidence is described as a Moon or Mars result;
+ * - no causal or safety wording appears unless a cited NASA item uses the same word;
+ * - no past outcome is turned into a prediction ("PMMA will burn on the Moon").
  */
 export function checkAnswer(raw: RawAnswer, items: EvidenceItem[]): CheckedClaim[] {
   const byKey = new Map(items.map((i) => [i.key, i]));
@@ -187,7 +284,20 @@ export function checkAnswer(raw: RawAnswer, items: EvidenceItem[]): CheckedClaim
       const citedNumbers = new Set(cites.flatMap((k) => byKey.get(k)!.text.match(NUMBER) ?? []));
       const missing = (c.text.match(NUMBER) ?? []).filter((n) => !citedNumbers.has(n));
       if (missing.length) issues.push(`Numbers not found in cited evidence: ${missing.join(", ")}`);
+      const cited = cites.flatMap((k) => pairs(byKey.get(k)!.text));
+      for (const [n, unit] of pairs(c.text)) {
+        const sameNumber = cited.filter(([m]) => m === n);
+        if (sameNumber.length && !sameNumber.some(([, u]) => u === unit))
+          issues.push(`Unit mismatch: the evidence gives ${n} in ${sameNumber[0][1]}, not ${unit}`);
+      }
+      if (OTHER_GRAVITY.test(c.text) && !NEGATED.test(c.text) && cites.every((k) => byKey.get(k)!.gravity !== "partial"))
+        issues.push("Describes microgravity evidence as a Moon or Mars result");
     }
+    const causal = c.text.match(CAUSAL);
+    if (causal && !cites.some((k) => byKey.get(k)!.text.toLowerCase().includes(causal[1].toLowerCase().slice(0, 5))))
+      issues.push(`Causal or safety wording ("${causal[0]}") that no cited NASA item states`);
+    if (c.type !== "DATA_GAP" && PREDICTION.test(c.text) && !UNCERTAIN.test(c.text))
+      issues.push("Turns a past test outcome into a prediction");
     return { ...c, cites, verified: issues.length === 0, issues };
   });
 }
