@@ -179,9 +179,19 @@ const describe = (q: MissionQuestion) =>
 export function ladder(records: EvidenceRecord[], findings: Finding[], q: MissionQuestion): Ladder {
   const scored = records.map((record) => ({ record, differs: differences(record, q) }));
   const direct = scored.filter((x) => x.differs.length === 0);
+  // fewer differences first, then fewer unknowns, then the smallest actual distance on oxygen and pressure
+  const distance = (r: EvidenceRecord) =>
+    (q.oxygen != null && r.oxygen != null ? Math.abs(r.oxygen - q.oxygen) / 5 : 0) +
+    (q.pressureKpa != null && r.pressureKpa != null ? Math.abs((r.pressureKpa[0] + r.pressureKpa[1]) / 2 - q.pressureKpa) / 20 : 0);
   const analogous = scored
     .filter((x) => x.differs.length > 0)
-    .sort((a, b) => a.differs.length - b.differs.length || a.differs.filter((d) => d.unknown).length - b.differs.filter((d) => d.unknown).length || a.record.id.localeCompare(b.record.id));
+    .sort(
+      (a, b) =>
+        a.differs.length - b.differs.length ||
+        a.differs.filter((d) => d.unknown).length - b.differs.filter((d) => d.unknown).length ||
+        distance(a.record) - distance(b.record) ||
+        a.record.id.localeCompare(b.record.id),
+    );
 
   // findings: other gravity levels and exploration atmospheres are analogous; other phases are mechanistic only
   const wantsGravity = q.gravity && q.gravity !== "microgravity";

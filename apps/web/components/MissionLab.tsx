@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Quote } from "@/components/Cite";
+import { EvidenceLadder } from "@/components/EvidenceLadder";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
 import { Legend, OutcomeTag } from "@/components/Outcome";
 import { experiments, findings, GROUP_LABEL } from "@/lib/data";
-import { confidence, outsideEvidence, rank, type Gravity, type Scenario } from "@/lib/relevance";
+import { confidence, rank, type Gravity, type Scenario } from "@/lib/relevance";
 import type { OutcomeGroup } from "@/lib/types";
 
 type Form = {
@@ -43,6 +44,12 @@ export const CONTEXTS: { id: string; label: string; detail: string; form: Form }
     label: "Exploration atmosphere",
     detail: "56.5 kPa with 34 % oxygen, the cabin atmosphere NASA recommends for Moon and Mars missions.",
     form: { oxygen: 34, flow: 10, pressureKpa: 56.5, gravity: "microgravity", material: "any", flowDirection: "any" },
+  },
+  {
+    id: "moon-base",
+    label: "Moon base, exploration air",
+    detail: "PMMA in 34 % oxygen at 56.5 kPa, at lunar gravity: the hardest question in this atlas.",
+    form: { oxygen: 34, flow: 20, pressureKpa: 56.5, gravity: "lunar", material: "PMMA", flowDirection: "any" },
   },
   {
     id: "lunar",
@@ -83,7 +90,6 @@ export function MissionLab() {
   const [open, setOpen] = useState<string | null>(null);
 
   const ranked = useMemo(() => rank(experiments, toScenario(form)), [form]);
-  const outside = useMemo(() => outsideEvidence(experiments, toScenario(form)), [form]);
   const top = ranked.slice(0, 12);
   const strong = ranked.filter((r) => r.score >= STRONG);
   const tally = strong.reduce<Partial<Record<OutcomeGroup, number>>>((acc, r) => {
@@ -91,6 +97,10 @@ export function MissionLab() {
     return acc;
   }, {});
   const quotes = findingsForScenario(form);
+  const question = useMemo(
+    () => ({ material: form.material === "any" ? undefined : form.material, oxygen: form.oxygen, pressureKpa: form.pressureKpa, gravity: form.gravity, flow: form.flow }),
+    [form],
+  );
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => {
     setCtx("custom");
@@ -143,6 +153,8 @@ export function MissionLab() {
               <option>PMMA</option>
               <option>SIBAL fabric</option>
               <option>Nomex</option>
+              <option>Silicone</option>
+              <option>Cotton jersey</option>
             </select>
           </label>
           <label className="block">
@@ -157,24 +169,7 @@ export function MissionLab() {
       </aside>
 
       <div className="min-w-0 space-y-10">
-        {outside.length > 0 ? (
-          <section data-guide="notice" role="status" className="border border-flame/60 bg-panel rounded-sm p-5">
-            <h2 className="font-semibold text-flame">Direct evidence under these exact conditions is limited</h2>
-            <ul className="mt-2 space-y-1 text-[15px]">
-              {outside.map((o) => (
-                <li key={o}>{o}</li>
-              ))}
-            </ul>
-            <p className="mt-3 text-sm text-muted">
-              The tests below are the nearest evidence available, not a prediction for your scenario.
-            </p>
-          </section>
-        ) : (
-          <section data-guide="notice" role="status" className="border border-rule bg-panel rounded-sm p-5">
-            <h2 className="font-semibold">Your scenario sits inside the tested range</h2>
-            <p className="mt-1 text-sm text-muted">Oxygen, airflow and pressure are all within values NASA tested in this atlas.</p>
-          </section>
-        )}
+        <EvidenceLadder q={question} />
 
         <section aria-labelledby="summary">
           <h2 id="summary" className="display text-2xl">
@@ -206,7 +201,7 @@ export function MissionLab() {
 
         <section aria-labelledby="ranked">
           <h2 id="ranked" className="display text-xl">
-            Most relevant NASA tests
+            Most similar BASS-II tests, with the arithmetic
           </h2>
           <p className="mt-1 text-sm text-faint">
             Mission Relevance and Evidence Confidence are project heuristics, not NASA ratings.{" "}
