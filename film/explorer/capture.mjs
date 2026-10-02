@@ -43,6 +43,7 @@ const DRIVE = `window.__drive = async (fade) => {
   }
   const f = document.getElementById("vox-fade"); if (f) f.style.opacity = String(fade);
   await Promise.all(seeks);
+  return [scrollX, scrollY];
 };`;
 const FADE = `addEventListener("DOMContentLoaded", () => { const d = document.createElement("div"); d.id = "vox-fade";
   d.setAttribute("style", "position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:2147483647"); document.body.append(d); });`;
@@ -160,8 +161,9 @@ async function render(sc, setup, build, pos = "left") {
     for (const tw of tweens) if (t >= tw.t0 && t <= tw.t1 + 1 / FPS) await tw.apply(Math.min(1, (t - tw.t0) / (tw.t1 - tw.t0)));
     if (askRelease) { askAt ??= t + 1.1; if (t >= askAt) { askRelease(); askRelease = null; askAt = null; } }
     const fade = Math.max(t < fin ? 1 - t / fin : 0, t > sc.dur - fout ? (t - (sc.dur - fout)) / fout : 0);
-    await p.evaluate((f) => window.__drive?.(f), Math.min(1, fade));
-    const { data } = await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 92, optimizeForSpeed: true, clip: { x: 0, y: 0, width: W, height: H, scale: SCALE } });
+    // the clip is in document coordinates, so it must follow the scroll position or scrolled pages come out black
+    const [sx, sy] = (await p.evaluate((f) => window.__drive?.(f), Math.min(1, fade))) ?? [0, 0];
+    const { data } = await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 92, optimizeForSpeed: true, clip: { x: sx, y: sy, width: W, height: H, scale: SCALE } });
     if (!ff.stdin.write(Buffer.from(data, "base64"))) await new Promise((ok) => ff.stdin.once("drain", ok));
     await ctx.clock.runFor(Math.round(((n + 1) * 1000) / FPS) - Math.round((n * 1000) / FPS));
     if (n % (FPS * 5) === 0) process.stdout.write(`  ${sc.id} ${t.toFixed(0)}s/${sc.dur.toFixed(0)}s (${((Date.now() - started) / 1000 / (n + 1)).toFixed(2)} s/frame)\n`);
