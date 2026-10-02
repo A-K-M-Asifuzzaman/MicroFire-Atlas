@@ -52,6 +52,12 @@ export const CONTEXTS: { id: string; label: string; detail: string; form: Form }
     form: { oxygen: 34, flow: 20, pressureKpa: 56.5, gravity: "lunar", material: "PMMA", flowDirection: "any" },
   },
   {
+    id: "mars-fabric",
+    label: "Mars habitat, exploration air",
+    detail: "Cotton-fiberglass fabric in 34 % oxygen at 56.5 kPa, at Martian gravity.",
+    form: { oxygen: 34, flow: 10, pressureKpa: 56.5, gravity: "martian", material: "SIBAL fabric", flowDirection: "any" },
+  },
+  {
     id: "lunar",
     label: "Lunar habitat, normal air",
     detail: "Same air as the ISS, but at lunar gravity, where buoyancy returns.",
