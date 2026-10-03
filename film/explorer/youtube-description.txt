@@ -11,17 +11,18 @@ Live site: https://microfire-atlas.vercel.app
 Code: https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas
 
 Chapters
-0:00 Fire without gravity
-0:22 Two ways into NASA's evidence
-0:39 Build the real experiment
-0:49 Real NASA footage, then predict first
-1:14 Climb the Evidence Ladder to the Moon
-1:35 Quests, stars and the data detective
-1:57 Saffire: real fires inside a spacecraft
-2:11 The Mission Analyst workstation and ranked findings
-2:43 Tested 1,000 ways, graded on 100 questions
-3:03 FM²: fire on the Moon
-3:14 Follow the spark
+0:00 This fire is real
+0:21 Fire without gravity
+0:42 Two ways into NASA's evidence
+0:58 Part 1 · The explorer's adventure
+1:10 Real NASA footage, then predict first
+1:34 Climb the Evidence Ladder to the Moon
+1:54 Quests, stars and the data detective
+2:15 Part 2 · The mission planner's workstation
+2:32 Mission Analyst and ranked NASA findings
+2:59 Tested 1,000 ways, graded on 100 questions
+3:19 Part 3 · Where the evidence stops (FM²)
+3:34 Follow the spark
 
 What's inside
 - 78 NASA test records: 56 BASS-II tests, 20 Saffire spacecraft-fire runs and 2 LUCI burns in simulated lunar gravity, each value traced to its NASA page
@@ -30,5 +31,7 @@ What's inside
 - Mission Analyst mode: NASA's exploration atmospheres, a coverage instrument over the real evidence, and an evidence status that never guesses or scores risk
 - Rankings re-run 1,000 ways; the AI graded on 100 questions (98 pass before the model; 99.9 % citation precision in a live run)
 - FM², NASA's planned burn on the Moon, shown as a research horizon with no invented results
+
+Music: an original score composed in code for this film (no third-party tracks).
 
 Characters, scenery and the opening explainer are illustrations. NASA footage, photographs and test records are evidence. Not affiliated with or endorsed by NASA.

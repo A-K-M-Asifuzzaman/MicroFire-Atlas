@@ -1,23 +1,33 @@
 [
  {
+  "id": "coldopen",
+  "lines": [
+   [
+    "This fire is real."
+   ],
+   [
+    "NASA lit it on purpose, inside an empty cargo spaceship, high above the Earth."
+   ],
+   [
+    "Because one day, people will live on the Moon... and up there, fire won't behave the way it does here."
+   ]
+  ],
+  "lead": 1.6,
+  "tail": 4.8
+ },
+ {
   "id": "hook",
   "lines": [
    [
-    "Light a match on Earth, and the flame stretches up.",
+    "On Earth, a flame stands tall: hot air rises, and pulls fresh air in behind it.",
     "On Earth, flames reach up"
    ],
    [
-    "Hot air rises, and pulls fresh air in behind it."
-   ],
-   [
-    "Now take gravity away.",
+    "Take gravity away, and nothing rises.",
     "Now remove gravity"
    ],
    [
-    "Nothing rises. The flame turns small, round, and blue..."
-   ],
-   [
-    "and it lives or dies on the air drifting past it.",
+    "The flame turns small, round, and blue... and lives or dies on the air drifting past it.",
     "Airflow is one important condition"
    ]
   ]
@@ -26,14 +36,11 @@
   "id": "intro",
   "lines": [
    [
-    "NASA has been setting fires in space for decades. On purpose.",
+    "NASA has studied this for decades, but the answers are buried in technical reports.",
     "Decades of NASA fire tests"
    ],
    [
-    "MicroFire Atlas turns those real experiments into two adventures."
-   ],
-   [
-    "One for young explorers... and one for the people planning missions.",
+    "MicroFire Atlas brings them to life: an adventure for young explorers, and a workstation for mission planners.",
     "Two ways in"
    ]
   ]
@@ -49,17 +56,18 @@
     "then building NASA's real wind tunnel, piece by piece.",
     "Build the real experiment"
    ]
-  ]
+  ],
+  "lead": 3.2
  },
  {
   "id": "film",
   "lines": [
    [
-    "This is real NASA footage. The computer outlines the flame, and measures it in pixels.",
+    "Next, a real NASA flame. The computer traces it, frame by frame, and measures it in pixels.",
     "Real NASA footage"
    ],
    [
-    "Then, a puzzle. Turn the airflow down on test B20.",
+    "Then a puzzle: turn the airflow down on test B20.",
     "Compare near-matched tests"
    ],
    [
@@ -76,18 +84,15 @@
   "id": "moon",
   "lines": [
    [
-    "Next stop: the Moon.",
-    "Next stop: the Moon"
-   ],
-   [
-    "Sort real clues onto the Evidence Ladder.",
+    "Next stop: the Moon. Sort real clues onto the Evidence Ladder.",
     "Climb the Evidence Ladder"
    ],
    [
-    "Tiny burning droplets? They explain how fire works. Not how plastic burns."
+    "Tiny burning droplets? They explain how fire works. Not how plastic burns.",
+    "Droplets explain mechanisms"
    ],
    [
-    "And the top rung stays empty. No current record in this atlas matches these conditions.",
+    "And the top rung stays empty. No record in this atlas matches these conditions yet.",
     "The top rung is empty"
    ]
   ]
@@ -96,15 +101,12 @@
   "id": "atlas",
   "lines": [
    [
-    "Every page has a quest. Every real discovery lights a star.",
+    "Every page has a quest, and every real discovery lights a star.",
     "Quests light stars"
    ],
    [
-    "In the Atlas, you become a data detective.",
+    "In the Atlas, you become a data detective. Find the lowest oxygen where a flame kept burning... Solved!",
     "Be a data detective"
-   ],
-   [
-    "Find the lowest oxygen where a flame kept burning... Solved!"
    ],
    [
     "And meet LUCI: fires in Moon-like gravity, made by a spinning rocket.",
@@ -116,24 +118,22 @@
   "id": "saffire",
   "lines": [
    [
-    "The biggest fires? NASA lit them inside an empty cargo spaceship.",
+    "The biggest fires? NASA lit them inside empty cargo spaceships: the Saffire experiments.",
     "Real fires in a spacecraft"
    ],
    [
-    "Twenty Saffire runs, and every number traced to its line in a NASA table.",
+    "Twenty runs, and every number traced to its line in a NASA table.",
     "Every number traced"
    ]
-  ]
+  ],
+  "lead": 3.2
  },
  {
   "id": "analyst",
   "lines": [
    [
-    "For mission planners, there's a real workstation.",
+    "Mission planners pick a NASA cabin atmosphere. Every tick underneath is a real NASA test.",
     "Mission Analyst"
-   ],
-   [
-    "Pick one of NASA's cabin atmospheres. Every tick underneath is a real NASA test."
    ],
    [
     "Slide to thirty-four percent oxygen... and you're in empty space.",
@@ -144,7 +144,7 @@
     "No guessing"
    ],
    [
-    "Then it ranks NASA's own findings, and explains why each one matters... and where it doesn't.",
+    "Then it ranks NASA's own findings, and explains why each one matters, and where it doesn't.",
     "Ranked NASA findings"
    ]
   ]
@@ -153,7 +153,7 @@
   "id": "trust",
   "lines": [
    [
-    "Can you trust it? Experiment ranking is re-run a thousand ways,",
+    "Can you trust it? Every ranking is re-run a thousand ways,",
     "Tested 1,000 ways"
    ],
    [
@@ -170,13 +170,15 @@
   "id": "frontier",
   "lines": [
    [
-    "And when NASA finally burns materials on the Moon itself,",
+    "And when NASA finally burns materials on the Moon itself, in its FM-two experiment,",
     "Fire on the Moon: FM²"
    ],
    [
-    "MicroFire already shows which open questions it's built to answer."
+    "MicroFire already shows which open questions it's built to answer.",
+    "Built for the open questions"
    ]
-  ]
+  ],
+  "lead": 3.2
  },
  {
   "id": "close",

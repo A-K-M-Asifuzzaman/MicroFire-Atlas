@@ -10,14 +10,14 @@ VOICE = os.environ.get("VOICE", "en-US-AvaMultilingualNeural")
 RATE = os.environ.get("RATE", "-2%")
 EDGE = os.environ.get("EDGE_TTS", "edge-tts")
 # seconds; the final scene keeps a longer tail for the end card. Roomier pauses give animations time to land.
-LEAD, GAP, TAIL, END_TAIL = (float(os.environ.get(k, d)) for k, d in (("LEAD", 0.9), ("GAP", 0.65), ("TAIL", 1.5), ("END_TAIL", 4.0)))
+LEAD, GAP, TAIL, END_TAIL = (float(os.environ.get(k, d)) for k, d in (("LEAD", 0.9), ("GAP", 0.58), ("TAIL", 1.3), ("END_TAIL", 7.0)))
 os.makedirs("build", exist_ok=True)
 dur = lambda f: float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f], capture_output=True, text=True, check=True).stdout)
 out = []
 scenes = json.load(open("script.json"))
 for sc in scenes:
-    tail = END_TAIL if sc is scenes[-1] else TAIL
-    t, parts, lines = LEAD, [], []
+    tail = sc.get("tail", END_TAIL if sc is scenes[-1] else TAIL)
+    t, parts, lines = sc.get("lead", LEAD), [], []  # a scene may open with silence for a title or chapter card
     for i, (text, *cap) in enumerate(sc["lines"]):
         key = hashlib.sha1(f"{VOICE}|{RATE}|{text}".encode()).hexdigest()[:10]  # re-voice only lines whose text changed
         mp3 = f"build/{sc['id']}-{i}-{key}.mp3"

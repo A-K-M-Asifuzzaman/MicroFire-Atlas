@@ -56,6 +56,9 @@
 #vox-end.s6 .cta{animation:vx-chipIn .6s cubic-bezier(.2,1.4,.4,1) both,vx-glow 1.6s ease-in-out .6s infinite alternate}
 #vox-end .credit{position:absolute;left:0;right:0;bottom:34px;text-align:center;font:500 19px system-ui,sans-serif;color:#8ea6be;opacity:0}
 #vox-end.s6 .credit{animation:vx-fadeUp .8s ease .5s both}
+#vox-end .thanks{position:absolute;left:0;right:0;bottom:78px;text-align:center;font-size:30px;font-weight:700;color:#ffe2ac;opacity:0;letter-spacing:.02em}
+#vox-end .thanks b{display:block;font:700 15px system-ui,sans-serif;letter-spacing:.3em;color:#8eeaf5;margin-bottom:8px}
+#vox-end.s7 .thanks{animation:vx-fadeUp 1.1s ease both}
 #vox-end .crew{position:absolute;bottom:-12px;height:400px;opacity:0;filter:drop-shadow(0 20px 40px #000c)}
 #vox-end .crew.tala{left:40px}#vox-end .crew.mei{right:190px;height:390px}#vox-end .crew.kofi{right:16px;height:370px}
 #vox-end.s3 .crew.tala{animation:vx-crewUp .9s cubic-bezier(.2,1.1,.3,1) both,vx-bob 4s ease-in-out .9s infinite alternate}
@@ -93,6 +96,49 @@
 #vox-crew .bubble small{display:block;font-size:15px;font-weight:700;color:#c9761a;margin-bottom:2px}
 .vox-star{position:absolute;font-size:42px;color:#ffcf6b;text-shadow:0 0 18px #ffb347;animation:vx-starFly 1.3s cubic-bezier(.15,.8,.3,1) both}
 .vox-sticker{position:absolute;padding:12px 22px;border-radius:18px;background:#ffcc79;color:#16181d;font-size:34px;font-weight:900;box-shadow:0 14px 40px #000a;border:4px solid #fff;animation:vx-sticker 2.2s cubic-bezier(.2,1.6,.4,1) both}
+#vox-cold{position:absolute;inset:0;background:#000;overflow:hidden;opacity:0;transition:opacity .9s}
+#vox-cold.on{opacity:1}
+#vox-cold video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 72%;opacity:0;transform:scale(1.02);transition:opacity 1.6s,filter 1.4s}
+#vox-cold.a video,#vox-cold.b video,#vox-cold.c video,#vox-cold.d video{opacity:1;animation:vx-ken 22s linear both}
+#vox-cold.d video{filter:blur(6px) brightness(.35) saturate(1.2)}
+#vox-cold .bar{position:absolute;left:0;right:0;height:0;background:#000;transition:height 1.2s cubic-bezier(.6,0,.2,1);z-index:2}
+#vox-cold .bar.t{top:0}#vox-cold .bar.b{bottom:0}
+#vox-cold.a .bar,#vox-cold.b .bar,#vox-cold.c .bar,#vox-cold.d .bar{height:118px}
+#vox-cold .src{position:absolute;left:92px;bottom:150px;z-index:3;font:600 19px system-ui,sans-serif;letter-spacing:.04em;color:#ffffffb3;opacity:0;transition:opacity 1s .6s}
+#vox-cold.a .src,#vox-cold.b .src,#vox-cold.c .src{opacity:1}
+#vox-cold .kin{position:absolute;left:92px;top:41%;z-index:3;font-size:104px;line-height:1.05;font-weight:800;color:#fff;text-shadow:0 8px 50px #000c;letter-spacing:-.01em}
+#vox-cold .kin span{display:inline-block;opacity:0}
+#vox-cold.b .k1 span,#vox-cold.c .k1 span{animation:vx-word .7s cubic-bezier(.2,.9,.2,1.1) both}
+#vox-cold .k2{top:55%;font-size:52px;font-weight:700;color:#ffcc79}
+#vox-cold.c .k2 span{animation:vx-word .7s cubic-bezier(.2,.9,.2,1.1) both}
+#vox-cold.d .kin{opacity:0;transition:opacity .5s}
+#vox-cold .title{position:absolute;inset:0;z-index:3;display:grid;place-content:center;justify-items:center;text-align:center;opacity:0}
+#vox-cold.d .title{opacity:1}
+#vox-cold .title svg{width:150px;height:150px;margin-bottom:6px}
+#vox-cold.d .title .ring{animation:vx-draw 1.6s .1s ease-out both}
+#vox-cold.d .title .core{transform-origin:75px 82px;animation:vx-coreIn 1s .7s cubic-bezier(.2,1.5,.4,1) both,vx-breathe 2.2s 1.7s ease-in-out infinite alternate}
+#vox-cold .title h1{font-size:150px;line-height:1;font-weight:800;color:#fff;letter-spacing:-.02em;text-shadow:0 0 60px #ffb34755}
+#vox-cold .title h1 span{display:inline-block;opacity:0}
+#vox-cold.d .title h1 span{animation:vx-titleRise .9s cubic-bezier(.2,.9,.2,1) both}
+#vox-cold .title p{margin-top:22px;font-size:34px;font-weight:600;color:#ffe2ac;opacity:0;max-width:1200px}
+#vox-cold.d .title p{animation:vx-fadeUp 1s 1.9s both}
+#vox-cold .title small{margin-top:26px;font:600 18px system-ui,sans-serif;letter-spacing:.24em;color:#8eeaf5;opacity:0}
+#vox-cold.d .title small{animation:vx-fadeUp 1s 2.6s both}
+#vox-chap{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;text-align:center;background:radial-gradient(ellipse at 50% 55%,#1c2a55f2,#050813fa 70%);opacity:0;pointer-events:none}
+#vox-chap.on{animation:vx-chap 2.9s cubic-bezier(.4,0,.2,1) both}
+#vox-chap .num{font-size:170px;line-height:1;font-weight:800;color:transparent;-webkit-text-stroke:3px #ffcc79;letter-spacing:.04em}
+#vox-chap .part{margin-top:4px;font:700 22px system-ui,sans-serif;letter-spacing:.32em;color:#8eeaf5}
+#vox-chap h2{margin-top:14px;font-size:84px;line-height:1.05;font-weight:800;color:#fff}
+#vox-chap p{margin-top:16px;font-size:30px;color:#ffe2ac;font-weight:600}
+#vox-chap .sweep{margin-top:26px;height:5px;width:520px;border-radius:3px;background:linear-gradient(90deg,transparent,#ffcc79,#8eeaf5,transparent);transform-origin:left;animation:vx-sweep 1.4s .35s cubic-bezier(.6,0,.2,1) both}
+#vox-chap.on .num{animation:vx-numIn .8s .05s cubic-bezier(.2,1.4,.4,1) both}
+#vox-chap.on h2{animation:vx-titleRise .8s .2s cubic-bezier(.2,.9,.2,1) both}
+#vox-chap.on p{animation:vx-fadeUp .8s .5s both}
+@keyframes vx-ken{from{transform:scale(1.02)}to{transform:scale(1.16) translateX(-1.5%)}}
+@keyframes vx-word{from{opacity:0;transform:translateY(40px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes vx-chap{0%{opacity:0;transform:scale(1.04)}14%{opacity:1;transform:none}82%{opacity:1;transform:none}100%{opacity:0;transform:scale(.98)}}
+@keyframes vx-sweep{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes vx-numIn{from{opacity:0;transform:translateY(30px) scale(.8)}to{opacity:1;transform:none}}
 @keyframes vx-crewPop{from{opacity:0;transform:translateY(120%)}to{opacity:1;transform:none}}
 @keyframes vx-crewDrop{from{opacity:1;transform:none}to{opacity:0;transform:translateY(120%)}}
 @keyframes vx-sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg) translateY(-6px)}}
@@ -140,6 +186,7 @@
 <div class="title">${title}</div>
 <div class="chips"><span class="chip c1">✦ Real NASA data</span><span class="chip c2">✦ A real adventure</span><span class="chip c3">✦ Honest answers</span></div>
 <div class="cta">Follow the spark ✦ <small>microfire-atlas.vercel.app</small></div>
+<p class="thanks"><b>NASA SPACE APPS CHALLENGE 2026 · FLAME IN FREEFALL</b>Thank you for watching</p>
 <p class="credit">Built from public NASA technical reports · Illustrations are art · AI voiceover · Not affiliated with or endorsed by NASA</p>`;
   };
 
@@ -232,6 +279,40 @@
     s.style.left = x + "px"; s.style.top = y + "px";
     r.append(s);
     setTimeout(() => s.remove(), 2300);
+  };
+  /** Cold open: real NASA footage, letterboxed, kinetic words, then the title reveal. Stages: on, a, b, c, d, "" (gone). */
+  window.__voxCold = (stage) => {
+    const r = document.getElementById("vox-root");
+    if (!r) return;
+    let c = document.getElementById("vox-cold");
+    if (!c) {
+      c = document.createElement("div");
+      c.id = "vox-cold";
+      const words = (t) => t.split(" ").map((w, i) => `<span style="animation-delay:${(i * 0.12).toFixed(2)}s">${w}&nbsp;</span>`).join("");
+      const letters = "MicroFire Atlas".split("").map((ch, i) => `<span style="animation-delay:${(0.35 + i * 0.05).toFixed(2)}s">${ch === " " ? "&nbsp;" : ch}</span>`).join("");
+      c.innerHTML = `<video src="/media/saffire-vi-pmma/video.mp4" muted playsinline></video><div class="bar t"></div><div class="bar b"></div>
+<p class="src">REAL NASA FOOTAGE · SAFFIRE VI · INSIDE AN UNCREWED CYGNUS SPACECRAFT IN ORBIT</p>
+<div class="kin k1">${words("This fire is real.")}</div><div class="kin k2">${words("Lit on purpose. In orbit.")}</div>
+<div class="title"><svg viewBox="0 0 150 150"><circle class="ring" cx="75" cy="75" r="64" fill="none" stroke="#ffcc79" stroke-width="3" stroke-dasharray="402" stroke-dashoffset="402"/>
+<path class="core" d="M75 34 C92 60 104 76 98 96 C94 112 84 120 75 120 C66 120 56 112 52 96 C46 76 58 60 75 34Z" fill="#8eb6ff"/><circle class="core" cx="75" cy="96" r="13" fill="#eef6ff"/></svg>
+<h1>${letters}</h1><p>What NASA knows about fire beyond Earth, and where the evidence stops.</p><small>NASA SPACE APPS CHALLENGE 2026 · FLAME IN FREEFALL</small></div>`;
+      r.prepend(c);
+    }
+    if (stage === "on") { c.className = "on"; return; }
+    if (!stage) { c.className = ""; c.querySelector("video")?.pause(); return; }
+    if (stage === "a") { const v = c.querySelector("video"); v.currentTime = 24; v.play().catch(() => {}); } // 24 s: where NASA's flame is largest (analysis.json)
+    c.className = "on " + stage;
+  };
+  /** A full-screen chapter card that enters, holds and leaves on its own (2.9 s). */
+  window.__voxChapter = (n, part, title, line) => {
+    const r = document.getElementById("vox-root");
+    if (!r) return;
+    let c = document.getElementById("vox-chap");
+    if (!c) { c = document.createElement("div"); c.id = "vox-chap"; r.append(c); }
+    c.className = "";
+    c.innerHTML = `<div class="num">0${n}</div><div class="part">${part}</div><h2>${title}</h2><p>${line}</p><div class="sweep"></div>`;
+    void c.offsetWidth;
+    c.className = "on";
   };
   window.__voxCard = (stage) => { const c = document.getElementById("vox-card"); if (c) c.dataset.stage = stage; };
   if (document.readyState === "loading") addEventListener("DOMContentLoaded", mount); else mount();

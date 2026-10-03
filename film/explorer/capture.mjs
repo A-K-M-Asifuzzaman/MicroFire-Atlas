@@ -188,23 +188,37 @@ const fx = {
 };
 const toEl = (sel, off = 80) => () => p.evaluate(([s, o]) => { const el = document.querySelector(s); if (el) scrollTo(0, el.getBoundingClientRect().top + scrollY - o); }, [sel, off]);
 
+const chapter = (n, part, title, line) => () => p.evaluate(([a, b, c, d]) => window.__voxChapter?.(a, b, c, d), [n, part, title, line]);
+const lineEnd = (S, k, back = 0.6) => S.lines[k].at + S.lines[k].dur - back;
+
 const scenes = {
+  // cold open: real NASA footage, letterboxed, kinetic words, then the title reveal
+  coldopen: [() => go("/"), (S) => {
+    const cold = (st) => () => p.evaluate((x) => window.__voxCold?.(x), st);
+    S.at(0, cold("on"));
+    S.at(0.25, cold("a"));
+    S.at(S.L[0] - 0.05, cold("b"));
+    S.at(S.L[1] + 1.2, cold("c"));
+    S.at(lineEnd(S, 2, -0.35), cold("d"));
+  }, "none"],
   hook: [() => go("/"), (S) => {
     const card = (st) => () => p.evaluate((x) => window.__voxCard?.(x), st);
-    S.at(S.L[0], card("earth")); S.at(S.L[2], card("space")); S.at(S.L[4], card("flow")); S.at(S.dur - 1.3, card(""));
+    S.at(S.L[0], card("earth")); S.at(S.L[1], card("space")); S.at(S.L[2] + 1.6, card("flow")); S.at(S.dur - 1.2, card(""));
   }],
   intro: [null, (S) => {
-    S.glideEl(S.L[1] - 0.2, 2.4, "#paths", 0.08);
-    S.at(S.L[2] + 0.2, fx.crew("tala", "Two ways in. Pick yours!", "pointing"));
-    S.point(S.L[2] + 0.6, 1.0, 560, 640);
-    S.point(S.L[2] + 2.4, 1.0, 1300, 640);
+    S.glide(S.L[0] + 0.4, 2.0, 380);
+    S.glideEl(S.L[1] - 0.2, 2.2, "#paths", 0.08);
+    S.at(S.L[1] + 0.6, fx.crew("tala", "Two ways in. Pick yours!", "pointing"));
+    S.point(S.L[1] + 1.4, 1.0, 560, 640);
+    S.point(S.L[1] + 3.4, 1.0, 1300, 640);
     S.at(S.dur - 0.9, fx.crew(""));
   }],
   freefall: [async () => { await go("/story"); await p.evaluate(() => localStorage.clear()); await go("/story"); }, (S) => {
     const sheetNext = () => p.locator(".game-sheet button.story-cta");
     const duct = () => p.locator(".game-part", { hasText: "Flow duct" });
-    S.tap(0.35, () => btn("Start the mission"), "start");
-    S.tap(1.1, sheetNext, "hello-next");
+    S.at(0.05, chapter(1, "PART ONE", "The explorer's adventure", "Learn by playing with real NASA evidence"));
+    S.tap(2.85, () => btn("Start the mission"), "start");
+    S.tap(3.5, sheetNext, "hello-next");
     S.tap(S.L[0] + 1.3, () => btn("Switch off gravity"), "gravity");
     S.at(S.L[0] + 1.6, fx.stars(960, 520));
     S.tap(S.L[1] - 0.1, sheetNext, "gravity-next");
@@ -217,8 +231,8 @@ const scenes = {
     S.tap(0.4, () => btn(/follow the spark/i), "follow");
     S.tap(1.3, () => p.locator("button", { hasText: "Investigate this flame" }), "film");
     S.tap(2.3, () => p.getByRole("button", { name: "Play", exact: true }), "play");
-    S.tap(S.L[0] + 2.6, () => p.getByRole("tab", { name: "Flame Vision" }), "vision");
-    S.at(S.L[0] + 2.9, fx.sticker("Measured in pixels", 1180, 230));
+    S.tap(S.L[0] + 2.8, () => p.locator('[data-mode="vision"]'), "vision");
+    S.at(S.L[0] + 3.1, fx.sticker("Measured in pixels", 1180, 230));
     S.tap(S.L[1] - 0.2, nextBtn, "to-trace");
     S.tap(S.L[1] + 0.7, nextBtn, "to-predict");
     S.tap(S.L[1] + 2.2, () => btn("Less airflow"), "less");
@@ -231,59 +245,58 @@ const scenes = {
     const card = (t) => () => p.locator('ul[aria-label="Clue cards to sort"] button', { hasText: t });
     const rung = (r) => () => p.locator(`button[aria-label^="Place the selected clue on the ${r} rung"]`);
     S.tap(0.5, nextBtn, "next");
-    S.glideTo(S.L[1] - 0.3, 1.2, 'ul[aria-label="Clue cards to sort"]');
-    S.tap(S.L[1] + 1.0, card("Small flame"), "c-b20");
-    S.tap(S.L[1] + 2.0, rung("Analogous"), "r-b20");
-    S.tap(S.L[2] + 0.4, card("Tiny burning"), "c-flex");
-    S.tap(S.L[2] + 2.0, rung("Mechanistic"), "r-flex");
-    S.tap(S.L[2] + 3.4, card("Big fire"), "c-saffire");
-    S.tap(S.L[2] + 4.2, rung("Analogous"), "r-saffire");
-    S.tap(S.L[3] - 0.2, card("nobody has done"), "c-gap");
-    S.tap(S.L[3] + 0.6, rung("Gap"), "r-gap");
-    S.at(S.L[3] + 1.0, fx.sticker("The next experiment!", 1150, 260));
+    S.glideTo(S.L[0] + 1.5, 1.2, 'ul[aria-label="Clue cards to sort"]');
+    S.tap(S.L[0] + 2.9, card("Small flame"), "c-b20");
+    S.tap(S.L[0] + 3.8, rung("Analogous"), "r-b20");
+    S.tap(S.L[1] + 0.4, card("Tiny burning"), "c-flex");
+    S.tap(S.L[1] + 2.0, rung("Mechanistic"), "r-flex");
+    S.tap(S.L[1] + 3.3, card("Big fire"), "c-saffire");
+    S.tap(S.L[1] + 4.1, rung("Analogous"), "r-saffire");
+    S.tap(S.L[2] - 0.2, card("nobody has done"), "c-gap");
+    S.tap(S.L[2] + 0.6, rung("Gap"), "r-gap");
+    S.at(S.L[2] + 1.0, fx.sticker("The next experiment!", 1150, 260));
   }],
   atlas: [async () => { await go("/atlas"); await toEl('aside[aria-label="Page quests"]', 90)(); }, (S) => {
     S.tap(S.L[0] + 1.6, () => p.locator("ul[aria-label=Tests] button", { hasText: "B19" }), "tile");
     S.at(S.L[0] + 1.9, fx.starsAt('aside[aria-label="Page quests"] li:nth-child(2)'));
-    S.glideEl(S.L[1] - 0.4, 1.4, '[data-guide="filters"]', 0.05);
-    S.tap(S.L[1] + 1.4, () => btn("Detective table"), "detective");
-    S.glideEl(S.L[1] + 2.0, 1.2, '[data-guide="table"]', 0.06);
-    S.tap(S.L[2] + 0.3, () => p.getByRole("button", { name: "Oxygen", exact: true }), "sort");
-    S.glideEl(S.L[2] + 0.9, 2.0, 'button[aria-label="Answer with test B20"]', 0.55);
-    S.tap(S.L[2] + 3.2, () => p.getByRole("button", { name: "Answer with test B20" }), "b20");
-    S.at(S.L[2] + 3.4, fx.starsAt('button[aria-label="Answer with test B20"]'));
-    S.at(S.L[2] + 3.6, fx.crew("mei", "Solved! Real NASA data.", "cheering"));
-    S.at(S.L[3] - 0.7, fx.crew(""));
-    S.glideEl(S.L[3] - 0.5, 1.4, 'aside[aria-label="Page quests"]', 0.12);
-    S.tap(S.L[3] + 1.2, () => p.getByRole("tab", { name: /LUCI/ }), "luci");
-    S.at(S.L[3] + 1.5, fx.starsAt('aside[aria-label="Page quests"]'));
-    S.at(S.dur - 0.9, fx.crew(""));
+    S.glideEl(S.L[1] - 0.3, 1.2, '[data-guide="filters"]', 0.05);
+    S.tap(S.L[1] + 0.9, () => btn("Detective table"), "detective");
+    S.glideEl(S.L[1] + 1.3, 1.1, '[data-guide="table"]', 0.06);
+    S.tap(S.L[1] + 2.5, () => p.getByRole("button", { name: "Oxygen", exact: true }), "sort");
+    S.glideEl(S.L[1] + 2.9, 1.6, 'button[aria-label="Answer with test B20"]', 0.55);
+    S.tap(lineEnd(S, 1, 0.8), () => p.getByRole("button", { name: "Answer with test B20" }), "b20");
+    S.at(lineEnd(S, 1, 0.6), fx.starsAt('button[aria-label="Answer with test B20"]'));
+    S.at(lineEnd(S, 1, 0.4), fx.crew("mei", "Solved! Real NASA data.", "cheering"));
+    S.at(S.L[2] - 0.5, fx.crew(""));
+    S.glideEl(S.L[2] - 0.4, 1.3, 'aside[aria-label="Page quests"]', 0.12);
+    S.tap(S.L[2] + 1.2, () => p.getByRole("tab", { name: /LUCI/ }), "luci");
+    S.at(S.L[2] + 1.5, fx.starsAt('aside[aria-label="Page quests"]'));
   }],
   saffire: [() => go("/saffire"), (S) => {
-    S.at(S.L[0] + 0.6, fx.crew("kofi", "A fire in a spaceship? On purpose!", "cheering"));
+    S.at(0.05, chapter(2, "PART TWO", "The mission planner's workstation", "Mission-conditioned evidence, ranked and checked"));
+    S.at(S.L[0] + 0.8, fx.crew("kofi", "A fire in a spaceship? On purpose!", "cheering"));
     S.glideEl(S.L[1] - 0.2, 2.2, 'li[id^="saffire-"]', 0.2);
     S.at(S.L[1] + 0.4, fx.crew(""));
     S.at(S.L[1] + 2.4, fx.sticker("Every number traced", 1100, 220));
   }],
   analyst: [async () => { await go("/mission?context=moon-base-alt"); await toEl("#step-atmosphere", 70)(); }, (S) => {
-    S.tap(S.L[1] + 0.4, () => p.locator('[role="radio"]', { hasText: "Alternate exploration atmosphere" }), "alt");
-    S.glideEl(S.L[1] + 2.0, 1.6, "#step-conditions", 0.06);
-    S.at(S.L[2] - 0.6, () => p.locator('input[type="range"]').first().focus());
-    for (let k = 0; k < 11; k++) S.at(S.L[2] + 0.2 + k * 0.17, () => p.keyboard.press("ArrowRight"));
-    S.at(S.L[2] + 2.3, fx.sticker("Empty space!", 1300, 200));
-    S.glideEl(S.L[3] - 0.3, 1.8, "#step-status", 0.06);
-    S.at(S.L[3] + 3.4, fx.sticker("No guessing!", 1200, 260));
-    S.glideEl(S.L[4] - 0.3, 2.0, "#ranked-findings", 0.06);
-    S.at(S.L[4] + 2.0, fx.starsAt("#ranked-findings li:first-child"));
-    S.at(S.L[4] + 2.4, fx.crew("mei", "Why each finding matters!", "pointing"));
+    S.tap(S.L[0] + 1.0, () => p.locator('[role="radio"]', { hasText: "Alternate exploration atmosphere" }), "alt");
+    S.glideEl(S.L[0] + 2.8, 1.6, "#step-conditions", 0.06);
+    S.at(S.L[1] - 0.6, () => p.locator('input[type="range"]').first().focus());
+    for (let k = 0; k < 11; k++) S.at(S.L[1] + 0.2 + k * 0.17, () => p.keyboard.press("ArrowRight"));
+    S.at(S.L[1] + 2.3, fx.sticker("Empty space!", 1300, 200));
+    S.glideEl(S.L[2] - 0.3, 1.8, "#step-status", 0.06);
+    S.at(S.L[2] + 3.4, fx.sticker("No guessing!", 1200, 260));
+    S.glideEl(S.L[3] - 0.3, 2.0, "#ranked-findings", 0.06);
+    S.at(S.L[3] + 2.0, fx.starsAt("#ranked-findings li:first-child"));
+    S.at(S.L[3] + 2.4, fx.crew("mei", "Why each finding matters!", "pointing"));
     S.at(S.dur - 0.8, fx.crew(""));
   }],
   trust: [async () => { await go("/methodology"); await p.evaluate(() => { document.documentElement.style.zoom = "1.25"; const el = [...document.querySelectorAll("p")].find((x) => x.textContent.includes("Drag a weight and watch")); if (el) scrollTo(0, el.getBoundingClientRect().top + scrollY - 140); }); }, (S) => {
     const knob = () => p.locator('input[type="range"]').first();
     [1.25, 1.5, 1.75, 2].forEach((v, k) => S.at(S.L[0] + 0.6 + k * 0.45, () => knob().fill(String(v))));
     S.at(S.L[0] + 0.4, fx.crew("mei", "Change the rules. Does it still hold?", "thinking"));
-    S.at(S.L[1] + 0.3, fx.crew(""));
-    // the scorecard while the line says "a hundred test questions", then back up to the game
+    S.at(S.L[1] - 0.2, fx.crew(""));
     S.at(S.L[1] - 0.1, () => p.evaluate(() => { const el = [...document.querySelectorAll("h3")].find((x) => x.textContent.includes("Before the model")); if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY - 90 }); }));
     S.at(S.L[1] + 0.6, fx.sticker("98 of 100", 1250, 300));
     S.at(S.L[2] - 0.1, () => p.evaluate(() => { const el = [...document.querySelectorAll("h3")].find((x) => x.textContent.includes("fool the checker")); if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY - 70 }); }));
@@ -293,12 +306,13 @@ const scenes = {
     S.at(S.L[2] + 5.2, fx.sticker("Caught!", 1300, 260));
   }],
   frontier: [async () => { await go("/gaps"); await p.evaluate(() => { document.documentElement.style.zoom = "1.25"; }); await toEl("#horizon", 70)(); }, (S) => {
-    S.at(S.L[0] + 0.4, fx.crew("tala", "To the Moon!", "cheering"));
+    S.at(0.05, chapter(3, "PART THREE", "Where the evidence stops", "And the experiment that would push it further"));
+    S.at(S.L[0] + 0.6, fx.crew("tala", "To the Moon!", "cheering"));
     S.glideEl(S.L[1] - 0.2, 2.0, 'li[data-closes="true"]', 0.45);
     S.at(S.L[1] + 2.2, fx.starsAt('li[data-closes="true"]'));
     S.at(S.dur - 0.9, fx.crew(""));
   }],
-  // the finale: an animated end card over the home page, staged on the closing lines
+  // the finale: an animated end card over the home page, staged on the closing lines, then the credits
   close: [() => go("/"), (S) => {
     const end = (st) => () => p.evaluate((x) => window.__voxEnd?.(x), st);
     const l1 = S.lines[1], parts = ["Real NASA data. ", "A real adventure. ", "And honest answers about what we still don't know."];
@@ -308,6 +322,7 @@ const scenes = {
     S.at(S.L[0], end(2));
     parts.forEach((x, i) => { S.at(l1.at + (l1.dur * acc) / total, end(3 + i)); acc += x.length; });
     S.at(S.L[2], end(6));
+    S.at(lineEnd(S, 2, -1.2), end(7));
   }, "none"],
 };
 

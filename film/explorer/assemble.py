@@ -3,7 +3,7 @@
     python3 narrate.py && node capture.mjs all && python3 assemble.py
 Output: MicroFire-Atlas-explorer-film.mp4 (3840x2160, 60 fps, AAC, soft English subtitles).
 """
-import json, re, subprocess
+import json, os, re, subprocess
 
 timed = json.load(open("build/timed.json"))
 run = lambda *a: subprocess.run(["ffmpeg", "-v", "error", "-y", *a], check=True)
@@ -19,17 +19,19 @@ with open("build/voices.txt", "w") as f:
 run("-f", "concat", "-safe", "0", "-i", "build/voices.txt", "-c:a", "pcm_s16le", "build/voice.wav")
 T = sum(sc["dur"] for sc in timed)
 
-# 3. music bed: two soft drone chords (A add9 / F#m7) that breathe into each other every 16 s
+# 3. music: the composed score (score.py) when it is up to date, otherwise the original drone bed
+SCORE = os.path.exists("build/music.wav") and os.path.getmtime("build/music.wav") >= os.path.getmtime("build/timed.json")
+# 3b. fallback music bed: two soft drone chords (A add9 / F#m7) that breathe into each other every 16 s
 A = "+".join(f"sin(2*PI*{hz}*t)*(0.6+0.4*sin(2*PI*{r}*t))" for hz, r in [(110, .05), (164.81, .07), (220, .045), (277.18, .06), (329.63, .08), (493.88, .035)])
 B = "+".join(f"sin(2*PI*{hz}*t)*(0.6+0.4*sin(2*PI*{r}*t))" for hz, r in [(92.5, .055), (138.59, .065), (220, .05), (277.18, .07), (329.63, .04), (440, .03)])
 expr = f"0.05*((0.5+0.5*cos(2*PI*t/16))*({A})+(0.5-0.5*cos(2*PI*t/16))*({B}))"
-run("-f", "lavfi", "-i", f"aevalsrc='{expr}':s=48000:d={T:.2f}",
+if not SCORE: run("-f", "lavfi", "-i", f"aevalsrc='{expr}':s=48000:d={T:.2f}",
     "-af", f"lowpass=f=1400,aecho=0.8:0.7:180|340:0.25|0.18,afade=t=in:d=3,afade=t=out:st={T - 4:.2f}:d=4,volume=0.55",
     "-ac", "2", "build/music.wav")
 
 # 4. mix: music ducks under the voice, then broadcast loudness
 run("-i", "build/voice.wav", "-i", "build/music.wav", "-filter_complex",
-    "[0]asplit=2[v][sc];[1][sc]sidechaincompress=threshold=0.03:ratio=8:attack=30:release=500[m];"
+    f"[0]asplit=2[v][sc];[1]volume={os.environ.get('MUSIC_GAIN', '0.25') if SCORE else '1'}[mu];[mu][sc]sidechaincompress=threshold=0.03:ratio=8:attack=30:release=500[m];"
     "[v][m]amix=inputs=2:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11[out]",
     "-map", "[out]", "-c:a", "aac", "-b:a", "192k", "build/mix.m4a")
 
