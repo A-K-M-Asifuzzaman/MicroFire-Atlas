@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useExplorer } from "@/components/guide/EmberGuide";
 import styles from "./CinematicWorld.module.css";
 
-export type World = "portal" | "lab" | "moon" | "constellation";
+export type World = "portal" | "lab" | "moon" | "constellation" | "bay" | "moonlab" | "starfield";
 
 /** Original artwork is scenery. No generated flame is presented as experimental evidence. */
 export function CinematicWorld({ world, priority = false }: { world: World; priority?: boolean }) {

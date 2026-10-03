@@ -156,10 +156,12 @@ export const discovery = (id: string) => DISCOVERIES.find((d) => d.id === id);
  * Ember hosts tours and fun facts; a crew member gives each page's one-line goal.
  */
 export type CrewId = "tala" | "kofi" | "mei";
-export const CREW: Record<CrewId, { name: string; job: string; img: string }> = {
-  tala: { name: "Tala", job: "Navigator: where to go next", img: "/art/tala.webp" },
-  kofi: { name: "Kofi", job: "Lab engineer: how to play", img: "/art/kofi.webp" },
-  mei: { name: "Dr. Mei", job: "Scientist: how to read the evidence", img: "/art/mei.webp" },
+export type Pose = "pointing" | "cheering" | "thinking";
+const poses = (id: string): Record<Pose, string> => ({ pointing: `/art/crew/${id}-pointing.webp`, cheering: `/art/crew/${id}-cheering.webp`, thinking: `/art/crew/${id}-thinking.webp` });
+export const CREW: Record<CrewId, { name: string; job: string; img: string; poses: Record<Pose, string> }> = {
+  tala: { name: "Tala", job: "Navigator: where to go next", img: "/art/tala.webp", poses: poses("tala") },
+  kofi: { name: "Kofi", job: "Lab engineer: how to play", img: "/art/kofi.webp", poses: poses("kofi") },
+  mei: { name: "Dr. Mei", job: "Scientist: how to read the evidence", img: "/art/mei.webp", poses: poses("mei") },
 };
 
 /** "What am I looking for?": one short goal per page, in Explorer and Scientist words. */

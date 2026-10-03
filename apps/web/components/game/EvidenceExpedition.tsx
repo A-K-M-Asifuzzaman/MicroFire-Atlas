@@ -22,11 +22,11 @@ import styles from "./EvidenceExpedition.module.css";
 const STEPS: { name: string; title: string; line: string; crew: CrewId; world: World }[] = [
   { name: "Welcome", title: "Follow a spark. Find a story.", line: "A flame in space has a story to tell. You are the detective. Let's find the evidence together.", crew: "tala", world: "portal" },
   { name: "Choose", title: "Which flame catches your eye?", line: "These are real NASA experiments. Choose a film to bring into our observation room.", crew: "kofi", world: "lab" },
-  { name: "Look closely", title: "What can a computer see?", line: "Play the film. Turn on AI vision, then tap a measurement to light up its guide.", crew: "kofi", world: "lab" },
-  { name: "Trace", title: "Put your detective eyes to work.", line: "Which outline follows this NASA flame photograph? Compare the edges, then check what the computer traced.", crew: "mei", world: "lab" },
+  { name: "Look closely", title: "What can a computer see?", line: "Play the film. Turn on AI vision, then tap a measurement to light up its guide.", crew: "kofi", world: "bay" },
+  { name: "Trace", title: "Put your detective eyes to work.", line: "Which outline follows this NASA flame photograph? Compare the edges, then check what the computer traced.", crew: "mei", world: "bay" },
   { name: "Compare", title: "One change. A different clue.", line: "Start with B20. Choose a condition to change, then open the crew's record of another real test.", crew: "mei", world: "constellation" },
-  { name: "Moon mission", title: "Take your clues to the Moon.", line: "A Moon base might use 34% oxygen at 56.5 kPa. Sort these clues onto the Evidence Ladder: how close can real NASA tests get?", crew: "tala", world: "moon" },
-  { name: "The unknown", title: "A missing star is a question.", line: "Our atlas contains tests made in orbit. Can they answer the same question for the Moon?", crew: "mei", world: "constellation" },
+  { name: "Moon mission", title: "Take your clues to the Moon.", line: "A Moon base might use 34% oxygen at 56.5 kPa. Sort these clues onto the Evidence Ladder: how close can real NASA tests get?", crew: "tala", world: "moonlab" },
+  { name: "The unknown", title: "A missing star is a question.", line: "Our atlas contains tests made in orbit. Can they answer the same question for the Moon?", crew: "mei", world: "starfield" },
   { name: "Ask PIX", title: "Good scientists ask why.", line: "Ask about the tests you explored. PIX retrieves NASA evidence. Open a source and check the answer.", crew: "mei", world: "constellation" },
   { name: "Your discoveries", title: "You followed the evidence.", line: "You made choices, looked closely, and kept the questions that still need answers. That is how scientists learn.", crew: "tala", world: "constellation" },
 ];
@@ -108,6 +108,8 @@ export function EvidenceExpedition({ trace }: { trace: FrameMetrics }) {
     requestAnimationFrame(() => { title.current?.focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: "instant" }); });
   }
   const complete = step < 2 || step === 8 || done.includes(TASKS[step - 2]);
+  // The guide reacts: cheers when a clue is found, thinks while a task is open, points on once it is done.
+  const pose: "default" | "cheering" | "thinking" | "pointing" = reward ? "cheering" : step === 0 || step === 8 ? "default" : complete ? "pointing" : "thinking";
   return <section className={styles.expedition}>
     <div className={styles.backdrop}><CinematicWorld world={scene.world} priority /></div>
     <header className={styles.toolbar}>
@@ -122,7 +124,7 @@ export function EvidenceExpedition({ trace }: { trace: FrameMetrics }) {
     <div className={`${styles.layout} ${step === 0 || step === 8 ? styles.bookend : ""}`}>
       <aside className={styles.crew}>
         <div className={styles.actor} key={scene.crew}>
-          <img src={CREW[scene.crew].img} alt={`${CREW[scene.crew].name}, your guide`} />
+          <img key={pose} src={pose === "default" ? CREW[scene.crew].img : CREW[scene.crew].poses[pose]} alt={`${CREW[scene.crew].name}, your guide${pose === "default" ? "" : `, ${pose}`}`} />
           <span className={styles.crewOrbit} aria-hidden="true" />
         </div>
         <div className={styles.dialogue} key={step}><strong>{CREW[scene.crew].name}</strong><p>{scene.line}</p><small>{complete && step > 1 && step < 8 ? "Clue saved to your journey" : "Take your time. Try things out."}</small></div>
