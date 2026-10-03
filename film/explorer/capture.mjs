@@ -54,6 +54,7 @@ await ctx.addInitScript(() => {
   try { // the state a child has after pressing "Got it" on each page's crew tip
     const k = "microfire-explorer-v2", s = JSON.parse(localStorage.getItem(k) || "{}");
     s.tips = ["home", "story", "atlas", "analyze", "compare", "mission", "gaps", "ask", "methodology", "sources", "experiment", "expedition"];
+    s.seen = [...s.tips, "saffire", "tour"]; // PIX's "show you around" nudge already answered
     localStorage.setItem(k, JSON.stringify(s));
   } catch {}
 });
@@ -94,7 +95,7 @@ async function render(sc, setup, build, pos = "left") {
   const at = (t, fn) => events.push({ t: Math.max(0, t), fn });
   const scrollTween = (t, d, y0, dy) => tweens.push({ t0: t, t1: t + d, apply: (u) => p.evaluate((y) => scrollTo(0, y), y0 + dy * ease(u)) });
   const S = {
-    L: sc.lines.map((l) => l.at), lines: sc.lines, dur: sc.dur, at,
+    L: sc.lines.map((l) => l.at), lines: sc.lines, dur: sc.dur, at, tweens,
     go: (t, path) => at(t, () => go(path)),
     /** Scroll by dy over d seconds from t. */
     glide: (t, d, dy) => at(t, async () => scrollTween(t, d, await p.evaluate(() => scrollY), dy)),
@@ -106,6 +107,11 @@ async function render(sc, setup, build, pos = "left") {
         return [scrollY, Math.max(0, Math.min(el.getBoundingClientRect().bottom - innerHeight * 0.86, room))];
       }).catch(() => [0, 0]);
       if (dy > 4) scrollTween(t, d, y0, dy);
+    }),
+    /** Scroll so the element's top sits at `frac` of the screen height. */
+    glideEl: (t, d, sel, frac = 0.12) => at(t, async () => {
+      const [y0, dy] = await p.locator(sel).first().evaluate((el, f) => [scrollY, el.getBoundingClientRect().top - innerHeight * f], frac).catch(() => [0, 0]);
+      if (Math.abs(dy) > 4) scrollTween(t, d, y0, dy);
     }),
     /** Glide the cursor to (x, y). */
     point: (t, d, x, y) => at(t, () => {
@@ -213,13 +219,22 @@ const scenes = {
     S.tap(S.L[3] + 1.0, () => btn("It went out"), "predict");
     S.glideTo(S.L[4] + 1.2, 1.6, '[class*="record"] blockquote');
   }],
+  // the Evidence Ladder game: four real clues, each tapped then placed on its rung as the line describes it
   moon: [null, (S) => {
+    const card = (t) => () => p.locator('ul[aria-label="Clue cards to sort"] button', { hasText: t });
+    const rung = (r) => () => p.locator(`button[aria-label^="Place the selected clue on the ${r} rung"]`);
     S.tap(0.5, nextBtn, "next");
-    S.tap(S.L[2], () => p.locator('[class*="candidates"] button').nth(0), "cand0");
-    S.tap(S.L[2] + 1.6, () => p.locator('[class*="candidates"] button').nth(1), "cand1");
-    S.glideTo(S.L[3] + 0.4, 1.2, '[class*="candidates"] + [role="status"]');
-    S.tap(S.L[4], nextBtn, "next2");
-    S.tap(S.L[4] + 1.6, () => btn("We need more evidence for these conditions."), "answer");
+    S.glideTo(S.L[2], 1.4, 'ul[aria-label="Clue cards to sort"]');
+    S.tap(S.L[3] + 0.3, card("Small flame"), "c-b20");
+    S.tap(S.L[3] + 1.9, rung("Analogous"), "r-b20");
+    S.tap(S.L[4] + 0.3, card("Tiny burning"), "c-flex");
+    S.tap(S.L[4] + 2.2, rung("Mechanistic"), "r-flex");
+    S.tap(S.L[5] - 0.2, card("Big fire"), "c-saffire");
+    S.tap(S.L[5] + 0.6, rung("Analogous"), "r-saffire");
+    S.tap(S.L[5] + 1.5, card("nobody has done"), "c-gap");
+    S.tap(S.L[5] + 2.3, rung("Gap"), "r-gap");
+    S.tap(S.L[6] + 1.2, nextBtn, "next2");
+    S.tap(S.L[6] + 2.6, () => btn("We need more evidence for these conditions."), "answer");
   }],
   finale: [null, (S) => {
     S.tap(0.5, nextBtn, "next");
@@ -229,17 +244,34 @@ const scenes = {
     S.tap(S.L[2] + 2.0, () => p.getByLabel(/Nickname/), "nick");
     [..."Ada"].forEach((ch, i) => S.at(S.L[2] + 2.3 + i * 0.16, () => p.keyboard.type(ch)));
   }],
-  science: [() => go("/atlas"), (S) => {
-    S.glide(1.0, 2.4, 560);
-    S.go(S.L[1] - 0.3, "/experiments/bass2-B16");
-    S.glide(S.L[1] + 0.2, 1.4, 260);
+  saffire: [() => go("/saffire"), (S) => {
+    S.point(S.L[1] + 1.0, 1.4, 760, 520);
+    S.glideEl(S.L[2] + 0.2, 2.2, `li[id^="saffire-"]`, 0.22); // the run cards, each value with its NASA table and page
+    S.glideEl(S.L[3] - 0.3, 2.0, 'section[aria-labelledby="atm"]', 0.1); // back to the atmosphere map
+  }],
+  ladder: [async () => { await go("/mission?context=moon-base"); await p.evaluate(() => { document.documentElement.style.zoom = "1.25"; const el = document.getElementById("ladder-title"); scrollTo(0, el.getBoundingClientRect().top + scrollY - 120); }); }, (S) => {
+    S.glide(S.L[1] + 0.2, 3.2, 380);
+    S.at(S.L[2] - 1.0, async () => { // bring the first analogous card to the upper third, then open its "Why?" path
+      const [y0, dy] = await p.locator("details summary", { hasText: "Why is this evidence shown?" }).nth(0).evaluate((el) => [scrollY, el.getBoundingClientRect().top - innerHeight * 0.28]);
+      const tw = { t0: S.L[2] - 1.0, t1: S.L[2] - 0.1, apply: (u) => p.evaluate((y) => scrollTo(0, y), y0 + dy * ease(u)) };
+      S.tweens.push(tw);
+    });
+    S.tap(S.L[2] + 0.6, () => p.locator("details summary", { hasText: "Why is this evidence shown?" }), "why");
+    S.glide(S.L[3] + 0.4, 2.2, 220);
+  }],
+  science: [async () => { await go("/compare?preset=fabric-three-sizes"); await p.evaluate(() => { const el = document.getElementById("compare-tool"); scrollTo(0, el.getBoundingClientRect().top + scrollY - 60); }); }, (S) => {
+    S.glide(1.2, 1.8, 240);
+    S.go(S.L[1] - 0.3, "/gaps");
+    S.at(S.L[1] - 0.29, () => p.evaluate(() => { const el = document.getElementById("frontier"); scrollTo(0, el.getBoundingClientRect().top + scrollY - 110); }));
+    S.glide(S.L[1] + 1.4, 2.6, 300);
     S.go(S.L[2] - 0.3, "/methodology");
     S.at(S.L[2] - 0.29, () => p.evaluate(() => {
       const el = [...document.querySelectorAll("p")].find((x) => x.textContent.includes("quoted findings are checked"));
       if (el) scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.45);
     }));
-    S.go(S.L[3] - 0.3, "/gaps");
-    S.glide(S.L[3] + 0.2, 2.0, 300);
+    S.go(S.L[3] - 0.3, "/sources");
+    S.at(S.L[3] - 0.29, () => p.evaluate(() => { const el = document.getElementById("downloads"); scrollTo(0, el.getBoundingClientRect().top + scrollY - 200); }));
+    S.point(S.L[3] + 1.2, 1.2, 760, 470);
   }],
   // the finale: an animated end card over the home page, staged on the closing lines
   close: [() => go("/"), (S) => {

@@ -7,17 +7,17 @@
     "On Earth, flames reach up"
    ],
    [
-    "Hot air rises... and pulls fresh air in behind it."
+    "Hot air rises... and drags fresh air in behind it."
    ],
    [
     "Now take gravity away.",
     "Now remove gravity"
    ],
    [
-    "Nothing rises. The flame turns round, and blue..."
+    "Nothing rises. The flame turns small, round, and blue..."
    ],
    [
-    "and it lives or dies on one thing: the air moving past it.",
+    "and it lives or dies on one thing: the air drifting past it.",
     "Airflow decides everything"
    ]
   ]
@@ -26,18 +26,18 @@
   "id": "problem",
   "lines": [
    [
-    "NASA has studied fire in space for decades.",
+    "NASA has been setting fires in space for decades. On purpose.",
     "Decades of NASA fire research"
    ],
    [
-    "But the answers are buried in test tables and long reports."
+    "But the answers are locked inside test tables and two-hundred-page reports."
    ],
    [
-    "Not exactly kid-friendly.",
-    "Not exactly kid-friendly"
+    "And the biggest question of all... how fire behaves on a Moon base... has never actually been tested.",
+    "The Moon question is still open"
    ],
    [
-    "So we asked: what if an eight-year-old could investigate those real experiments... like a detective?",
+    "So we asked: what if an eight-year-old could investigate it... like a detective?",
     "What if kids could investigate?"
    ]
   ]
@@ -50,7 +50,7 @@
     "MicroFire Atlas"
    ],
    [
-    "You start in Mission Freefall. Flip gravity off... and watch the flame change right in front of you.",
+    "It starts in Mission Freefall. Flip gravity off... and watch the flame change right in front of you.",
     "Flip gravity off"
    ],
    [
@@ -67,7 +67,7 @@
     "Then: the adventure"
    ],
    [
-    "A crew of guides walks you through it. And PIX, our little evidence robot, gives you a hint whenever you're stuck.",
+    "A crew of guides walks you through it. And PIX, our little evidence robot, has a hint whenever you're stuck.",
     "Meet PIX, your hint robot"
    ],
    [
@@ -79,15 +79,15 @@
   "id": "vision",
   "lines": [
    [
-    "This is a real NASA film.",
+    "This is real NASA footage.",
     "Real NASA footage"
    ],
    [
-    "Switch on AI vision, and the computer outlines the flame and measures it, in pixels.",
+    "Switch on AI vision, and the computer traces the flame and measures it, in pixels.",
     "AI vision measures the flame"
    ],
    [
-    "No made-up numbers. And we tell you it's an estimate.",
+    "No made-up numbers. And it tells you when a frame is too bright to trust.",
     "No made-up numbers"
    ]
   ]
@@ -103,7 +103,7 @@
     "Two of them are fakes."
    ],
    [
-    "Get it right... and a clue lights up. Your explorer rank goes up, too.",
+    "Get it right, and a clue lights up.",
     "Clues raise your rank"
    ]
   ]
@@ -140,19 +140,27 @@
     "Next stop: the Moon"
    ],
    [
-    "NASA has proposed thirty-four percent oxygen, at fifty-six and a half kilopascals, for future habitats.",
+    "A future habitat might use thirty-four percent oxygen, at about half of Earth's air pressure.",
     "34% O₂ at 56.5 kPa"
    ],
    [
-    "So which real test is the closest clue? Pick one..."
+    "Your job: sort four real clues onto the Evidence Ladder.",
+    "Climb the Evidence Ladder"
    ],
    [
-    "and you discover something big. None of our tests match.",
-    "No test matches"
+    "A small flame in ordinary air? Close... but different."
    ],
    [
-    "And a missing test doesn't mean safe. It means a question nobody has answered yet.",
-    "A gap is a question, not a promise"
+    "Tiny burning droplets? They explain how fire works. Not how plastic burns.",
+    "Droplets explain mechanisms"
+   ],
+   [
+    "And the top rung... stays empty. Nobody has run this test yet.",
+    "The top rung is empty"
+   ],
+   [
+    "A gap isn't a promise of safety. It's the next experiment.",
+    "A gap is the next experiment"
    ]
   ]
  },
@@ -160,7 +168,7 @@
   "id": "finale",
   "lines": [
    [
-    "You can ask PIX anything, and every answer links back to NASA's evidence.",
+    "You can ask PIX anything, and every answer points back to NASA's evidence.",
     "Every answer cites NASA"
    ],
    [
@@ -174,23 +182,65 @@
   ]
  },
  {
+  "id": "saffire",
+  "lines": [
+   [
+    "But the real evidence goes much bigger.",
+    "Bigger fires"
+   ],
+   [
+    "In NASA's Saffire experiments, an empty cargo ship left the space station... and NASA lit fires inside it.",
+    "Saffire: fires inside a spacecraft"
+   ],
+   [
+    "Twenty runs, and every single number is traced to its exact line in a NASA table.",
+    "20 runs, every number traced"
+   ],
+   [
+    "Saffire Six got closest to Moon-base air. Close... but not there.",
+    "Close to Moon air, not there"
+   ]
+  ]
+ },
+ {
+  "id": "ladder",
+  "lines": [
+   [
+    "For mentors and judges, every question climbs the same ladder.",
+    "One ladder for every question"
+   ],
+   [
+    "Direct. Analogous. Mechanistic. Or a gap. Different kinds of fire are never mixed into one table.",
+    "Regimes are never mixed"
+   ],
+   [
+    "And any card can answer: why am I here?",
+    "Why is this shown?"
+   ],
+   [
+    "Each condition, matched or missed... then the rung... then the NASA page it came from.",
+    "Every step, traced to a page"
+   ]
+  ]
+ },
+ {
   "id": "science",
   "lines": [
    [
-    "And for mentors and judges, the full science is right underneath.",
-    "Full science underneath"
+    "Compare two experiments, and it warns you they are not replicas.",
+    "It warns before you compare"
    ],
    [
-    "Fifty-six tests from NASA's BASS-II report, each linked to its page.",
-    "56 tests, page-cited"
+    "The Research Frontier spells out what we know, what we don't, and the test that would close the gap.",
+    "Know. Don't know. Next test."
    ],
    [
-    "Thirty-three NASA findings, each quote checked word for word against its source.",
-    "33 findings, checked word for word"
+    "Seventy-six test records. Fifty-four NASA findings, each quote checked word for word.",
+    "76 records · 54 findings, checked"
    ],
    [
-    "A mission planner, and an honest map of where the evidence runs out.",
-    "An honest evidence-gap map"
+    "And all of it is open. Download the data... and check our work.",
+    "Open data: check our work"
    ]
   ]
  },

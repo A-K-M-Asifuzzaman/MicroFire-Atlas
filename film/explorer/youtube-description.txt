@@ -12,21 +12,24 @@ Code: https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas
 
 Chapters
 0:00 Fire without gravity
-0:19 The problem
-0:36 Mission Freefall
-0:50 The adventure begins
-1:04 AI vision on a real NASA film
-1:17 Spot the real outline
-1:31 Predict, then check NASA's record
-1:53 The Moon, and a science gap
-2:18 Ask PIX, and your certificate
-2:32 The science underneath
-2:53 Follow the spark
+0:20 The open Moon question
+0:42 Mission Freefall
+0:55 The adventure begins
+1:09 AI vision on a real NASA film
+1:24 Spot the real outline
+1:36 Predict, then check NASA's record
+1:58 Climb the Evidence Ladder to the Moon
+2:31 Ask PIX, and your certificate
+2:45 Saffire: real fires inside a spacecraft
+3:07 The Evidence Ladder, and why each clue is shown
+3:30 Compare, Research Frontier and open data
+3:53 Follow the spark
 
 What's inside
-- 56 tests transcribed from NASA's BASS-II Summary Report, each linked to its PDF page
-- 33 NASA findings, each quote checked word for word against its source at build time
+- 76 test records: 56 BASS-II tests and 20 Saffire spacecraft-fire runs, each traced to its NASA table and PDF page
+- 54 NASA findings, each quote checked word for word against its source at build time
+- The Evidence Ladder: every question sorted into direct, analogous, mechanistic and gap evidence, with a "Why is this shown?" path on every card
 - Predict-first comparisons between real tests (for example B20 → B16 as the airflow is turned down)
-- An honest map of where the evidence runs out, including NASA's proposed 34% O2 at 56.5 kPa habitat air
+- A Research Frontier for NASA's proposed 34% O2 at 56.5 kPa habitat air, and open data downloads
 
 Characters, scenery and the opening explainer are illustrations. NASA footage, photographs and test records are evidence. Not affiliated with or endorsed by NASA.

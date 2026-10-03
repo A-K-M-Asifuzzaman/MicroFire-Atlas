@@ -5,7 +5,7 @@ Writes build/<scene>.wav and build/timed.json (scene durations and the start tim
     EDGE_TTS=/path/to/edge-tts python3 narrate.py
 The voice is AI-generated; the film shows an on-screen disclosure.
 """
-import json, os, subprocess
+import hashlib, json, os, subprocess
 VOICE = os.environ.get("VOICE", "en-US-AvaMultilingualNeural")
 RATE = os.environ.get("RATE", "+4%")
 EDGE = os.environ.get("EDGE_TTS", "edge-tts")
@@ -18,7 +18,8 @@ for sc in scenes:
     tail = END_TAIL if sc is scenes[-1] else TAIL
     t, parts, lines = LEAD, [], []
     for i, (text, *cap) in enumerate(sc["lines"]):
-        mp3 = f"build/{sc['id']}-{i}.mp3"
+        key = hashlib.sha1(f"{VOICE}|{RATE}|{text}".encode()).hexdigest()[:10]  # re-voice only lines whose text changed
+        mp3 = f"build/{sc['id']}-{i}-{key}.mp3"
         if not os.path.exists(mp3):
             subprocess.run([EDGE, "--voice", VOICE, f"--rate={RATE}", "--text", text, "--write-media", mp3], check=True, capture_output=True)
         d = dur(mp3)
