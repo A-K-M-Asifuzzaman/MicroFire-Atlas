@@ -9,6 +9,7 @@ import { OBSERVED_MIN } from "@/lib/gaps";
 import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, rank, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
 import { ladderRobustness, RANGES, rankRobustness, SAMPLES } from "@/lib/robustness";
 import { runEval, runFindingEval, type EvalQuestion } from "@/lib/eval";
+import { TRACEABILITY } from "@/lib/challenge";
 import { FoolTheChecker } from "@/components/method/FoolTheChecker";
 import { WeightPlayground } from "@/components/method/WeightPlayground";
 import { QuestBoard } from "@/components/quest/QuestBoard";
@@ -56,6 +57,7 @@ export default function MethodologyPage() {
       <nav aria-label="On this page" className="text-sm lg:sticky lg:top-6 lg:self-start">
         <ul className="space-y-2 text-muted">
           {[
+            ["challenge", "How MicroFire answers the challenge"],
             ["data", "Where the data comes from"],
             ["ladder", "The Evidence Ladder"],
             ["labels", "Observed, series, derived"],
@@ -97,6 +99,22 @@ export default function MethodologyPage() {
           </nav>
           <QuestBoard page="methodology" crew="mei" />
         </header>
+
+        <Section id="challenge" title="How MicroFire answers the challenge">
+          <p>
+            The challenge asks for an interactive, AI-powered dashboard that summarizes, ranks and interprets microgravity combustion
+            findings to deliver fire-safety insights for human space exploration. Each word maps to one place in the product.{" "}
+            <Link href="/challenge" className="link">See all of it answer one mission question</Link>.
+          </p>
+          <ul className="space-y-2">
+            {TRACEABILITY.map((t) => (
+              <li key={t.verb} className="grid gap-1 sm:grid-cols-[11rem_minmax(0,1fr)]">
+                <strong>✓ {t.verb}</strong>
+                <span className="text-muted">{t.what}. <Link href={t.href} className="link">{t.where}</Link></span>
+              </li>
+            ))}
+          </ul>
+        </Section>
 
         <Section id="data" title="Where the data comes from">
           <p>

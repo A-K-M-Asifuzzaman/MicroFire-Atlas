@@ -16,7 +16,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     id: "evidence", label: "Evidence", blurb: "Every NASA test, traced to its page",
     items: [
-      { href: "/atlas", label: "Atlas", title: "Test observatory", detail: "Every BASS-II test on one map. Open one to read what the crew recorded.", icon: "orbit" },
+      { href: "/atlas", label: "Atlas", title: "Test observatory", detail: "Every test record in three experiment families, with filters and a detective table.", icon: "orbit" },
       { href: "/saffire", label: "Saffire", title: "Fires inside a spacecraft", detail: "Twenty large fires NASA set on purpose inside empty cargo ships.", icon: "fire" },
       { href: "/compare", label: "Compare", title: "Comparison bench", detail: "What stayed the same, what changed, and what that lets us say.", icon: "compare" },
     ],
@@ -38,6 +38,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     id: "about", label: "About", blurb: "How MicroFire Atlas knows what it says",
     items: [
+      { href: "/challenge", label: "Challenge Mode", title: "Challenge Mode", detail: "One mission question, answered stage by stage: find, compare, summarize, rank, interpret, verify, and where the evidence stops.", icon: "map" },
       { href: "/tour", label: "90-second tour", title: "For judges and mentors", detail: "Seven stops that show the strongest evidence, fast.", icon: "orbit" },
       { href: "/methodology", label: "Method", title: "How it works", detail: "Every rule, score and tolerance, so you can check it.", icon: "map" },
       { href: "/sources", label: "Sources", title: "The station library", detail: "Every NASA document, with its NTRS record and file hash.", icon: "book" },

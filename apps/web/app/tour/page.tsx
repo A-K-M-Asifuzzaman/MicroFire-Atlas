@@ -63,6 +63,10 @@ export default function TourPage() {
         Seven stops, each one click from the exact view that proves the point. {evidenceRecords.length} test records,{" "}
         {findings.length} verified findings, and an honest map of where NASA&apos;s evidence stops.
       </p>
+      <p className="mt-6 rounded-2xl border border-[var(--rule-strong)] p-4 max-w-[64ch]">
+        <strong>Short on time?</strong> <Link href="/challenge" className="link">Challenge Mode</Link> answers one mission question end to end on a
+        single page: find, compare, summarize, rank, interpret, verify the AI, and show where NASA&apos;s evidence stops.
+      </p>
       <ol className="tour-steps mt-10">
         {STEPS.map((s, i) => (
           <li key={s.title} className="tour-step">

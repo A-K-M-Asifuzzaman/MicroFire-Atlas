@@ -33,6 +33,10 @@ export function HomePaths() {
           <span className={styles.cta}>Investigate a future lunar habitat</span>
         </Link>
       </div>
+      <p className={styles.judge}>
+        Judging or mentoring? <Link href="/challenge" className="link">Challenge Mode</Link> answers one mission question end to end in about 90
+        seconds: find, compare, summarize, rank, interpret, verify the AI, and see where NASA&apos;s evidence stops.
+      </p>
     </section>
   );
 }

@@ -16,3 +16,19 @@ export function verifiedExample(exps: Experiment[], finds: Finding[], saffire: S
   const checked = checkAnswer(EXAMPLE_ANSWER, evidence.items, EXAMPLE_QUESTION);
   return { evidence, checked, valid: checked.length > 0 && checked.every(c => c.verified) };
 }
+
+/**
+ * The claim-check list shown to judges, computed from the checker's actual issues on these claims
+ * (never hard-coded ticks). A check passes only if no checked claim raised its issue.
+ */
+export const CHECKS: { label: string; issue: RegExp }[] = [
+  { label: "Every citation exists in the retrieved evidence", issue: /^(Removed citations|No valid citation|Interpretation cites no)/ },
+  { label: "Every number appears in the cited NASA records", issue: /^Numbers not found/ },
+  { label: "Units match the cited evidence", issue: /^Unit mismatch/ },
+  { label: "No microgravity result told as Moon or Mars", issue: /^Describes microgravity/ },
+  { label: "No causal or safety claim the evidence does not make", issue: /^Causal or safety/ },
+  { label: "No past outcome turned into a prediction", issue: /^Turns a past/ },
+];
+export function checkSummary(checked: { issues: string[] }[]) {
+  return CHECKS.map((c) => ({ label: c.label, pass: !checked.some((x) => x.issues.some((i) => c.issue.test(i))) }));
+}
