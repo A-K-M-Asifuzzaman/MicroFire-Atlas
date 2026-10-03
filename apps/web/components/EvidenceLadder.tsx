@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
+import { ladderRobustness, RANGES, SAMPLES } from "@/lib/robustness";
 import { Cite } from "@/components/Cite";
 import { evidenceRecords, findings } from "@/lib/data";
 import { FAMILIES, KIND_LABEL, ladder, TOLERANCE, whyPath, type LadderItem, type MissionQuestion, type WhyStep } from "@/lib/ontology";
@@ -23,6 +24,8 @@ const OUTCOME: Record<OutcomeGroup, { label: string; tone: string }> = {
 export function EvidenceLadder({ q }: { q: MissionQuestion }) {
   const l = useMemo(() => ladder(evidenceRecords, findings, q), [q]);
   const [more, setMore] = useState(false);
+  const settled = useDeferredValue(q);
+  const rob = useMemo(() => ladderRobustness(evidenceRecords, findings, settled), [settled]);
   const top = l.direct.length ? 3 : l.analogous.length ? 2 : l.findings.mechanistic.length ? 1 : 0;
   const families = new Set([...l.direct, ...l.analogous].map((x) => x.record.family));
   const shown = more ? l.analogous.slice(0, 18) : l.analogous.slice(0, 6);
@@ -126,6 +129,16 @@ export function EvidenceLadder({ q }: { q: MissionQuestion }) {
           <p className={styles.ground}>
             Tolerances: oxygen ±{TOLERANCE.oxygen} points, pressure ±{TOLERANCE.pressureKpa} kPa, airflow ±{TOLERANCE.flowFraction * 100} %. A missing value never counts as a match.{" "}
             <Link href="/methodology#ladder" className="link">How the ladder works</Link>
+          </p>
+          <p className={styles.ground} data-robust>
+            <strong>Tolerance check.</strong> Across {SAMPLES.toLocaleString("en-US")} variations of these tolerances (oxygen ±{RANGES.oxygen[0]}–{RANGES.oxygen[1]} points,
+            pressure ±{RANGES.pressureKpa[0]}–{RANGES.pressureKpa[1]} kPa, airflow ±{RANGES.flowFraction[0] * 100}–{RANGES.flowFraction[1] * 100} %),{" "}
+            {rob.directEmpty === 1
+              ? "the direct rung stays empty every time."
+              : rob.directEmpty === 0
+                ? `the direct rung always holds evidence (${rob.directCount[0]}–${rob.directCount[1]} records).`
+                : `the direct rung is empty in ${Math.round(rob.directEmpty * 100)} % of them (${rob.directCount[0]}–${rob.directCount[1]} direct records).`}
+            {rob.closest && ` ${rob.closest.label} stays the closest record in ${Math.round(rob.closest.first * 100)} %.`}
           </p>
         </div>
       </div>

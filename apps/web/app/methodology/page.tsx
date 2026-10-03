@@ -6,7 +6,8 @@ import { evidenceRecords, experiments, findings, OUTCOME_STYLE, saffireRuns, sou
 import { FAMILIES, ladder, TOLERANCE } from "@/lib/ontology";
 import { FRONTIER } from "@/lib/frontier";
 import { OBSERVED_MIN } from "@/lib/gaps";
-import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
+import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, rank, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
+import { ladderRobustness, RANGES, rankRobustness, SAMPLES } from "@/lib/robustness";
 
 export const metadata: Metadata = { title: "Methodology" };
 
@@ -34,6 +35,10 @@ export default function MethodologyPage() {
   const sc = scalesFrom(experiments);
   const moon = FRONTIER.find((f) => f.id === "moon-base")!;
   const ml = ladder(evidenceRecords, findings, moon.q);
+  const demo = { material: "PMMA", oxygen: 16.5, flow: 5, gravity: "microgravity" as const, flowDirection: "opposed" };
+  const demoRank = rank(experiments, demo).slice(0, 5);
+  const demoRob = rankRobustness(experiments, demo);
+  const moonRob = ladderRobustness(evidenceRecords, findings, moon.q);
   return (
     <div className="explorer-page method-page mx-auto max-w-7xl px-4 sm:px-6 py-12 grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
       <nav aria-label="On this page" className="text-sm lg:sticky lg:top-6 lg:self-start">
@@ -44,6 +49,7 @@ export default function MethodologyPage() {
             ["labels", "Observed, series, derived"],
             ["outcomes", "Outcome codes"],
             ["relevance", "Mission Relevance"],
+            ["robustness", "Ranking robustness"],
             ["confidence", "Evidence Confidence"],
             ["gaps", "Evidence gaps"],
             ["ai", "Where AI is used"],
@@ -242,6 +248,65 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             Ties are broken by coverage, then by test ID, so the ranking is deterministic. A scenario outside the tested range
             of oxygen, airflow or pressure, or at a gravity level no test used, triggers the notice “Direct evidence under these
             exact conditions is limited”.
+          </p>
+        </Section>
+
+        <Section id="robustness" title="Ranking robustness">
+          <p>
+            The weights, the pressure scale and the ladder tolerances above are our choices. A fair question is whether the
+            answer depends on them. So every ranking is recomputed {SAMPLES.toLocaleString("en-US")} times with those choices
+            varied over a stated range, from a fixed random seed so the result is repeatable:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>each relevance weight multiplied by {RANGES.weight[0]} to {RANGES.weight[1]};</li>
+            <li>the pressure scale between {RANGES.pressureScaleKpa[0]} and {RANGES.pressureScaleKpa[1]} kPa, and the similar-material credit between {RANGES.classCredit[0]} and {RANGES.classCredit[1]};</li>
+            <li>
+              for the Evidence Ladder: oxygen tolerance ±{RANGES.oxygen[0]}–{RANGES.oxygen[1]} points, pressure ±{RANGES.pressureKpa[0]}–{RANGES.pressureKpa[1]} kPa, airflow ±
+              {RANGES.flowFraction[0] * 100}–{RANGES.flowFraction[1] * 100} %.
+            </li>
+          </ul>
+          <p>
+            For each test we report the median rank, the rank range (5th to 95th percentile) and how often it stays in the top
+            three. &ldquo;Stable rank&rdquo; means a range of 3 places or fewer, &ldquo;fairly stable&rdquo; up to 7. Robustness is shown beside
+            relevance and never merged into it: a stable rank means the test stays among the closest under many reasonable
+            assumptions, not that a fire is likely or unlikely.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[14px] num">
+              <caption className="text-left text-muted mb-2">
+                Worked example, computed live: PMMA, 16.5 % oxygen, 5 cm/s opposed flow, microgravity
+              </caption>
+              <thead>
+                <tr className="border-b border-rule text-left text-muted">
+                  <th className="font-normal py-1.5 pr-4">Test</th>
+                  <th className="font-normal py-1.5 pr-4">Relevance</th>
+                  <th className="font-normal py-1.5 pr-4">Median rank</th>
+                  <th className="font-normal py-1.5 pr-4">Rank range</th>
+                  <th className="font-normal py-1.5">Top 3</th>
+                </tr>
+              </thead>
+              <tbody>
+                {demoRank.map((r) => {
+                  const st = demoRob.get(r.experiment.id)!;
+                  return (
+                    <tr key={r.experiment.id} className="border-b border-rule">
+                      <th scope="row" className="text-left font-semibold py-1.5 pr-4">
+                        <Link href={`/experiments/${r.experiment.id}`} className="link">{r.experiment.test_id}</Link>
+                      </th>
+                      <td className="pr-4">{Math.round(r.score * 100)}</td>
+                      <td className="pr-4">{st.median}</td>
+                      <td className="pr-4">{st.lo}–{st.hi}</td>
+                      <td>{Math.round(st.top3 * 100)} %</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            For {moon.title}, the direct rung stays empty in {Math.round(moonRob.directEmpty * 100)} % of tolerance variations
+            {moonRob.closest && <>, and {moonRob.closest.label} stays the closest record in {Math.round(moonRob.closest.first * 100)} %</>}. Loosening
+            our tolerances cannot turn orbit tests into lunar-gravity evidence.
           </p>
         </Section>
 

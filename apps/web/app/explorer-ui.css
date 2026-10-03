@@ -213,3 +213,9 @@ html[data-motion="gentle"] .nav-panel { animation: none; }
 .tour-go { display: inline-flex; margin-top: 10px; min-height: 40px; align-items: center; padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: 14px; color: #1b160c; background: #ffd080; }
 .tour-go:hover, .tour-go:focus-visible { background: #ffe2ac; }
 @media (max-width: 520px) { .tour-step { grid-template-columns: 1fr; } .tour-step::after { display: none; } }
+
+/* Ranking robustness: stability of a rank under varied weights; never merged with the relevance score */
+.robust-chip { display: block; width: fit-content; margin-top: 4px; font-size: 11.5px; padding: 1px 8px; border-radius: 9px; border: 1px solid var(--rule-strong); color: var(--muted); }
+.robust-chip[data-level="High"] { border-color: #3ddc9766; color: #9df0c8; }
+.robust-chip[data-level="Moderate"] { border-color: #ffcf6b66; color: #ffe2ac; }
+.robust-chip[data-level="Low"] { border-style: dashed; }

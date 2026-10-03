@@ -132,30 +132,31 @@ export function fromSaffire(r: SaffireRun): EvidenceRecord {
 export type MissionQuestion = { material?: string; oxygen?: number; pressureKpa?: number; gravity?: Gravity; flow?: number };
 
 /** Project tolerances for "the same condition". Documented on /methodology. */
-export const TOLERANCE = { oxygen: 1.5, pressureKpa: 10, flowFraction: 0.5 } as const;
+export type Tolerance = { oxygen: number; pressureKpa: number; flowFraction: number };
+export const TOLERANCE: Tolerance = { oxygen: 1.5, pressureKpa: 10, flowFraction: 0.5 };
 
 const GRAVITY_NAME: Record<Gravity, string> = { microgravity: "microgravity", lunar: "lunar gravity", martian: "Martian gravity" };
 
 export type Difference = { dim: "material" | "gravity" | "oxygen" | "pressure" | "flow"; text: string; unknown?: boolean };
 
 /** How one record differs from the question, dimension by dimension. Unrecorded values count as differences. */
-export function differences(r: EvidenceRecord, q: MissionQuestion): Difference[] {
+export function differences(r: EvidenceRecord, q: MissionQuestion, tol: Tolerance = TOLERANCE): Difference[] {
   const out: Difference[] = [];
   if (q.material && r.material !== q.material) out.push({ dim: "material", text: `${r.material}, not ${q.material}` });
   if (q.gravity && q.gravity !== r.gravity) out.push({ dim: "gravity", text: `${GRAVITY_NAME[r.gravity]}, not ${GRAVITY_NAME[q.gravity]}` });
   if (q.oxygen != null) {
     if (r.oxygen == null) out.push({ dim: "oxygen", text: "oxygen not recorded", unknown: true });
-    else if (Math.abs(r.oxygen - q.oxygen) > TOLERANCE.oxygen) out.push({ dim: "oxygen", text: `${r.oxygen} % O₂, not ${q.oxygen} %` });
+    else if (Math.abs(r.oxygen - q.oxygen) > tol.oxygen) out.push({ dim: "oxygen", text: `${r.oxygen} % O₂, not ${q.oxygen} %` });
   }
   if (q.pressureKpa != null) {
     const p = r.pressureKpa;
     if (p == null) out.push({ dim: "pressure", text: "pressure not recorded", unknown: true });
-    else if (q.pressureKpa < p[0] - TOLERANCE.pressureKpa || q.pressureKpa > p[1] + TOLERANCE.pressureKpa)
+    else if (q.pressureKpa < p[0] - tol.pressureKpa || q.pressureKpa > p[1] + tol.pressureKpa)
       out.push({ dim: "pressure", text: `${p[0] === p[1] ? p[0] : `${p[0]}–${p[1]}`} kPa, not ${q.pressureKpa} kPa` });
   }
   if (q.flow != null) {
     if (r.flowCmS == null) out.push({ dim: "flow", text: "airflow not recorded", unknown: true });
-    else if (Math.abs(r.flowCmS - q.flow) > Math.max(1, q.flow * TOLERANCE.flowFraction)) out.push({ dim: "flow", text: `${r.flowCmS} cm/s airflow, not ${q.flow} cm/s` });
+    else if (Math.abs(r.flowCmS - q.flow) > Math.max(1, q.flow * tol.flowFraction)) out.push({ dim: "flow", text: `${r.flowCmS} cm/s airflow, not ${q.flow} cm/s` });
   }
   return out;
 }
@@ -179,8 +180,8 @@ const describe = (q: MissionQuestion) =>
     .join(", ");
 
 /** Sort all evidence for a mission question into the ladder. Deterministic and order-stable. */
-export function ladder(records: EvidenceRecord[], findings: Finding[], q: MissionQuestion): Ladder {
-  const scored = records.map((record) => ({ record, differs: differences(record, q) }));
+export function ladder(records: EvidenceRecord[], findings: Finding[], q: MissionQuestion, tol: Tolerance = TOLERANCE): Ladder {
+  const scored = records.map((record) => ({ record, differs: differences(record, q, tol) }));
   const direct = scored.filter((x) => x.differs.length === 0);
   // fewer differences first, then fewer unknowns, then the smallest actual distance on oxygen and pressure
   const distance = (r: EvidenceRecord) =>
@@ -220,8 +221,8 @@ export function ladder(records: EvidenceRecord[], findings: Finding[], q: Missio
   const covered = (dim: Difference["dim"]) => scored.some((x) => !x.differs.some((d) => d.dim === dim));
   if (q.gravity && q.gravity !== "microgravity" && !covered("gravity"))
     gaps.push({ dim: "gravity", text: `No test record in this atlas burned at ${GRAVITY_NAME[q.gravity]}. Short partial-gravity tests exist as reported findings, not test rows.` });
-  if (q.oxygen != null && !covered("oxygen")) gaps.push({ dim: "oxygen", text: `No test record is within ±${TOLERANCE.oxygen} points of ${q.oxygen} % oxygen.` });
-  if (q.pressureKpa != null && !covered("pressure")) gaps.push({ dim: "pressure", text: `No test record is within ±${TOLERANCE.pressureKpa} kPa of ${q.pressureKpa} kPa.` });
+  if (q.oxygen != null && !covered("oxygen")) gaps.push({ dim: "oxygen", text: `No test record is within ±${tol.oxygen} points of ${q.oxygen} % oxygen.` });
+  if (q.pressureKpa != null && !covered("pressure")) gaps.push({ dim: "pressure", text: `No test record is within ±${tol.pressureKpa} kPa of ${q.pressureKpa} kPa.` });
   if (q.material && !covered("material")) gaps.push({ dim: "material", text: `No test record used ${q.material}.` });
   if (q.flow != null && !covered("flow")) gaps.push({ dim: "flow", text: `No test record ran near ${q.flow} cm/s.` });
   if (!direct.length && gaps.length === 0) gaps.push({ dim: "combination", text: "Each condition was tested somewhere, but never all together in one test." });

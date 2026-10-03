@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { Quote } from "@/components/Cite";
 import { EvidenceLadder } from "@/components/EvidenceLadder";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
 import { Legend, OutcomeTag } from "@/components/Outcome";
 import { experiments, findings, GROUP_LABEL } from "@/lib/data";
 import { confidence, rank, type Gravity, type Scenario } from "@/lib/relevance";
+import { RANGES, rankRobustness, SAMPLES, type RankStability } from "@/lib/robustness";
 import type { OutcomeGroup } from "@/lib/types";
 
 type Form = {
@@ -88,6 +89,15 @@ function findingsForScenario(f: Form) {
   return findings.filter((x) => x.topics.some((t) => topics.has(t))).slice(0, 4);
 }
 
+/** One line: how stable this test's place is when MicroFire's own weights change. */
+function Robust({ r }: { r: RankStability }) {
+  return (
+    <span className="robust-chip" data-level={r.level} title="Ranking robustness: how stable this rank is when the weights change">
+      {r.level === "High" ? "Stable rank" : r.level === "Moderate" ? "Fairly stable" : "Rank shifts"} · rank {r.lo === r.hi ? r.lo : `${r.lo}–${r.hi}`} · top 3 in {Math.round(r.top3 * 100)} %
+    </span>
+  );
+}
+
 export function MissionLab() {
   const params = useSearchParams();
   const initial = CONTEXTS.find((c) => c.id === params.get("context")) ?? CONTEXTS[0];
@@ -96,6 +106,8 @@ export function MissionLab() {
   const [open, setOpen] = useState<string | null>(null);
 
   const ranked = useMemo(() => rank(experiments, toScenario(form)), [form]);
+  const settled = useDeferredValue(form); // robustness reruns the ranking 1,000 times, so it trails slider drags
+  const robust = useMemo(() => rankRobustness(experiments, toScenario(settled)), [settled]);
   const top = ranked.slice(0, 12);
   const strong = ranked.filter((r) => r.score >= STRONG);
   const tally = strong.reduce<Partial<Record<OutcomeGroup, number>>>((acc, r) => {
@@ -210,7 +222,10 @@ export function MissionLab() {
             Most similar BASS-II tests, with the arithmetic
           </h2>
           <p className="mt-1 text-sm text-faint">
-            Mission Relevance and Evidence Confidence are project heuristics, not NASA ratings.{" "}
+            Mission Relevance, Evidence Confidence and Ranking Robustness are three separate project heuristics, not NASA
+            ratings. Robustness reranks every test {SAMPLES.toLocaleString("en-US")} times with each weight varied ×
+            {RANGES.weight[0]}–{RANGES.weight[1]}, the pressure scale {RANGES.pressureScaleKpa[0]}–{RANGES.pressureScaleKpa[1]} kPa and
+            the similar-material credit {RANGES.classCredit[0]}–{RANGES.classCredit[1]}.{" "}
             <Link href="/methodology" className="link">
               See the formula
             </Link>
@@ -232,6 +247,7 @@ export function MissionLab() {
                       <span className="block sm:inline">
                         <OutcomeTag outcome={e.outcome} label={e.outcome_label} />
                       </span>
+                      {robust.get(e.id) && <Robust r={robust.get(e.id)!} />}
                     </span>
                     <span className="flex items-center gap-2 w-28 sm:w-auto" aria-label={`Relevance ${Math.round(r.score * 100)} of 100`}>
                       {/* SVG attributes, not inline styles, so the strict CSP needs no 'unsafe-inline' */}
@@ -273,6 +289,12 @@ export function MissionLab() {
                         <p className="text-muted">
                           Evidence confidence: <span className="text-ink">{conf.level}</span>, coverage {Math.round(r.coverage * 100)}%
                         </p>
+                        {robust.get(e.id) && (
+                          <p className="mt-1 text-muted">
+                            Ranking robustness: median rank {robust.get(e.id)!.median}, range {robust.get(e.id)!.lo}–{robust.get(e.id)!.hi} (5th–95th
+                            percentile), top 3 in {Math.round(robust.get(e.id)!.top3 * 100)} % of variations.
+                          </p>
+                        )}
                         <ul className="mt-2 space-y-1">
                           {conf.checks.map((c) => (
                             <li key={c.label} className={c.pass ? "" : "text-faint"}>
