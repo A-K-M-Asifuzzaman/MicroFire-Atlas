@@ -13,6 +13,7 @@ const tips = () => {
   try { // the state after a child presses "Got it" on each crew tip, so tips don't cover the content
     const k = "microfire-explorer-v2", s = JSON.parse(localStorage.getItem(k) || "{}");
     s.tips = ["home", "story", "atlas", "analyze", "compare", "mission", "gaps", "ask", "methodology", "sources", "experiment", "expedition"];
+    s.seen = [...s.tips, "saffire", "tour"]; // and PIX's "show you around" nudge already answered
     localStorage.setItem(k, JSON.stringify(s));
   } catch {}
 };
@@ -63,8 +64,12 @@ await session({ width: 1440, height: 900 }, 2, async ({ p, go, btn, click, to, s
   await click(btn("Less airflow")); await click(btn("It went out"));
   await p.waitForTimeout(2800); await to('[class*="comparison"]', 150); await shot("07-expedition-predict", 600);
   await next();
-  const cands = p.locator('[class*="candidates"] button');
-  await click(cands.nth(0)); await click(cands.nth(1)); await shot("08-expedition-moon", 300);
+  const card = (t) => click(p.locator('ul[aria-label="Clue cards to sort"] button', { hasText: t }));
+  const rung = (r) => click(p.locator(`button[aria-label^="Place the selected clue on the ${r} rung"]`));
+  await card("Small flame"); await rung("Analogous");
+  await card("Tiny burning"); await rung("Mechanistic");
+  await card("nobody has done"); await to('[class*="game"]', 120); await shot("08-expedition-moon", 900);
+  await rung("Gap"); await card("Big fire"); await rung("Analogous");
   await p.waitForTimeout(2800); await next();
   await click(btn("We need more evidence for these conditions.")); await p.waitForTimeout(2800); await next();
   await click(btn("What changed between B16, B20 and B19?")); await p.waitForTimeout(4000); await shot("09-expedition-ask-pix", 300);
@@ -82,6 +87,18 @@ await session({ width: 1440, height: 900 }, 2, async ({ p, go, btn, click, to, s
   await go("/ask"); await to("#ask-tool", 70);
   await p.getByRole("textbox").first().fill("What happened to thin PMMA at 16.5% oxygen as the airflow changed?");
   await click(btn(/Find the evidence|Ask/)); await p.waitForTimeout(8000); await shot("17-ask");
+
+  // ---- evidence intelligence ----
+  await go("/mission?context=moon-base"); await to('section[aria-labelledby="ladder-title"]', 70); await shot("19-evidence-ladder", 1600);
+  await click(p.locator("details summary", { hasText: "Why is this evidence shown?" }).first());
+  await p.evaluate(() => document.querySelector("details[open]")?.closest("li")?.scrollIntoView({ block: "center" })); await shot("20-why-path", 1400);
+  await go("/saffire"); await shot("21-saffire", 2500);
+  await go("/compare?preset=fabric-three-sizes"); await to("#compare-tool", 70); await shot("22-compare-families");
+  await go("/gaps"); await to("#frontier", 110); await shot("23-research-frontier");
+  await go("/analyze/saffire-vi-pmma"); await click(p.getByRole("button", { name: "Play", exact: true })); await p.waitForTimeout(3000);
+  await click(p.getByRole("tab", { name: "Motion" })); await p.waitForTimeout(2500); await click(p.getByRole("button", { name: "Pause", exact: true })); await shot("24-flame-vision-motion", 900);
+  await go("/tour"); await shot("25-tour");
+  await go("/sources"); await to("#downloads", 120); await shot("26-open-data");
 });
 
 // ---- phone ----
