@@ -273,6 +273,10 @@ const scenes = {
     S.at(S.L[2] + 2.3, fx.sticker("Empty space!", 1300, 200));
     S.glideEl(S.L[3] - 0.3, 1.8, "#step-status", 0.06);
     S.at(S.L[3] + 3.4, fx.sticker("No guessing!", 1200, 260));
+    S.glideEl(S.L[4] - 0.3, 2.0, "#ranked-findings", 0.06);
+    S.at(S.L[4] + 2.0, fx.starsAt("#ranked-findings li:first-child"));
+    S.at(S.L[4] + 2.4, fx.crew("mei", "Why each finding matters!", "pointing"));
+    S.at(S.dur - 0.8, fx.crew(""));
   }],
   trust: [async () => { await go("/methodology"); await p.evaluate(() => { document.documentElement.style.zoom = "1.25"; const el = [...document.querySelectorAll("p")].find((x) => x.textContent.includes("Drag a weight and watch")); if (el) scrollTo(0, el.getBoundingClientRect().top + scrollY - 140); }); }, (S) => {
     const knob = () => p.locator('input[type="range"]').first();

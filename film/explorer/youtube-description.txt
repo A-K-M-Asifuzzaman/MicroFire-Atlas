@@ -16,12 +16,12 @@ Chapters
 0:39 Build the real experiment
 0:49 Real NASA footage, then predict first
 1:14 Climb the Evidence Ladder to the Moon
-1:33 Quests, stars and the data detective
-1:55 Saffire: real fires inside a spacecraft
-2:09 The Mission Analyst workstation
-2:34 Tested 1,000 ways, graded on 100 questions
-2:54 FM²: fire on the Moon
-3:05 Follow the spark
+1:35 Quests, stars and the data detective
+1:57 Saffire: real fires inside a spacecraft
+2:11 The Mission Analyst workstation and ranked findings
+2:43 Tested 1,000 ways, graded on 100 questions
+3:03 FM²: fire on the Moon
+3:14 Follow the spark
 
 What's inside
 - 78 NASA test records: 56 BASS-II tests, 20 Saffire spacecraft-fire runs and 2 LUCI burns in simulated lunar gravity, each value traced to its NASA page

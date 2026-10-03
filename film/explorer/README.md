@@ -1,4 +1,4 @@
-# MicroFire Atlas explorer film (3:21, 4K, 60 fps)
+# MicroFire Atlas explorer film (3:30, 4K, 60 fps)
 
 A Vox-style walkthrough of the real site: a child plays Mission Freefall and the Follow the Spark adventure, climbs the Evidence Ladder to the Moon, then the film shows the evidence intelligence underneath for mentors and judges: Saffire's spacecraft fires, the ladder's "Why is this shown?" path, cross-experiment warnings, the Research Frontier and open data.
 
