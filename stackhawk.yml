@@ -32,6 +32,10 @@ hawk:
       - /mission?context=moon-base
       - /downloads/evidence-graph.json
       - /downloads/bass2-tests.csv
+      - /downloads/luci-runs.csv
+      - /learn
+      - /mission/brief?o2=34&kpa=56.5&flow=20&g=lunar&m=PMMA
+      - /mission?context=lunar
       - /analyze
       - /analyze/saffire-vi-pmma
 tags:
