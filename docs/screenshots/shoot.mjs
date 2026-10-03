@@ -13,7 +13,7 @@ const tips = () => {
   try { // the state after a child presses "Got it" on each crew tip, so tips don't cover the content
     const k = "microfire-explorer-v2", s = JSON.parse(localStorage.getItem(k) || "{}");
     s.tips = ["home", "story", "atlas", "analyze", "compare", "mission", "gaps", "ask", "methodology", "sources", "experiment", "expedition"];
-    s.seen = [...s.tips, "saffire", "tour"]; // and PIX's "show you around" nudge already answered
+    s.seen = [...s.tips, "saffire", "tour", "learn"]; // and PIX's "show you around" nudge already answered
     localStorage.setItem(k, JSON.stringify(s));
   } catch {}
 };
@@ -82,7 +82,8 @@ await session({ width: 1440, height: 900 }, 2, async ({ p, go, btn, click, to, s
   await go("/atlas"); await to("#atlas-tool", 70); await shot("12-atlas");
   await go("/experiments/bass2-B19"); await shot("13-test-record");
   await go("/compare?preset=pmma-flow-window"); await to("#compare-tool", 70); await shot("14-compare");
-  await go("/mission"); await to("#mission-tool", 70); await shot("15-mission-lab");
+  await go("/mission?context=moon-base"); await to("#step-conditions", 70); await shot("15-mission-lab", 1400);
+  await to("#step-status", 70); await shot("27-mission-status", 1200);
   await go("/gaps"); await to("#gaps-tool", 70); await shot("16-evidence-gaps");
   await go("/ask"); await to("#ask-tool", 70);
   await p.getByRole("textbox").first().fill("What happened to thin PMMA at 16.5% oxygen as the airflow changed?");
@@ -99,6 +100,14 @@ await session({ width: 1440, height: 900 }, 2, async ({ p, go, btn, click, to, s
   await click(p.getByRole("tab", { name: "Motion" })); await p.waitForTimeout(2500); await click(p.getByRole("button", { name: "Pause", exact: true })); await shot("24-flame-vision-motion", 900);
   await go("/tour"); await shot("25-tour");
   await go("/sources"); await to("#downloads", 120); await shot("26-open-data");
+
+  // ---- analyst and explorer upgrades ----
+  await go("/atlas"); await click(btn("Detective table")); await click(btn("Oxygen")); await click(p.getByRole("button", { name: "Answer with test B20" }));
+  await to('[data-guide="table"]', 70); await shot("28-atlas-detective", 1200);
+  await go("/atlas#luci-sibal"); await to('[role="tablist"]', 90); await shot("29-luci", 1200);
+  await go("/methodology"); await p.locator('input[type="range"]').first().fill("2"); await to("#robustness", 70); await p.getByText("Drag a weight and watch").scrollIntoViewIfNeeded(); await p.evaluate(() => scrollBy(0, -110)); await shot("30-weight-playground", 900);
+  await go("/gaps"); await to("#horizon", 70); await shot("31-research-horizon", 900);
+  await go("/"); await to("#paths", 40); await shot("32-two-ways-in", 1200);
 });
 
 // ---- phone ----

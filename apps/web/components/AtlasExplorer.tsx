@@ -74,11 +74,14 @@ export function AtlasExplorer({ data, saffire, luci }: { data: Experiment[]; saf
 
   // a link like /atlas#luci-sibal opens that family and record
   useEffect(() => {
-    const id = location.hash.slice(1);
-    if (!id) return;
-    const f: Family | null = luci.some((r) => r.id === id) ? "luci" : saffire.some((r) => r.id === id) ? "saffire" : null;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reading the URL hash once after hydration
-    if (f) { setFamily(f); setPicked(id); }
+    const open = () => {
+      const id = location.hash.slice(1);
+      const f: Family | null = luci.some((r) => r.id === id) ? "luci" : saffire.some((r) => r.id === id) ? "saffire" : null;
+      if (f) { setFamily(f); setPicked(id); }
+    };
+    open();
+    window.addEventListener("hashchange", open);
+    return () => window.removeEventListener("hashchange", open);
   }, [luci, saffire]);
   const switchFamily = (f: Family) => { if (f !== "bass2") discover("family"); setFamily(f); setMaterial("all"); setGroups(new Set(GROUPS)); setPicked(null); };
   const toggle = (g: OutcomeGroup) => setGroups((s) => { const n = new Set(s); if (n.has(g)) n.delete(g); else n.add(g); return n.size ? n : new Set(GROUPS); });
@@ -179,7 +182,7 @@ export function AtlasExplorer({ data, saffire, luci }: { data: Experiment[]; saf
 
       {items.length === 0 ? (
         <div className="empty-discovery"><span aria-hidden="true">◎</span><h3 className="display text-2xl">No tests in this corner.</h3><p>Include more outcomes or another material.</p><button className="story-action" onClick={reset}>Show all tests</button></div>
-      ) : view === "tiles" || family === "saffire" ? (
+      ) : view === "tiles" || family !== "bass2" ? (
         <div className={styles.split}>
           <ul className={styles.tiles} aria-label="Tests">
             {items.map((i) => (

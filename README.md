@@ -58,8 +58,8 @@ These are real screenshots of the live site at 2× resolution. Click any image f
 ### The science underneath
 
 <table>
-<tr><td width="50%" valign="top"><a href="docs/screenshots/12-atlas.jpg"><img src="docs/screenshots/12-atlas.jpg" alt="Atlas: every test on one map"></a><br><b>Atlas: every test on one map</b><br>All 56 BASS-II tests plotted by oxygen against airflow and coloured by recorded outcome. Filters cover material, flow direction and outcome.</td><td width="50%" valign="top"><a href="docs/screenshots/13-test-record.jpg"><img src="docs/screenshots/13-test-record.jpg" alt="A test record, fully sourced"></a><br><b>A test record, fully sourced</b><br>Every value is labelled as recorded, stated for the series, derived or not stated. Each record has the crew's verbatim note, the PDF page and an evidence-confidence checklist.</td></tr>
-<tr><td width="50%" valign="top"><a href="docs/screenshots/14-compare.jpg"><img src="docs/screenshots/14-compare.jpg" alt="Compare Lab"></a><br><b>Compare Lab</b><br>Presets hold conditions constant where NASA's tables allow. Here B16, B20 and B19 share the same film and oxygen and differ in airflow.</td><td width="50%" valign="top"><a href="docs/screenshots/15-mission-lab.jpg"><img src="docs/screenshots/15-mission-lab.jpg" alt="Mission Lab"></a><br><b>Mission Lab</b><br>Describe a cabin and real tests are ranked by Mission Relevance, with the arithmetic shown. Conditions outside the tested range are flagged.</td></tr>
+<tr><td width="50%" valign="top"><a href="docs/screenshots/12-atlas.jpg"><img src="docs/screenshots/12-atlas.jpg" alt="Evidence Atlas"></a><br><b>Evidence Atlas</b><br>Three experiment families (BASS-II, Saffire, LUCI) as tiles, plain-language filter chips with counts, a how-to-read strip on every map, and a preview with the crew's own words.</td><td width="50%" valign="top"><a href="docs/screenshots/13-test-record.jpg"><img src="docs/screenshots/13-test-record.jpg" alt="A test record, fully sourced"></a><br><b>A test record, fully sourced</b><br>Every value is labelled as recorded, stated for the series, derived or not stated. Each record has the crew's verbatim note, the PDF page and an evidence-confidence checklist.</td></tr>
+<tr><td width="50%" valign="top"><a href="docs/screenshots/14-compare.jpg"><img src="docs/screenshots/14-compare.jpg" alt="Compare Lab"></a><br><b>Compare Lab</b><br>Presets hold conditions constant where NASA's tables allow. Here B16, B20 and B19 share the same film and oxygen and differ in airflow.</td><td width="50%" valign="top"><a href="docs/screenshots/15-mission-lab.jpg"><img src="docs/screenshots/15-mission-lab.jpg" alt="Mission Analyst: the coverage instrument"></a><br><b>Mission Analyst: the coverage instrument</b><br>Every control sits on top of NASA's evidence: each tick is a real test record, the dashed window is the ladder tolerance. Exploration atmosphere A (34 %) sits in empty space.</td></tr>
 <tr><td width="50%" valign="top"><a href="docs/screenshots/16-evidence-gaps.jpg"><img src="docs/screenshots/16-evidence-gaps.jpg" alt="Evidence gaps"></a><br><b>Evidence gaps</b><br>Shows where tests exist and where this atlas has none. A blank region is an open research question.</td><td width="50%" valign="top"><a href="docs/screenshots/17-ask.jpg"><img src="docs/screenshots/17-ask.jpg" alt="Ask the evidence"></a><br><b>Ask the evidence</b><br>Retrieval picks NASA tests and verbatim quotes first, grouped by rung in the evidence notebook. Until an AI key is added, the page says AI synthesis is coming soon and shows the matched evidence.</td></tr>
 </table>
 
@@ -70,6 +70,14 @@ These are real screenshots of the live site at 2× resolution. Click any image f
 <tr><td width="50%" valign="top"><a href="docs/screenshots/21-saffire.jpg"><img src="docs/screenshots/21-saffire.jpg" alt="Saffire: real fires inside a spacecraft"></a><br><b>Saffire: real fires inside a spacecraft</b><br>20 runs from the Saffire I–VI experiments, every number traced to its NASA table line, with an atmosphere map against Moon-base air.</td><td width="50%" valign="top"><a href="docs/screenshots/22-compare-families.jpg"><img src="docs/screenshots/22-compare-families.jpg" alt="Compare across experiments"></a><br><b>Compare across experiments</b><br>Comparing a BASS strip with Saffire sheets shows a comparability warning. What was held constant, what changed and what NASA recorded stay separate.</td></tr>
 <tr><td width="50%" valign="top"><a href="docs/screenshots/23-research-frontier.jpg"><img src="docs/screenshots/23-research-frontier.jpg" alt="Research Frontier"></a><br><b>Research Frontier</b><br>For four mission questions: what we know, what we don't, why the gap exists and the matched-condition test that would reduce it.</td><td width="50%" valign="top"><a href="docs/screenshots/24-flame-vision-motion.jpg"><img src="docs/screenshots/24-flame-vision-motion.jpg" alt="Flame Vision: Motion"></a><br><b>Flame Vision: Motion</b><br>Flame-centre trail, leading edge and area change over time, in pixels. Overexposed frames are flagged instead of measured.</td></tr>
 <tr><td width="50%" valign="top"><a href="docs/screenshots/25-tour.jpg"><img src="docs/screenshots/25-tour.jpg" alt="A 90-second tour"></a><br><b>A 90-second tour</b><br>Seven stops for judges and mentors, each opening the exact view that proves a point.</td><td width="50%" valign="top"><a href="docs/screenshots/26-open-data.jpg"><img src="docs/screenshots/26-open-data.jpg" alt="Open data"></a><br><b>Open data</b><br>Download test records, Saffire runs, findings, the source manifest, frame metrics and the full evidence graph as CSV or JSON.</td></tr>
+</table>
+
+### Mission analyst and explorer upgrades
+
+<table>
+<tr><td width="50%" valign="top"><a href="docs/screenshots/27-mission-status.jpg"><img src="docs/screenshots/27-mission-status.jpg" alt="Evidence status and the brief"></a><br><b>Evidence status and the brief</b><br>A verdict about evidence, never risk, with a mismatch budget for the closest record and a printable Mission Evidence Brief.</td><td width="50%" valign="top"><a href="docs/screenshots/28-atlas-detective.jpg"><img src="docs/screenshots/28-atlas-detective.jpg" alt="Detective table"></a><br><b>Detective table</b><br>The same NASA rows as a game: sort, then tap the test that answers the case. Answers are computed from the data.</td></tr>
+<tr><td width="50%" valign="top"><a href="docs/screenshots/29-luci.jpg"><img src="docs/screenshots/29-luci.jpg" alt="LUCI: Moon-like gravity"></a><br><b>LUCI: Moon-like gravity</b><br>Two burns in lunar gravity simulated on a spinning rocket, every value stored with its NASA sentence and page, always shown with its caveats.</td><td width="50%" valign="top"><a href="docs/screenshots/30-weight-playground.jpg"><img src="docs/screenshots/30-weight-playground.jpg" alt="Methodology you can play"></a><br><b>Methodology you can play</b><br>Drag the ranking weights and watch the top tests move; then try to fool the AI claim checker. Both run the real code.</td></tr>
+<tr><td width="50%" valign="top"><a href="docs/screenshots/31-research-horizon.jpg"><img src="docs/screenshots/31-research-horizon.jpg" alt="Research horizon: FM²"></a><br><b>Research horizon: FM²</b><br>NASA's planned burn on the Moon: planned atmospheres, samples and measurements in NASA's words, and which open questions it is designed to reach. No results are invented.</td><td width="50%" valign="top"><a href="docs/screenshots/32-two-ways-in.jpg"><img src="docs/screenshots/32-two-ways-in.jpg" alt="Two ways in"></a><br><b>Two ways in</b><br>Explorer for students, Mission Analyst for planners and researchers: the same evidence for both.</td></tr>
 </table>
 
 Screenshots are reproducible: `cd docs/screenshots && node shoot.mjs` plays the site and captures each screen.
@@ -84,15 +92,25 @@ Screenshots are reproducible: `cd docs/screenshots && node shoot.mjs` plays the 
 | Effects of Confinement (20205004657) | Saffire vs BASS scale caveat |
 | Microgravity vs Martian gravity (20130010991), LUCI (20250010653) | Partial-gravity evidence |
 | Exploration atmosphere study (20220009546) | The 56.5 kPa / 34 % O₂ scenario |
+| Exploration Atmosphere Tests 3–4 (20240013238) and Test 6 (20260003261) | The alternate 66.2 kPa / 28.5 % O₂ atmosphere |
+| LUCI results (20250010653) | 2 lunar-gravity burn records (simulated), each value page-verified |
+| FM² posters (20240008623, 20240015307) | Planned lunar-surface burns; SIBAL burning only downward in lunar gravity |
+| Saffire I–III, IV–V, VI (20170008805, 20210017780, 20240002981) | 20 large-scale spacecraft fire runs |
+| SoFIE, FLEX, ACME (20200000361, 20150023456, 20210015913) | Exploration-atmosphere context; mechanistic droplet and gas-flame evidence |
 
 Run `python3 pipelines/fetch_sources.py` to download every PDF from NTRS. Hashes are in `data/sources.json`. The raw PDFs are not committed.
 
 ## What we implemented
 
+- **Mission Analyst workstation**: atmosphere profiles (ISS-like, exploration A 56.5 kPa / 34 %, alternate 66.2 kPa / 28.5 %), a coverage instrument that draws every NASA record under each control, an evidence-status verdict with a mismatch budget, and a printable Mission Evidence Brief.
+- **Ranking robustness**: every ranking is recomputed 1,000 times with the weights, scales and ladder tolerances varied; each test shows its median rank, rank range and top-3 share, beside (never merged with) its relevance.
+- **MicroFire-Eval**: 100 frozen questions (lookups, numbers, comparisons, synthesis, mission scenarios, unanswerable and misleading). Before the model: 98/100 pass, gold recall 97 %, 0 over-claims, 70/70 broken claims caught with 0 false alarms. One paid run with gpt-5-mini: citation precision 99.9 %, numeric fidelity 98.0 %, 0 microgravity results told as lunar, 25/25 gaps admitted. Results in `apps/web/eval/`.
+- **LUCI**: two lunar-gravity burn records (simulated on a spinning rocket), page-verified; the ladder can now show real lunar-gravity evidence, always with its caveats.
+- **Quests**: page quests across the site light stars in an explorer constellation; the Atlas has a detective table and Methodology has two playable explanations.
 - **Evidence Ladder**: a combustion evidence ontology sorts BASS-II, Saffire, LUCI, SoFIE, FLEX and ACME evidence into direct, analogous, mechanistic and gap rungs, without merging physical regimes. Every card explains why it is shown.
 - **Saffire**: 20 large-scale spacecraft fire runs, verified against the exact NASA table lines.
 - **Research Frontier** and **open data downloads**, including a typed evidence graph (JSON).
-- **Atlas**: all 56 BASS-II tests, filterable, plotted by oxygen and airflow, colored by outcome.
+- **Atlas**: 78 test records in three families (56 BASS-II, 20 Saffire, 2 LUCI), with plain-language filters, test tiles and a detective table.
 - **Test pages**: every value is labelled *recorded for this test*, *stated for the series*, *derived by us* or *not stated*, with a link to the PDF page.
 - **Compare Lab**: five presets that hold conditions constant where NASA's tables allow. Each separates observed facts, our interpretation, and data gaps.
 - **Mission Lab**: ranks tests against a cabin scenario (oxygen, airflow, pressure, gravity, material) with a transparent **Mission Relevance** score and a separate **Evidence Confidence** checklist. It flags scenarios outside the tested range.
@@ -128,7 +146,8 @@ Without a key, the page says AI synthesis is coming soon and shows the evidence 
 
 ## Limitations
 
-- 56 tests, three materials (PMMA, SIBAL fabric, Nomex), thin samples, all run in orbit near 1 atm.
+- 78 test records: 56 BASS-II tests (thin samples, near 1 atm, in orbit), 20 Saffire runs (large samples, some at 54–73 kPa, in orbit) and 2 LUCI burns (simulated lunar gravity, normal air). No record comes from the Moon's surface or from Martian gravity, and none reaches 34 % oxygen.
+- Flame Vision segmentation has not yet been validated against hand-annotated frames.
 - Many flows ended at fan settings with no recorded velocity.
 - Outcome codes are our reading of short crew notes.
 - Flame Vision measures in image pixels only, and the films are not tied to specific test rows.
