@@ -27,6 +27,8 @@ SOURCES = {
     "partial-g": ("20130010991", "Microgravity vs Martian gravity vs NASA-STD-6001 Test 1"),
     "luci": ("20250010653", "Lunar-gravity flammability from a rotating sounding rocket"),
     "exploration-atmosphere": ("20220009546", "Source for the 56.5 kPa, 34 % O2 exploration cabin atmosphere scenario"),
+    "ea-alt": ("20240013238", "Exploration Atmosphere Tests 3 and 4: the alternate 66.2 kPa, 28.5 % O2 cabin atmosphere"),
+    "ea-6": ("20260003261", "Exploration Atmosphere Test 6: 66.2 kPa, 28.5 % O2 named the proposed Exploration Atmosphere"),
     # second family and cross-regime evidence (each kept in its own physical regime; see apps/web/lib/ontology.ts)
     "saffire-1-3": ("20170008805", "Saffire I-III: large-scale flame spread aboard Cygnus"),
     "saffire-4-5": ("20210017780", "Saffire IV and V: large-scale fire safety implications"),

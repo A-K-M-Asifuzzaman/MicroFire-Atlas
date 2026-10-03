@@ -207,6 +207,40 @@
   "kind": "observed"
  },
  {
+  "id": "alt-exploration-atmosphere",
+  "source_id": "ea-alt",
+  "in": "abstract",
+  "quote": "Fourteen volunteers completed 11-day hypobaric chamber studies with an “alternate exploration atmosphere” of 66.2kPa, 28.5% O2.",
+  "topics": [
+   "oxygen",
+   "pressure"
+  ],
+  "kind": "context"
+ },
+ {
+  "id": "enriched-o2-flammability",
+  "source_id": "ea-alt",
+  "in": "abstract",
+  "quote": "In previous studies, we validated a prebreathe protocol from a 56.5 kPa 34% O2 cabin to a 29.6 kPa EVA pressure; however, the enriched oxygen cabin environment poses a flammability risk that requires significant changes to material design and selections.",
+  "topics": [
+   "oxygen",
+   "pressure",
+   "materials-screening"
+  ],
+  "kind": "context"
+ },
+ {
+  "id": "proposed-ea-66",
+  "source_id": "ea-6",
+  "in": "abstract",
+  "quote": "Subjects acclimated for 48 hrs at the proposed Exploration Atmosphere (66.2kPa, 28.5% O2) and then participated in five 6-hour simulated EVAs at 29.6 kPa, 95% O2.",
+  "topics": [
+   "oxygen",
+   "pressure"
+  ],
+  "kind": "context"
+ },
+ {
   "id": "saffire-vs-bass",
   "source_id": "confinement",
   "in": "pdf",

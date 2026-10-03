@@ -59,6 +59,8 @@ export const SOURCE_FAMILY: Record<string, FamilyId> = {
   flex: "flex",
   acme: "acme",
   "exploration-atmosphere": "context",
+  "ea-alt": "context",
+  "ea-6": "context",
 };
 
 export const KIND_LABEL: Record<Finding["kind"], string> = {

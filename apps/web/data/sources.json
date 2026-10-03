@@ -199,6 +199,51 @@
   "abstract": "INTRODUCTION:\nApollo missions used 100% O2 cabin atmospheres which effectively eliminated the risk of decompression sickness (DCS) during extravehicular activities (EVAs, ‘spacewalks’); however, this atmosphere presented a flammability risk that is no longer acceptable to NASA. Denitrogenation prebreathe protocols used to mitigate DCS risk for Space Shuttle and International Space Station EVAs are validated for the microgravity environment, but the significantly increased risk of DCS during equivalent ambulatory surface EVAs make these protocols inapplicable to planetary/Lunar missions. An “exploration atmosphere” of 56.5 kPa (8.2 psia), 34% O2, 66% N2 has been recommended by NASA for future Moon and Mars missions as a compromise that balances subsequent pre-EVA prebreathe duration, hypoxia, and flammability risk, assuming a 29.6 kPa (4.3 psi) spacesuit.  Prebreathe validation studies was initiated utilizing a three-story 6m diameter hypobaric chamber at NASA’s Johnson Space Center. Here, we report the results of a 3-day human-in-the-loop system checkout. \n\nMETHODS:\nSix volunteers acclimated to the 56.6kPa/34% O2 66% N2 environment for 48hrs prior to conducting a 20-minute prebreathe and a 6-hour simulated EVA at 34kPa/85% O2 / 15% N2.  The EVA simulation was designed to include tasks that are physically and ergonomically representative of future planetary EVAs.  Decompression stress was evaluated by serial doppler and echocardiographs, as well as by clinical features of DCS signs/symptoms. \n\nRESULTS AND DISCUSSION:\nPreliminary data analysis noted venous gas emboli (VGE) in 3 of 6 subjects, with peak Grade II VGE by Doppler and peak E-B score of 5 by cardiac ultrasonography. No volunteers were diagnosed with DCS during this initial test. No acute hypoxic symptoms were noted. Musculoskeletal and gastrointestinal complaints were noted, likely associated with the exercise load and the food system. Validation of exploration prebreathe protocols has since been initiated with an 11-day saturation test using the same facility and protocol."
  },
  {
+  "source_id": "ea-alt",
+  "ntrs_id": "20240013238",
+  "title": "Nasa Exploration Atmosphere Tests 3 & 4: Development and Validation of Planetary Extravehicular Activity Prebreathe Protocols for Alternate Atmospheres and Suit Pressures",
+  "authors": [
+   "A Garbino",
+   "M Y Hew-Yang",
+   "P Estep",
+   "B Siders",
+   "K Marshall-Goebel"
+  ],
+  "organization": "NASA",
+  "document_type": "ABSTRACT",
+  "published": null,
+  "url": "https://ntrs.nasa.gov/citations/20240013238",
+  "pdf_url": "https://ntrs.nasa.gov/api/citations/20240013238/downloads/ASMA_2025_EA_Garbino_v2.pdf",
+  "copyright": "PUBLIC_USE_PERMITTED",
+  "sha256": "727b246ec75eebcbac10b3da199bf299071c41a216f5b5324d791e1e08fbfa0e",
+  "retrieved": "2026-10-03",
+  "used_for": "Exploration Atmosphere Tests 3 and 4: the alternate 66.2 kPa, 28.5 % O2 cabin atmosphere",
+  "abstract": "INTRODUCTION:\nSpace suits operate at low pressures to optimize astronauts’ performance. The drop in pressure from the habitat environment to the suit carries a risk of decompression sickness (DCS), which is mitigated by a 95% O2 prebreathe protocol. Prebreathe protocols for the lunar surface have a significantly higher risk compared to International Space Station microgravity Extravehicular Activities (EVA). In previous studies, we validated a prebreathe protocol from a 56.5 kPa 34% O2 cabin to a 29.6 kPa EVA pressure; however, the enriched oxygen cabin environment poses a flammability risk that requires significant changes to material design and selections. Here, we report outcomes for prebreathe protocols from a sub-30% O2 cabin and associated changes necessary to control DCS risk critical to upcoming lunar missions.\n\nMETHODS:\nFourteen volunteers completed 11-day hypobaric chamber studies with an “alternate exploration atmosphere” of 66.2kPa, 28.5% O2. Subjects acclimated for 48 hrs and then participated in five 6-hour simulated EVAs at 29.6 or 35.6kPa, 95% O2. Prior to EVA, subjects underwent a 20, 90, or 150-minute prebreathe. The EVA simulation was designed to be representative of future planetary EVAs, proportionate to the subject’s VO2max. Decompression stress was monitored by real-time doppler and echocardiograph alternating every 15 min, as well as clinical monitoring for DCS signs/symptoms. Venous gas emboli (VGE) and DCS outcomes were verified against NASA-STD-3001 acceptance criteria.\n\nRESULTS AND DISCUSSION:\nVenous gas emboli (VGE) were identified during all EVAs. A neurological DCS case was identified in the 90-min/29.6kPa prebreathe, terminating further testing of this protocol. No DCS cases were identified in the 150 min/29.6kPa protocol. The 20 min/36.5kPa protocol was rejected due to a Type II DCS case. All DCS symptoms resolved with treatment, with no sequelae post initial treatment of DCS. These various test points highlighted to the significant benefit of elevated suit pressure to shorten prebreathe protocols, but also the difficulty in assessing and managing DCS during sustained EVA operations in remote planetary surfaces."
+ },
+ {
+  "source_id": "ea-6",
+  "ntrs_id": "20260003261",
+  "title": "NASA Exploration Atmosphere Test 6: Back to Back EVAs",
+  "authors": [
+   "Alejandro Garbino",
+   "Monica Hew-Yang",
+   "Patrick Estep",
+   "Brett Siders",
+   "Stijn Thoolen",
+   "Karina Marshall-Goebel"
+  ],
+  "organization": "NASA",
+  "document_type": "PRESENTATION",
+  "published": null,
+  "url": "https://ntrs.nasa.gov/citations/20260003261",
+  "pdf_url": "https://ntrs.nasa.gov/api/citations/20260003261/downloads/2026_05_18_AsMA_Garbino_EA_v2.pdf",
+  "copyright": "PUBLIC_USE_PERMITTED",
+  "sha256": "9f9a88f8a91efdd80c456236a0c7739541812b6d16ec3b4dd1e12f8bec698d45",
+  "retrieved": "2026-10-03",
+  "used_for": "Exploration Atmosphere Test 6: 66.2 kPa, 28.5 % O2 named the proposed Exploration Atmosphere",
+  "abstract": "INTRODUCTION:\nSpace suits operate at low pressures to optimize astronauts’ performance. The drop in pressure from the habitat environment to the suit carries a risk of decompression sickness (DCS), which is mitigated by a 95% O2 prebreathe protocol. Prebreathe protocols for the lunar surface have a significantly higher risk compared to International Space Station microgravity Extravehicular Activities (EVA). In previous studies, we validated a prebreathe protocols for single (independent) EVA exposures. However, Artemis mission plans include daily (‘back to back’) EVAs. NASA has minimal data exploring the DCS risk impacts of ~16hrs ‘surface intervals’, ie, breaks between EVAs. \n\nMETHODS:\nSixteen volunteers completed 7-day hypobaric chamber studies simulating daily EVAs. Subjects acclimated for 48 hrs at the proposed Exploration Atmosphere (66.2kPa, 28.5% O2) and then participated in five 6-hour simulated EVAs at 29.6 kPa, 95% O2. Prior to EVA, subjects underwent a 120 or 150-minute prebreathe. The EVA simulation was designed to be representative of future planetary EVAs, proportionate to the subject’s VO2max. Decompression stress was monitored by real-time doppler and echocardiograph alternating every 15 min, as well as clinical monitoring for DCS signs/symptoms. Venous gas emboli (VGE) and DCS outcomes were verified against NASA-STD-3001 acceptance criteria.\n\nRESULTS AND DISCUSSION:\nTwo neurological DCS cases occurred in the 120-min/29.6kPa prebreathe, terminating further testing of this protocol. One Type I DCS case was identified in the 150 min/29.6kPa protocol. All DCS symptoms resolved with treatment, with no residual sequelae post HBOT treatments of DCS. Venous gas emboli (VGE) were identified during all EVAs. Within the statistical power of these limited exposures, there was no apparent increase or decrease in VGE as a result of back-to-back EVAs (within +/- 1 VGE grade). This test highlighted the importance of characterizing DCS risk factors, and the difficulty in assessing and managing DCS during sustained EVA operations in remote planetary surfaces."
+ },
+ {
   "source_id": "saffire-1-3",
   "ntrs_id": "20170008805",
   "title": "Results of Large-Scale Spacecraft Flammability Tests",

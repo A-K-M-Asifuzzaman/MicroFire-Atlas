@@ -32,6 +32,19 @@ const MATERIAL_WORDS: [RegExp, string][] = [
   [/\b(pmma|acrylic|plexiglas)/i, "PMMA"],
   [/\b(sibal|fabric|cotton|cloth|textile)/i, "SIBAL fabric"],
   [/\bnomex/i, "Nomex"],
+  [/\bsilicone/i, "Silicone"],
+];
+/** Materials people ask about that no record in this atlas used: named, so the ladder reports the gap instead of matching other materials. */
+const UNTESTED_MATERIALS: [RegExp, string][] = [
+  [/\bkapton|polyimide/i, "Kapton"],
+  [/\bteflon|ptfe\b/i, "Teflon"],
+  [/\bwood(?:en)?\b/i, "wood"],
+  [/\bpaper|cardboard/i, "paper"],
+  [/\bpolyethylene|plastic bag/i, "polyethylene"],
+  [/\bnylon|velcro/i, "nylon"],
+  [/\b(?:polyurethane )?foam\b/i, "foam"],
+  [/\brubber\b/i, "rubber"],
+  [/\balumin(?:i)?um\b/i, "aluminium"],
 ];
 
 const TOPIC_WORDS: [RegExp, string][] = [
@@ -39,13 +52,14 @@ const TOPIC_WORDS: [RegExp, string][] = [
   [/\b(oxygen|o2|o₂)/i, "oxygen"],
   [/\b(quench|extinguish|went out|go out|starv)/i, "quench"],
   [/\b(blow ?off|blew|blown)/i, "blowoff"],
-  [/\b(moon|lunar|mars|martian|partial|gravity)/i, "partial-gravity"],
+  [/\b(moon|lunar|mars|martian|partial|gravity|luci|sounding rocket|fm2|fm²)/i, "partial-gravity"],
   [/\b(pressure|kpa|atmosphere|exploration)/i, "pressure"],
   [/\b(detect|smoke|sensor|alarm|unnoticed|undetected)/i, "detection"],
-  [/\b(confine|duct|baffle|scale|saffire|large)/i, "confinement"],
+  [/\b(confine|duct|baffle|scale|large)/i, "confinement"],
   [/\b(thick|thin|width|wide|narrow|geometry|size)/i, "geometry"],
   [/\b(large|big|scale|cargo|cygnus|saffire|spacecraft fire)/i, "scale"],
-  [/\b(smoke|toxic|carbon monoxide|co₂|co2|alarm|fumes)/i, "smoke"],
+  [/\b(smoke|toxic|carbon monoxide|co₂|co2|alarm|fumes|hazard|crew)/i, "smoke"],
+  [/\b(duct|apparatus|glovebox|igniter|camera|hardware|radiometer)/i, "apparatus"],
   [/\b(extinguish|suppress|put (it )?out|fight|diluent)/i, "suppression"],
   [/\b(nomex|silicone|rated|screening|6001|which materials?)/i, "materials-screening"],
   [/\b(droplet|liquid fuel|heptane|methanol|flex)\b/i, "droplet"],
@@ -67,6 +81,7 @@ export function parseQuestion(q: string): { scenario: Scenario; topics: Set<stri
   if (/\b(moon|lunar)\b/i.test(q)) scenario.gravity = "lunar";
   else if (/\b(mars|martian)\b/i.test(q)) scenario.gravity = "martian";
   for (const [re, m] of MATERIAL_WORDS) if (re.test(q)) scenario.material = m;
+  for (const [re, m] of UNTESTED_MATERIALS) if (re.test(q)) scenario.material = m;
   const topics = new Set(TOPIC_WORDS.filter(([re]) => re.test(q)).map(([, t]) => t));
   const testIds = [...q.matchAll(TEST_ID)].map((m) => m[1].toUpperCase());
   // "2-7" alone is too ambiguous; plain digit samples count only when the word Saffire is in the question
@@ -158,18 +173,22 @@ export function buildEvidence(q: string, exps: Experiment[], finds: Finding[], s
     : [
         ...saffire.filter((r) => saffireIds.includes(r.sample.toUpperCase())),
         ...saffire
-          .map((r) => ({ r, d: differences(fromSaffire(r), sq) }))
-          .sort((a, b) => a.d.length - b.d.length || a.r.id.localeCompare(b.r.id))
+          .map((r) => ({ r, d: differences(fromSaffire(r), sq), size: Math.max(r.width_cm ?? 0, r.length_cm ?? 0) }))
+          // with conditions: closest first; without (a question about scale or smoke): the largest fires first
+          .sort((a, b) => (hasScenario ? a.d.length - b.d.length : b.size - a.size) || a.r.id.localeCompare(b.r.id))
           .slice(0, 4)
           .map((x) => x.r),
       ];
   const saffireRuns = [...new Map(saffirePicked.map((r) => [r.id, r])).values()].slice(0, 6);
 
+  // a named Saffire flight points at its own report
+  const flightSource = /saffire[\s-]*(vi\b|6)/i.test(q) ? "saffire-6" : /saffire[\s-]*(iv|v\b|4|5)/i.test(q) ? "saffire-4-5" : /saffire[\s-]*(i{1,3}\b|[123]\b)/i.test(q) ? "saffire-1-3" : null;
   const scored = finds
     .map((f) => ({
       f,
       s:
         f.topics.filter((t) => topics.has(t)).length +
+        (f.source_id === flightSource ? 1 : 0) +
         (Array.isArray(f.experiments) && f.experiments.some((id) => tests.some((e) => e.id === id) || saffireRuns.some((r) => r.id === id)) ? 2 : 0),
     }))
     .filter((x) => x.s > 0)
@@ -187,10 +206,19 @@ export function buildEvidence(q: string, exps: Experiment[], finds: Finding[], s
     .map(({ item, d }) => ({ ...item, rung: (d === 0 && hasScenario ? "direct" : "analogous") as EvidenceRung }));
   // gaps come from the ladder over every family, so a Saffire run at 31 % oxygen counts as tested ground
   const records = [...exps.map(fromBass), ...saffire.map(fromSaffire)];
+  const gaps: { dim: string; text: string }[] = hasScenario ? ladder(records, [], sq).gaps : [];
+  // records the question names that this atlas does not hold are gaps too, never silently ignored
+  for (const id of testIds) if (!named.some((e) => e.test_id.toUpperCase() === id)) gaps.push({ dim: "record", text: `This atlas holds no test ${id}.` });
+  const flight = q.match(/\bsaffire[\s-]*(vii+|ix|x|[7-9]|1\d)\b/i);
+  if (flight) gaps.push({ dim: "record", text: `This atlas holds Saffire I to VI only; it has no Saffire ${flight[1].toUpperCase()} record.` });
+  // a question about a concept rather than conditions or named records reads NASA's own words first
+  const conceptual = scenario.oxygen == null && scenario.flow == null && scenario.pressureKpa == null && !named.length && !saffireIds.length;
+  const quoteItems = scored.map(findingItem);
   return {
-    items: [...placedTests, ...scored.map(findingItem)],
+    items: conceptual ? [...quoteItems, ...placedTests] : [...placedTests, ...quoteItems],
     scenario,
-    outside: hasScenario ? ladder(records, [], sq).gaps.map((g) => g.text) : [],
+    outside: gaps.map((g) => g.text),
+    gapDims: gaps.map((g) => g.dim),
   };
 }
 
@@ -257,7 +285,7 @@ const pairs = (t: string) => [...t.matchAll(UNIT_PAIR)].map((m) => [m[1], m[2]] 
 const OTHER_GRAVITY = /\b(moon|lunar|mars|martian|partial[- ]gravity)\b/i;
 const NEGATED = /\b(not|no|never|none|only|without|lack|cannot|can't|unknown|untested)\b/i;
 const CAUSAL = /\b(caus(?:e|es|ed|ing)|prov(?:e|es|ed|en|ing)|ensur(?:e|es|ed)|guarantee[sd]?|leads? to|led to|makes? (?:it |them )?safe|made (?:it |them )?safe|(?:is|are) safe|safe to use|demonstrates? safety)\b/i;
-const PREDICTION = /\b(will|would|is (?:likely|expected|predicted) to|are (?:likely|expected|predicted) to|predicts?)\b[^.]{0,40}?\b(burn|ignite|spread|go out|extinguish|quench|blow off|catch fire)/i;
+const PREDICTION = /\b(will|would|is (?:likely|expected|predicted) to|are (?:likely|expected|predicted) to|predicts?)\b[^.]{0,40}?\b(burn|ignite|spread|go out|extinguish|quench|blow off|catch fire|behave|react|happen|be (?:safe|dangerous|the same))/i;
 const UNCERTAIN = /\b(cannot|can't|unknown|not known|no evidence|whether|untested|would need|needs? to be tested)\b/i;
 
 /**
