@@ -55,6 +55,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link className="link" href="/sources">
                 Sources
               </Link>
+              <span className="mx-3 text-faint">/</span>
+              <Link className="link" href="/tour">
+                90-second tour
+              </Link>
             </p>
           </div>
         </footer>

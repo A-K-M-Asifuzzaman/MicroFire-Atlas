@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CheckedClaim, ClaimType, EvidenceItem, EvidenceRung } from "@/lib/ask-core";
 import { buildEvidence } from "@/lib/ask-core";
 import { experiments, findings, saffireRuns } from "@/lib/data";
@@ -46,7 +46,7 @@ const TYPE_LABEL: Record<ClaimType, { label: string; cls: string }> = {
   DATA_GAP: { label: "Data gap", cls: "border-quench/70 text-quench" },
 };
 
-export function AskPanel({ onAnswered }: { onAnswered?: () => void } = {}) {
+export function AskPanel({ onAnswered, initialQuestion }: { onAnswered?: () => void; initialQuestion?: string } = {}) {
   const { discover } = useExplorer();
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
@@ -74,6 +74,14 @@ export function AskPanel({ onAnswered }: { onAnswered?: () => void } = {}) {
       setBusy(false);
     }
   }
+
+  // A question in the URL (from the judges' tour) is asked once on arrival.
+  const asked = useRef(false);
+  useEffect(() => {
+    if (asked.current || !initialQuestion || initialQuestion.trim().length < 3) return;
+    asked.current = true;
+    void ask(initialQuestion.trim().slice(0, 400));
+  }); // runs after every render, guarded by the ref so the question is asked once
 
   const evidence = result?.evidence ?? [];
   const byKey = new Map(evidence.map((i) => [i.key, i]));

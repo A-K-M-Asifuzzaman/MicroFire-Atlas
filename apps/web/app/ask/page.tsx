@@ -5,7 +5,9 @@ import { RouteStage } from "@/components/world/RouteStage";
 
 export const metadata: Metadata = { title: "Ask" };
 
-export default function AskPage() {
+export default async function AskPage({ searchParams }: PageProps<"/ask">) {
+  const q = (await searchParams).q;
+  const initial = typeof q === "string" && q.length <= 400 ? q : undefined;
   return (
     <div className="explorer-page mx-auto max-w-7xl px-4 sm:px-6 py-12">
       <RouteStage kind="ask" />
@@ -17,7 +19,7 @@ export default function AskPage() {
         </Link>
       </p>
       <div id="ask-tool" className="scroll-mt-20 mt-8">
-        <AskPanel />
+        <AskPanel initialQuestion={initial} />
       </div>
     </div>
   );

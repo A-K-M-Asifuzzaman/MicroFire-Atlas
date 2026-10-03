@@ -37,6 +37,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     id: "about", label: "About", blurb: "How MicroFire Atlas knows what it says",
     items: [
+      { href: "/tour", label: "90-second tour", title: "For judges and mentors", detail: "Seven stops that show the strongest evidence, fast.", icon: "orbit" },
       { href: "/methodology", label: "Method", title: "How it works", detail: "Every rule, score and tolerance, so you can check it.", icon: "map" },
       { href: "/sources", label: "Sources", title: "The station library", detail: "Every NASA document, with its NTRS record and file hash.", icon: "book" },
     ],

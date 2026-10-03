@@ -203,3 +203,13 @@ html[data-motion="gentle"] .nav-panel { animation: none; }
 /* Home: closing thesis */
 .home-thesis { position: relative; margin-top: 64px; border-top: 1px solid var(--rule); background: radial-gradient(ellipse at 50% 0%, #ffcf6b14, transparent 60%), radial-gradient(ellipse at 50% 100%, #17305a66, transparent 60%); }
 .home-thesis h2 { text-wrap: balance; }
+/* Judges' 90-second tour */
+.tour-steps { display: grid; gap: 14px; counter-reset: none; }
+.tour-step { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 16px; padding: 18px 20px; border-radius: 18px; border: 1px solid var(--rule-strong); background: radial-gradient(ellipse at 0% 0%, #17305a55, transparent 60%), var(--panel); }
+.tour-step::after { content: ""; position: absolute; left: 45px; top: 70px; bottom: -16px; width: 2px; background: linear-gradient(#ffcf6b88, transparent); }
+.tour-step:last-child::after { display: none; }
+.tour-n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; font: 700 20px var(--font-fredoka, system-ui); color: #20160a; background: #ffcf6b; box-shadow: 0 0 22px -4px #ffb347; }
+.tour-meta { font-size: 12px; font-weight: 700; color: var(--signal); }
+.tour-go { display: inline-flex; margin-top: 10px; min-height: 40px; align-items: center; padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: 14px; color: #1b160c; background: #ffd080; }
+.tour-go:hover, .tour-go:focus-visible { background: #ffe2ac; }
+@media (max-width: 520px) { .tour-step { grid-template-columns: 1fr; } .tour-step::after { display: none; } }
