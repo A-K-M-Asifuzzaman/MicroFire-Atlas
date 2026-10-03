@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Cite } from "@/components/Cite";
 import { evidenceRecords, findings } from "@/lib/data";
-import { FAMILIES, KIND_LABEL, ladder, TOLERANCE, type LadderItem, type MissionQuestion } from "@/lib/ontology";
+import { FAMILIES, KIND_LABEL, ladder, TOLERANCE, whyPath, type LadderItem, type MissionQuestion, type WhyStep } from "@/lib/ontology";
 import type { OutcomeGroup } from "@/lib/types";
 import styles from "./EvidenceLadder.module.css";
 
@@ -68,7 +68,7 @@ export function EvidenceLadder({ q }: { q: MissionQuestion }) {
         <div className={styles.rungs}>
           <Rung title="Direct" note="Same material and gravity, every condition within tolerance" on={!!l.direct.length} missing={!l.direct.length}>
             {l.direct.length ? (
-              <Cards items={l.direct.slice(0, 6)} />
+              <Cards items={l.direct.slice(0, 6)} q={q} />
             ) : (
               <div className={styles.missingCard}>
                 <p className={styles.missingTitle}>The top rung is missing</p>
@@ -88,7 +88,7 @@ export function EvidenceLadder({ q }: { q: MissionQuestion }) {
           </Rung>
 
           <Rung title="Analogous" note="Solid-fuel tests that differ in named ways" on={!!l.analogous.length}>
-            <Cards items={shown} />
+            <Cards items={shown} q={q} />
             {l.analogous.length > 6 && (
               <button className={styles.more} onClick={() => setMore((m) => !m)} aria-expanded={more}>
                 {more ? "Show fewer" : `Show ${Math.min(l.analogous.length, 18) - 6} more`}
@@ -144,7 +144,9 @@ function Rung({ title, note, on, missing = false, children }: { title: string; n
   );
 }
 
-function Cards({ items }: { items: LadderItem[] }) {
+const MARK: Record<WhyStep["kind"], string> = { question: "?", match: "✓", differs: "✗", unknown: "–", rung: "▲" };
+
+function Cards({ items, q }: { items: LadderItem[]; q: MissionQuestion }) {
   return (
     <ul className={styles.cards}>
       {items.map(({ record: r, differs }) => (
@@ -164,6 +166,23 @@ function Cards({ items }: { items: LadderItem[] }) {
               </span>
             )}
           </Link>
+          <details className={styles.whyBox}>
+            <summary>Why is this evidence shown?</summary>
+            <ol className={styles.whyPath}>
+              {whyPath(r, q).map((st, i) => (
+                <li key={i} data-kind={st.kind}>
+                  <span className={styles.whyMark} aria-hidden="true">{MARK[st.kind]}</span>
+                  <span>{st.text}</span>
+                </li>
+              ))}
+              {r.cite && (
+                <li data-kind="source">
+                  <span className={styles.whyMark} aria-hidden="true">📄</span>
+                  <span>NASA source: <Cite sourceId={r.cite.source_id} page={r.cite.pdf_page} where={r.cite.table} /></span>
+                </li>
+              )}
+            </ol>
+          </details>
         </li>
       ))}
     </ul>

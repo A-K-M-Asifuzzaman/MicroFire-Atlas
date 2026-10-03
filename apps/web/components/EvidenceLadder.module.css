@@ -24,8 +24,8 @@
 .rungTitle span { font-size: 13px; font-weight: 400; color: var(--muted); }
 .rung[data-on="true"] .rungTitle { color: #ffe2ac; }
 
-.cards { display: grid; gap: 10px; margin-top: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
-.card { animation: cardIn .45s ease both; }
+.cards { display: grid; gap: 10px; margin-top: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); align-items: start; }
+.card { display: flex; flex-direction: column; gap: 6px; animation: cardIn .45s ease both; }
 .card:nth-child(2) { animation-delay: .05s; } .card:nth-child(3) { animation-delay: .1s; } .card:nth-child(4) { animation-delay: .15s; } .card:nth-child(5) { animation-delay: .2s; } .card:nth-child(6) { animation-delay: .25s; }
 .cardLink { display: grid; gap: 6px; height: 100%; padding: 12px 14px; border: 1px solid var(--rule-strong); border-radius: 12px; background: #0d1830; color: var(--ink); text-decoration: none; transition: transform .18s, border-color .18s; }
 .cardLink:hover, .cardLink:focus-visible { transform: translateY(-3px); border-color: var(--signal); }
@@ -33,7 +33,7 @@
 .facts { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
 .outcome { font-size: 13px; font-weight: 600; }
 .toneFlame { color: var(--flame); } .toneQuench { color: var(--quench); } .toneInert { color: #93a0bb; } .toneUnknown { color: var(--faint); }
-.differs { display: flex; flex-wrap: wrap; gap: 5px; }
+.differs { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 5px; }
 .differs em { font-style: normal; font-size: 11.5px; padding: 2px 8px; border-radius: 10px; background: #ff8a5a1f; color: #ffc3a8; border: 1px solid #ff8a5a44; }
 .differs em[data-unknown] { background: #8f9ab11a; color: var(--muted); border-color: #8f9ab144; }
 
@@ -72,5 +72,26 @@
   .meter li[data-on="true"] { border-color: #ffcf6b; color: #ffe2ac; background: #ffcf6b14; box-shadow: 0 0 14px -6px #ffb347; }
   .meter li[data-missing="true"] { border-style: dashed; border-color: #ffcf6b88; color: #ffcf6b; }
 }
+/* "Why is this evidence shown?": the decision path, step by step, drawn as a glowing trail */
+.whyBox summary { cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--signal); padding: 4px 6px; border-radius: 8px; list-style: none; display: inline-flex; align-items: center; gap: 6px; }
+.whyBox summary::-webkit-details-marker { display: none; }
+.whyBox summary::before { content: "›"; display: inline-block; font-size: 15px; transition: transform .2s; }
+.whyBox[open] summary::before { transform: rotate(90deg); }
+.whyBox summary:hover, .whyBox summary:focus-visible { background: #8eeaf514; }
+.whyPath { position: relative; display: grid; gap: 8px; margin: 6px 0 2px; padding: 10px 12px 10px 10px; border-radius: 12px; background: #081022; border: 1px solid var(--rule); font-size: 12.5px; line-height: 1.4; }
+.whyPath::before { content: ""; position: absolute; left: 21px; top: 20px; bottom: 20px; width: 2px; background: linear-gradient(#8eeaf5, #ffcf6b); transform-origin: top; animation: trail .9s ease-out both; }
+.whyPath li { position: relative; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px; align-items: start; animation: stepIn .35s ease both; }
+.whyPath li:nth-child(2) { animation-delay: .1s; } .whyPath li:nth-child(3) { animation-delay: .2s; } .whyPath li:nth-child(4) { animation-delay: .3s; }
+.whyPath li:nth-child(5) { animation-delay: .4s; } .whyPath li:nth-child(6) { animation-delay: .5s; } .whyPath li:nth-child(7) { animation-delay: .6s; } .whyPath li:nth-child(n+8) { animation-delay: .7s; }
+.whyMark { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; font-size: 12px; font-weight: 800; background: #16233f; color: var(--muted); border: 1px solid var(--rule-strong); }
+.whyPath li[data-kind="question"] .whyMark { background: #8eeaf5; color: #0b1222; border-color: #8eeaf5; }
+.whyPath li[data-kind="match"] .whyMark { background: #3ddc9733; color: #7ff0bf; border-color: #3ddc9788; }
+.whyPath li[data-kind="differs"] .whyMark { background: #ff8a5a2a; color: #ffc3a8; border-color: #ff8a5a88; }
+.whyPath li[data-kind="rung"] .whyMark { background: #ffcf6b; color: #20160a; border-color: #ffcf6b; box-shadow: 0 0 12px -2px #ffb347; }
+.whyPath li[data-kind="rung"] { font-weight: 700; color: #ffe2ac; }
+.whyPath li[data-kind="source"] .whyMark { background: #0d1830; }
+@keyframes trail { from { transform: scaleY(0); } }
+@keyframes stepIn { from { opacity: 0; transform: translateX(-6px); } }
+
 @media (prefers-reduced-motion: reduce) { .ladder * { animation: none !important; transition: none !important; } }
 :global(html[data-motion="gentle"]) .ladder * { animation: none !important; transition: none !important; }

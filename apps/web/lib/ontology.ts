@@ -83,6 +83,7 @@ export type EvidenceRecord = {
   flowDirection: string | null;
   outcome: OutcomeGroup;
   outcomeLabel: string;
+  cite: { source_id: string; pdf_page: number; table?: string } | null;
 };
 
 export function fromBass(e: Experiment): EvidenceRecord {
@@ -103,6 +104,7 @@ export function fromBass(e: Experiment): EvidenceRecord {
     flowDirection: e.flow_direction,
     outcome: e.outcome_group,
     outcomeLabel: e.outcome_label,
+    cite: { source_id: e.provenance.record.source_id, pdf_page: e.provenance.record.pdf_page, table: e.provenance.record.table },
   };
 }
 
@@ -123,6 +125,7 @@ export function fromSaffire(r: SaffireRun): EvidenceRecord {
     flowDirection: r.flow_direction,
     outcome: r.outcome_group,
     outcomeLabel: r.outcome_label,
+    cite: (() => { const c = r.provenance.conditions ?? r.provenance.results ?? r.provenance.outcome; return c ? { source_id: c.source_id, pdf_page: c.pdf_page, table: c.table } : null; })(),
   };
 }
 
@@ -230,4 +233,29 @@ export function ladder(records: EvidenceRecord[], findings: Finding[], q: Missio
       : `${describe(q)}. The closest record, ${best.record.label}, differs in ${best.differs.map((d) => d.dim).join(", ")}.`;
 
   return { direct, analogous, findings: { analogous: fAnalog, mechanistic: fMech }, gaps, nextExperiment };
+}
+
+/**
+ * "Why is this evidence shown?": the path from the question to one record, condition by condition.
+ * Each step is a match, a difference or an unrecorded value; the last step is the rung it lands on.
+ */
+export type WhyStep = { kind: "question" | "match" | "differs" | "unknown" | "rung"; text: string };
+export function whyPath(r: EvidenceRecord, q: MissionQuestion): WhyStep[] {
+  const steps: WhyStep[] = [{ kind: "question", text: `Your question: ${describe(q) || "any conditions"}` }];
+  const d = differences(r, q);
+  const has = (dim: Difference["dim"]) => d.find((x) => x.dim === dim);
+  const fam = FAMILIES[r.family];
+  steps.push({ kind: "match", text: `Solid fuel, the same physical regime (${fam.name}: ${fam.fuel})` });
+  const check = (dim: Difference["dim"], asked: unknown, ok: string) => {
+    if (asked == null) return;
+    const x = has(dim);
+    steps.push(x ? { kind: x.unknown ? "unknown" : "differs", text: x.text } : { kind: "match", text: ok });
+  };
+  check("material", q.material, `Same material: ${r.material}`);
+  check("gravity", q.gravity, `Same gravity: ${r.gravity}`);
+  check("oxygen", q.oxygen, `Oxygen within ±${TOLERANCE.oxygen} points (${r.oxygen} %)`);
+  check("pressure", q.pressureKpa, `Pressure within ±${TOLERANCE.pressureKpa} kPa (${r.pressureKpa?.[0]} kPa)`);
+  check("flow", q.flow, `Airflow within ±${TOLERANCE.flowFraction * 100} % (${r.flowCmS} cm/s)`);
+  steps.push({ kind: "rung", text: d.length === 0 ? "Direct evidence: every condition you set is matched" : `Analogous evidence: differs in ${d.map((x) => x.dim).join(", ")}` });
+  return steps;
 }
