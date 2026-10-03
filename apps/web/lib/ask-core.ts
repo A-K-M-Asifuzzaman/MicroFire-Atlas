@@ -3,9 +3,9 @@
  * anything but the evidence package built here, and every claim it returns is checked
  * against that package before it reaches the page.
  */
-import type { Experiment, Finding, SaffireRun } from "./types";
+import type { Experiment, Finding, LuciRun, SaffireRun } from "./types";
 import { rank, type Scenario } from "./relevance.ts";
-import { differences, FAMILIES, fromBass, fromSaffire, KIND_LABEL, ladder, SOURCE_FAMILY, type FamilyId, type MissionQuestion } from "./ontology.ts";
+import { differences, FAMILIES, fromBass, fromLuci, fromSaffire, KIND_LABEL, ladder, SOURCE_FAMILY, type FamilyId, type MissionQuestion } from "./ontology.ts";
 
 export type EvidenceRung = "direct" | "analogous" | "mechanistic" | "context";
 export type EvidenceItem = {
@@ -137,6 +137,24 @@ function saffireItem(r: SaffireRun): EvidenceItem {
   return { key: `S:${r.id}`, kind: "test", title: `Saffire ${r.flight.replace("Saffire-", "")} sample ${r.sample}`, text: parts.filter(Boolean).join("; "), href: `/saffire#${r.id}`, family: "saffire", gravity: "microgravity" };
 }
 
+function luciItem(r: LuciRun): EvidenceItem {
+  const o = r.provenance.outcome;
+  const parts = [
+    `LUCI burn, ${r.sample}`,
+    `material ${r.material_verbatim}, ${r.size_verbatim}`,
+    `burning ${r.direction}`,
+    "lunar gravity simulated on a spinning New Shepard rocket (centrifugal acceleration, Coriolis force present), burn of about 2.5 minutes",
+    "in air at normal pressure",
+    `chamber oxygen fell from ${r.o2_start_pct} % to ${r.o2_end_pct} % during the burn`,
+    r.spread_base_mm_s != null ? `flame base spread rate ${r.spread_base_mm_s} mm/s` : "",
+    r.spread_tip_mm_s != null ? `flame tip spread rate ${r.spread_tip_mm_s} mm/s` : "",
+    `outcome: ${r.outcome_label}`,
+    o ? `NASA: "${o.quote}"` : "",
+    o ? `source: luci, PDF page ${o.pdf_page}` : "",
+  ];
+  return { key: `L:${r.id}`, kind: "test", title: `LUCI ${r.sample} (simulated lunar gravity)`, text: parts.filter(Boolean).join("; "), href: `/atlas#${r.id}`, family: "luci", gravity: "partial" };
+}
+
 function findingItem(f: Finding): EvidenceItem {
   const family = SOURCE_FAMILY[f.source_id] ?? "context";
   const phase = FAMILIES[family].phase;
@@ -157,7 +175,7 @@ function findingItem(f: Finding): EvidenceItem {
 const toQuestion = (s: Scenario): MissionQuestion => ({ material: s.material, oxygen: s.oxygen, pressureKpa: s.pressureKpa, gravity: s.gravity, flow: s.flow });
 
 /** Deterministic evidence package for a question. Saffire runs join when the question reaches their regime. */
-export function buildEvidence(q: string, exps: Experiment[], finds: Finding[], saffire: SaffireRun[] = []) {
+export function buildEvidence(q: string, exps: Experiment[], finds: Finding[], saffire: SaffireRun[] = [], luci: LuciRun[] = []) {
   const { scenario, topics, testIds, saffireIds } = parseQuestion(q);
   const named = exps.filter((e) => testIds.includes(e.test_id.toUpperCase()));
   const hasScenario = Object.keys(scenario).length > 0;
@@ -197,18 +215,28 @@ export function buildEvidence(q: string, exps: Experiment[], finds: Finding[], s
     .map((x) => x.f);
 
   // every test is placed on the ladder for this question; the closest evidence comes first
+  // LUCI: the only lunar-gravity test rows; they join any question about the Moon or reduced gravity
+  const wantsLuci = scenario.gravity === "lunar" || topics.has("partial-gravity");
   const placedTests = [
     ...tests.map((e) => ({ item: testItem(e), d: hasScenario ? differences(fromBass(e), sq).length : 1 })),
     ...saffireRuns.map((r) => ({ item: saffireItem(r), d: hasScenario ? differences(fromSaffire(r), sq).length : 1 })),
+    ...(wantsLuci ? luci : []).map((r) => ({ item: luciItem(r), d: hasScenario ? differences(fromLuci(r), sq).length : 1 })),
   ]
     .map((x, i) => ({ ...x, i }))
     .sort((a, b) => (hasScenario ? a.d - b.d : 0) || a.i - b.i)
     .map(({ item, d }) => ({ ...item, rung: (d === 0 && hasScenario ? "direct" : "analogous") as EvidenceRung }));
   // gaps come from the ladder over every family, so a Saffire run at 31 % oxygen counts as tested ground
-  const records = [...exps.map(fromBass), ...saffire.map(fromSaffire)];
+  const records = [...exps.map(fromBass), ...saffire.map(fromSaffire), ...luci.map(fromLuci)];
   const gaps: { dim: string; text: string }[] = hasScenario ? ladder(records, [], sq).gaps : [];
   // records the question names that this atlas does not hold are gaps too, never silently ignored
   for (const id of testIds) if (!named.some((e) => e.test_id.toUpperCase() === id)) gaps.push({ dim: "record", text: `This atlas holds no test ${id}.` });
+  if (/\bfm\s*[2²]\b/i.test(q)) gaps.push({ dim: "record", text: "FM² has not flown yet: no FM² results exist. Its planned conditions are listed on the Research Frontier page." });
+  // a question asking for danger, safety or a probability: the atlas reports evidence, never a forecast
+  if (/\b(probability|chance of|how likely|how long until|dangerous|is it safe|safe to|will .{0,40}\b(be safe|be dangerous|catch fire))\b/i.test(q))
+    gaps.push({ dim: "prediction", text: "MicroFire Atlas reports NASA evidence; it does not predict danger, safety or probability." });
+  // a premise that contradicts a named record: B19 did not burn on the Moon
+  if (scenario.gravity && scenario.gravity !== "microgravity")
+    for (const e of named) gaps.push({ dim: "premise", text: `Test ${e.test_id} ran in microgravity aboard the ISS, not at ${scenario.gravity} gravity.` });
   const flight = q.match(/\bsaffire[\s-]*(vii+|ix|x|[7-9]|1\d)\b/i);
   if (flight) gaps.push({ dim: "record", text: `This atlas holds Saffire I to VI only; it has no Saffire ${flight[1].toUpperCase()} record.` });
   // a question about a concept rather than conditions or named records reads NASA's own words first

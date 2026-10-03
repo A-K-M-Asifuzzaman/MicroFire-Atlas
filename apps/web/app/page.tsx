@@ -106,8 +106,8 @@ export default function Home() {
           <p className="text-signal text-sm">Where the evidence stops</p>
           <h2 id="thesis" className="display text-4xl sm:text-5xl mt-3">Good science does not hide what it doesn&apos;t know.</h2>
           <p className="mt-5 text-lg text-muted max-w-[62ch] mx-auto">
-            Every test row in this atlas ran in microgravity. No test reached the 34 % oxygen NASA proposes for Moon and Mars habitats, and long
-            burns at lunar gravity are only beginning. MicroFire Atlas shows that gap instead of guessing across it. <Cite sourceId="luci" />
+            Only two test rows in this atlas burned in lunar gravity, both simulated on a spinning rocket. No test reached the 34 % oxygen of
+            NASA&apos;s exploration atmosphere A, and burns on the Moon itself have not happened yet. MicroFire Atlas shows that gap instead of guessing across it. <Cite sourceId="luci" />
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/mission?context=moon-base" className="story-cta">Explore the evidence</Link>

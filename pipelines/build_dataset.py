@@ -257,17 +257,19 @@ def build_findings(sources, experiment_ids):
 
 def main():
     from saffire import build_saffire
+    from luci import build_luci
 
     records = build()
     sources = json.loads((ROOT / "data" / "sources.json").read_text())
     saffire = build_saffire(sources)
-    findings = build_findings(sources, {r["id"] for r in records} | {r["id"] for r in saffire})
+    luci = build_luci(sources)
+    findings = build_findings(sources, {r["id"] for r in records} | {r["id"] for r in saffire} | {r["id"] for r in luci})
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(records, indent=1, ensure_ascii=False) + "\n")
     WEB.mkdir(parents=True, exist_ok=True)
-    for name, data in (("experiments", records), ("saffire", saffire), ("sources", sources), ("findings", findings)):
+    for name, data in (("experiments", records), ("saffire", saffire), ("luci", luci), ("sources", sources), ("findings", findings)):
         (WEB / f"{name}.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
-    print(f"{len(records)} BASS records, {len(saffire)} Saffire runs, {len(findings)} verified findings -> {WEB.relative_to(ROOT)}")
+    print(f"{len(records)} BASS records, {len(saffire)} Saffire runs, {len(luci)} LUCI runs, {len(findings)} verified findings -> {WEB.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

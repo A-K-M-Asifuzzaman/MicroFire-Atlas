@@ -66,7 +66,7 @@ export default function GapsPage() {
         <h2 className="display text-2xl">Gaps across the whole atlas</h2>
         <dl className="mt-6 grid gap-px bg-rule border border-rule md:grid-cols-2 lg:grid-cols-4">
           {[
-            ["Gravity", `All ${evidenceRecords.length} test records ran in microgravity. Lunar and Martian results exist only as reported findings, not test rows.`],
+            ["Gravity", `${evidenceRecords.filter((r) => r.gravity === "microgravity").length} of ${evidenceRecords.length} test records ran in microgravity. ${evidenceRecords.filter((r) => r.gravity === "lunar").length} ran in simulated lunar gravity (LUCI, normal air). None ran at Martian gravity.`],
             ["Pressure", `BASS-II ran near 1 atm. Saffire IV to VI went down to ${Math.min(...saffireRuns.filter((r) => r.pressure_kpa != null).map((r) => r.pressure_kpa!))} kPa. NASA's proposed exploration atmosphere is 56.5 kPa with 34 % oxygen.`],
             ["Materials", `${[...new Set(evidenceRecords.map((r) => r.material))].join(", ")}. Real cabins hold many more.`],
             ["Scale", `From a ${Math.min(...evidenceRecords.filter((r) => r.sizeCm).map((r) => r.sizeCm!))} cm strip to a ${Math.max(...evidenceRecords.filter((r) => r.sizeCm).map((r) => r.sizeCm!))} cm sheet. NASA reports that larger Saffire burns spread more slowly than small-duct tests of the same fabric.`],
@@ -87,7 +87,7 @@ export default function GapsPage() {
           ))}
         </div>
         <p className="mt-8 text-sm text-muted">
-          Lunar and Martian results exist in NASA&apos;s reports as findings; they are not test-level rows here.{" "}
+          The two LUCI burns are the only lunar-gravity test rows here; Martian-gravity results exist only as reported findings.{" "}
           <Cite sourceId="partial-g" />, <Cite sourceId="luci" />
         </p>
       </section>

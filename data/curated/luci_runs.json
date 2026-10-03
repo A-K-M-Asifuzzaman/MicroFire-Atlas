@@ -1,0 +1,44 @@
+{
+ "_about": "LUCI: two burns in simulated lunar gravity on a spinning Blue Origin New Shepard rocket (Feb 2025). Every value cites the exact text on its PDF page of NTRS 20250010653; pipelines/luci.py fails the build if a text is not on its page or does not contain its value.",
+ "common": {
+  "gravity": {"value": "Lunar gravity", "page": 12, "text": "Blue Origin New Shepard sounding rocket yields Lunar gravity by using centrifugal acceleration."},
+  "pressure": {"value": "normal pressure", "page": 12, "text": "Two samples are burned simultaneously in air at normal pressure"},
+  "duration": {"value": "over two and a half minutes", "page": 12, "text": "the burn lasts for over two and a half minutes"},
+  "coriolis": {"value": "Coriolis force", "page": 17, "text": "the Coriolis force pulls the flame away from the axis of the fuel"}
+ },
+ "runs": [
+  {
+   "id": "luci-sibal",
+   "sample": "SIBAL",
+   "material": "SIBAL fabric",
+   "fields": {
+    "material_verbatim": {"value": "cotton-fiberglass blend", "page": 16, "text": "SIBAL fabric (cotton-fiberglass blend) burning downward in Lunar-g"},
+    "size": {"value": "5 cm wide x 30 cm", "page": 4, "text": "Fabric 5 cm wide x 30 cm"},
+    "direction": {"value": "downward", "page": 16, "text": "burning downward in Lunar-g"},
+    "o2_start_pct": {"value": 20, "page": 42, "text": "decreases from ~20% to ~18%"},
+    "o2_end_pct": {"value": 18, "page": 42, "text": "decreases from ~20% to ~18%"},
+    "spread_base_mm_s": {"value": 0.92, "page": 19, "text": "Flame base spread rate = .92 mm/s."},
+    "spread_tip_mm_s": {"value": 1.1, "page": 19, "text": "Flame tip spread rate = 1.1 mm/s"},
+    "outcome": {"value": "The flame spread for over a minute", "page": 16, "text": "The flame spread for over a minute."}
+   },
+   "outcome_group": "sustained",
+   "outcome_label": "Spread steadily for over a minute"
+  },
+  {
+   "id": "luci-pmma",
+   "sample": "PMMA rod",
+   "material": "PMMA",
+   "fields": {
+    "material_verbatim": {"value": "4-mm diameter rod of acrylic plastic", "page": 12, "text": "a 4-mm diameter rod of acrylic plastic (polymethyl methacrylate)"},
+    "size": {"value": "4-mm diameter rod", "page": 12, "text": "a 4-mm diameter rod of acrylic plastic"},
+    "direction": {"value": "upward", "page": 16, "text": "PMMA rod burning upward in air in Lunar-g"},
+    "o2_start_pct": {"value": 20, "page": 22, "text": "O2% decreases from 20% to 14.3%."},
+    "o2_end_pct": {"value": 14.3, "page": 22, "text": "O2% decreases from 20% to 14.3%."},
+    "spread_tip_mm_s": {"value": 1.5, "page": 21, "text": "Flame spread rate = 1.5 mm/s."},
+    "outcome": {"value": "Total base spread of ~6cm until extinction", "page": 20, "text": "Total base spread of ~6cm until extinction."}
+   },
+   "outcome_group": "extinguished",
+   "outcome_label": "Spread about 6 cm, then went out"
+  }
+ ]
+}

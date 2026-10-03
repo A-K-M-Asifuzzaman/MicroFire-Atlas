@@ -48,8 +48,8 @@ export function frontier(fq: FrontierQuestion, records: EvidenceRecord[], findin
     if (g.dim === "gravity")
       why.push(
         q.gravity === "martian"
-          ? { text: "Long burns at Martian gravity are hard to make: NASA's Martian-gravity flammability tests used a drop tower, which gives only seconds of reduced gravity. Every test row in this atlas ran in orbit.", finding: "low-g-burns-lower-o2" }
-          : { text: "Long burns at partial gravity are hard to make: drop towers give seconds. NASA describes its spinning-rocket LUCI tests as the first combustion tests longer than 25 seconds in simulated lunar gravity. Every test row in this atlas ran in orbit.", finding: "luci-first-lunar" },
+          ? { text: "Long burns at Martian gravity are hard to make: NASA's Martian-gravity flammability tests used a drop tower, which gives only seconds of reduced gravity. No test row in this atlas ran at Martian gravity.", finding: "low-g-burns-lower-o2" }
+          : { text: "Long burns at partial gravity are hard to make: drop towers give seconds. NASA describes its spinning-rocket LUCI tests as the first combustion tests longer than 25 seconds in simulated lunar gravity; this atlas holds its two burns, both in normal air.", finding: "luci-first-lunar" },
       );
     else if (g.dim === "oxygen") {
       const top = [...records].filter((r) => r.oxygen != null).sort((a, b) => b.oxygen! - a.oxygen!)[0];

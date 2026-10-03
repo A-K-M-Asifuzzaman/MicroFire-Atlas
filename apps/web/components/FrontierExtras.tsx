@@ -39,12 +39,12 @@ export function ResearchHorizon() {
         <div><h4>Planned samples</h4><Q f={F("fm2-samples")} /></div>
         <div><h4>What it will measure</h4><Q f={F("fm2-measurements")} /></div>
       </div>
-      <h4 className={styles.closeTitle}>Which frontier questions it could answer directly</h4>
+      <h4 className={styles.closeTitle}>Which frontier questions it is designed to reach</h4>
       <ul className={styles.closes}>
         {rows.map(({ fq, closes, why }) => (
           <li key={fq.id} data-closes={closes}>
             <span aria-hidden="true">{closes ? "◆" : "◇"}</span>
-            <span><strong>{fq.title}</strong> {closes ? "Could gain its first direct evidence" : "Stays open"}: {why}.</span>
+            <span><strong>{fq.title}</strong> {closes ? "Could gain the first evidence from the Moon's surface" : "Not covered by FM²"}: {why}.</span>
             <Link href={`/mission?context=${fq.context}`} className="link text-sm" data-quest="frontier-link">Evidence Ladder</Link>
           </li>
         ))}

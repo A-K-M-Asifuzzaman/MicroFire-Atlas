@@ -11,7 +11,7 @@
  * eval-live.ts, which needs an API key.
  */
 import { buildEvidence, checkAnswer, type ClaimType, type EvidenceItem } from "./ask-core.ts";
-import type { Experiment, Finding, SaffireRun } from "./types";
+import type { Experiment, Finding, LuciRun, SaffireRun } from "./types";
 
 export type EvalQuestion = {
   id: string;
@@ -24,6 +24,8 @@ export type EvalQuestion = {
 export type Signal = "direct" | "gap" | "empty" | "partial";
 
 export function signalOf(ev: ReturnType<typeof buildEvidence>): Signal {
+  // a missing named record, a forecast request or a false premise outranks any matching evidence
+  if (ev.gapDims.some((d) => d === "record" || d === "prediction" || d === "premise")) return "gap";
   if (ev.items.some((i) => i.rung === "direct")) return "direct";
   if (ev.outside.length) return "gap";
   if (!ev.items.length) return "empty";
@@ -32,8 +34,8 @@ export function signalOf(ev: ReturnType<typeof buildEvidence>): Signal {
 
 export type QuestionResult = { id: string; category: string; q: string; pass: boolean; why: string[]; recall5: number | null; recallAll: number | null; signal: Signal };
 
-export function scoreQuestion(x: EvalQuestion, exps: Experiment[], finds: Finding[], saffire: SaffireRun[]): QuestionResult {
-  const ev = buildEvidence(x.q, exps, finds, saffire);
+export function scoreQuestion(x: EvalQuestion, exps: Experiment[], finds: Finding[], saffire: SaffireRun[], luci: LuciRun[] = []): QuestionResult {
+  const ev = buildEvidence(x.q, exps, finds, saffire, luci);
   const keys = ev.items.map((i) => i.key);
   const top5 = keys.slice(0, 5);
   const why: string[] = [];
@@ -98,8 +100,8 @@ export type EvalReport = {
   failures: QuestionResult[];
 };
 
-export function runEval(qs: EvalQuestion[], exps: Experiment[], finds: Finding[], saffire: SaffireRun[]): EvalReport {
-  const rs = qs.map((x) => scoreQuestion(x, exps, finds, saffire));
+export function runEval(qs: EvalQuestion[], exps: Experiment[], finds: Finding[], saffire: SaffireRun[], luci: LuciRun[] = []): EvalReport {
+  const rs = qs.map((x) => scoreQuestion(x, exps, finds, saffire, luci));
   const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
   const byCategory: EvalReport["byCategory"] = {};
   for (const r of rs) {

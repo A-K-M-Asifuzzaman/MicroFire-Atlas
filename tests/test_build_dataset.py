@@ -128,3 +128,35 @@ class Saffire(unittest.TestCase):
         self._tampered("saffire-vi-2", "o2_pct", "34.0")           # column table
         self._tampered("saffire-v-2", "cond_col", "1")             # wrong column
         self._tampered("saffire-2-7", "quote", "The Nomex burned.")  # quote not in source
+
+
+class Luci(unittest.TestCase):
+    """LUCI values must sit inside the exact NASA text on their cited page; one wrong value must fail the build."""
+
+    @classmethod
+    def setUpClass(cls):
+        import luci
+        cls.mod = luci
+        cls.sources = json.loads((ROOT / "data" / "sources.json").read_text())
+
+    def test_runs(self):
+        runs = {r["id"]: r for r in self.mod.build_luci(self.sources)}
+        self.assertEqual(runs["luci-sibal"]["spread_base_mm_s"], 0.92)  # PDF p. 19
+        self.assertEqual((runs["luci-pmma"]["o2_start_pct"], runs["luci-pmma"]["o2_end_pct"]), (20, 14.3))  # PDF p. 22
+        self.assertEqual(runs["luci-pmma"]["gravity"], "lunar")
+
+    def test_a_wrong_value_fails(self):
+        import shutil, tempfile
+        for run, field, value in (("luci-sibal", "spread_base_mm_s", 0.95), ("luci-pmma", "o2_end_pct", 12)):
+            tmp = pathlib.Path(tempfile.mkdtemp())
+            data = json.loads((ROOT / "data" / "curated" / "luci_runs.json").read_text())
+            next(r for r in data["runs"] if r["id"] == run)["fields"][field]["value"] = value
+            (tmp / "luci_runs.json").write_text(json.dumps(data))
+            old = self.mod.CURATED
+            self.mod.CURATED = tmp
+            try:
+                with self.assertRaises(ValueError):
+                    self.mod.build_luci(self.sources)
+            finally:
+                self.mod.CURATED = old
+                shutil.rmtree(tmp)

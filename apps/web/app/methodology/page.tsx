@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Cite } from "@/components/Cite";
 import { OutcomeMark } from "@/components/Outcome";
-import { evidenceRecords, experiments, findings, OUTCOME_STYLE, saffireRuns, sources } from "@/lib/data";
+import { evidenceRecords, experiments, findings, luciRuns, OUTCOME_STYLE, saffireRuns, sources } from "@/lib/data";
 import { FAMILIES, ladder, TOLERANCE } from "@/lib/ontology";
 import { FRONTIER } from "@/lib/frontier";
 import { OBSERVED_MIN } from "@/lib/gaps";
@@ -46,7 +46,7 @@ export default function MethodologyPage() {
   const demoRank = rank(experiments, demo).slice(0, 5);
   const demoRob = rankRobustness(experiments, demo);
   const moonRob = ladderRobustness(evidenceRecords, findings, moon.q);
-  const ev = runEval(evalSet.questions as EvalQuestion[], experiments, findings, saffireRuns);
+  const ev = runEval(evalSet.questions as EvalQuestion[], experiments, findings, saffireRuns, luciRuns);
   const pc = (x: number | null) => (x == null ? "—" : `${Math.round(x * 1000) / 10} %`);
   const lm = live.metrics, lr = live.rescored;
   return (
@@ -107,6 +107,11 @@ export default function MethodologyPage() {
             Unit tests check the conversions and spot-check values against the PDF.
           </p>
           <p>
+            The {luciRuns.length} LUCI burns, in lunar gravity simulated on a spinning New Shepard rocket, come from NASA&apos;s 2025 LUCI
+            results. Every value is stored with the exact sentence and PDF page it came from, and the build fails if that sentence is not on
+            that page or does not contain the value.
+          </p>
+          <p>
             The {saffireRuns.length} Saffire runs come from the test-matrix and results tables of three NASA Saffire reports.
             A build check finds every transcribed number on the exact table line it came from, and fails if one is missing. Each run links to its table and PDF page on the{" "}
             <Link href="/saffire" className="link">Saffire page</Link>.
@@ -134,7 +139,7 @@ export default function MethodologyPage() {
             <dt className="font-semibold">Direct</dt>
             <dd className="text-muted">Same fuel phase, same material and same gravity, with every condition you set within tolerance.</dd>
             <dt className="font-semibold">Analogous</dt>
-            <dd className="text-muted">Solid-fuel tests that differ in named ways, listed on each card. Fewer differences rank higher.</dd>
+            <dd className="text-muted">Solid-fuel tests that differ in named ways, listed on each card. Fewer differences rank higher; a gravity difference counts double, because it is a different physical regime.</dd>
             <dt className="font-semibold">Mechanistic</dt>
             <dd className="text-muted">Other regimes, such as droplets or gas flames. They explain how flames behave, never how a material burns.</dd>
             <dt className="font-semibold">Gap</dt>
@@ -166,7 +171,7 @@ export default function MethodologyPage() {
                       <td className="py-2 pr-4 text-muted">{f.fuel}</td>
                       <td className="py-2 pr-4 text-muted">{f.platform}</td>
                       <td className="py-2">
-                        {f.phase !== "solid" ? "Mechanistic" : f.id === "bass2" || f.id === "saffire" ? "Direct (test rows)" : "Analogous (findings)"}
+                        {f.phase !== "solid" ? "Mechanistic" : f.id === "fm2" ? "None yet (planned)" : f.id === "bass2" || f.id === "saffire" || f.id === "luci" ? "Direct (test rows)" : "Analogous (findings)"}
                       </td>
                     </tr>
                   ))}
@@ -362,10 +367,11 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
 
         <Section id="evaluate" title="Evaluate MicroFire AI">
           <p>
-            MicroFire-Eval v1 is {ev.questions} questions written before the measurements and then frozen: direct lookups, numbers,
+            MicroFire-Eval v{evalSet.version} is {ev.questions} questions written before the measurements and then frozen: direct lookups, numbers,
             comparisons, synthesis across reports, mission scenarios, deliberately unanswerable questions and misleading premises.
             Gold answers are NASA record IDs taken from the data, not from the system. When the system failed a question, the
-            system was changed, never the question.{" "}
+            system was changed, never the question. When the evidence itself changed (two LUCI lunar-gravity burns were added), the
+            expectations that depend on it were updated, and each change is listed with its reason in the changelog.{" "}
             <a href="https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas/blob/main/apps/web/eval/microfire-eval-v1.json" className="link">Read every question</a>
           </p>
           <h3 className="text-lg font-semibold">Play: fool the checker</h3>
@@ -431,8 +437,8 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
           <ul className="list-disc pl-5 space-y-2">
             <li>
               {experiments.length} BASS tests (thin samples in a small duct, near 1 atm) and {saffireRuns.length} Saffire runs
-              (large samples, some at reduced pressure, 54 to 73 kPa). All {evidenceRecords.length} test rows ran in microgravity: no test row
-              comes from Moon or Mars gravity.
+              (large samples, some at reduced pressure, 54 to 73 kPa) ran in microgravity. Two LUCI burns ran in lunar gravity simulated on a
+              spinning rocket, in normal air. No test row comes from the Moon itself or from Martian gravity.
             </li>
             <li>Many flows ended at fan settings with no recorded velocity, so exact quench and blowoff speeds are often unknown.</li>
             <li>Outcome codes are our reading of short crew and ground notes.</li>

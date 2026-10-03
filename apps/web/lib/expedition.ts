@@ -57,7 +57,7 @@ const o2 = (e: Experiment) => e.oxygen_vol_pct ?? NaN;
 
 export function hop(from: Experiment, change: Change, all: Experiment[]): Hop {
   if (change === "moon")
-    return { kind: "gap", reason: "Every test in this atlas ran in orbit. No row here was burned in Moon gravity." };
+    return { kind: "gap", reason: "Every BASS-II test ran in orbit. None was burned in Moon gravity." };
   const pool = all.filter((e) => e.id !== from.id && isFilm(e) && COMPARABLE(e));
   const changeFlow = change === "more-flow" || change === "less-flow";
   const up = change === "more-flow" || change === "more-oxygen";

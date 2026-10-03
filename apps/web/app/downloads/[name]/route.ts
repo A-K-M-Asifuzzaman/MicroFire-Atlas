@@ -1,4 +1,4 @@
-import { evidenceRecords, experiments, findings, saffireRuns, sources } from "@/lib/data";
+import { evidenceRecords, experiments, findings, luciRuns, saffireRuns, sources } from "@/lib/data";
 import { buildGraph } from "@/lib/graph";
 import { FRONTIER } from "@/lib/frontier";
 import type { Analysis } from "@/lib/media";
@@ -27,6 +27,13 @@ const FILES: Record<string, { type: string; body: () => string }> = {
     body: () => csv(
       ["id", "flight", "sample", "material", "material_verbatim", "thickness_mm", "width_cm", "length_cm", "flow_cm_s", "flow_direction", "pressure_kpa", "o2_pct", "o2_basis", "burn_duration_s", "spread_rate_mm_s", "heat_release_avg_w", "heat_release_peak_w", "outcome", "outcome_label", "conditions_source", "conditions_pdf_page", "results_source", "results_pdf_page"],
       saffireRuns.map((r) => [r.id, r.flight, r.sample, r.material, r.material_verbatim, r.thickness_mm, r.width_cm, r.length_cm, r.flow_cm_s, r.flow_direction, r.pressure_kpa, r.o2_pct, r.o2_basis, r.burn_duration_s, r.spread_rate_mm_s, r.heat_release_avg_w, r.heat_release_peak_w, r.outcome_group, r.outcome_label, r.provenance.conditions?.source_id, r.provenance.conditions?.pdf_page, r.provenance.results?.source_id, r.provenance.results?.pdf_page]),
+    ),
+  },
+  "luci-runs.csv": {
+    type: "text/csv",
+    body: () => csv(
+      ["id", "sample", "material", "material_verbatim", "size_verbatim", "direction", "gravity", "gravity_note", "o2_start_pct", "o2_end_pct", "pressure_kpa", "pressure_basis", "spread_base_mm_s", "spread_tip_mm_s", "outcome", "outcome_label", "source_id", "outcome_pdf_page", "outcome_quote"],
+      luciRuns.map((r) => [r.id, r.sample, r.material, r.material_verbatim, r.size_verbatim, r.direction, r.gravity, r.gravity_note, r.o2_start_pct, r.o2_end_pct, r.pressure_kpa, r.pressure_basis, r.spread_base_mm_s, r.spread_tip_mm_s, r.outcome_group, r.outcome_label, "luci", r.provenance.outcome?.pdf_page, r.provenance.outcome?.quote]),
     ),
   },
   "findings.json": { type: "application/json", body: () => JSON.stringify(findings, null, 1) },

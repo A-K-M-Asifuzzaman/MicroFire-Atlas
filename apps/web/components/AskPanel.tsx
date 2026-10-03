@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { CheckedClaim, ClaimType, EvidenceItem, EvidenceRung } from "@/lib/ask-core";
 import { buildEvidence } from "@/lib/ask-core";
-import { experiments, findings, saffireRuns } from "@/lib/data";
+import { experiments, findings, saffireRuns, luciRuns } from "@/lib/data";
 import { FAMILIES } from "@/lib/ontology";
 import { useExplorer } from "@/components/guide/EmberGuide";
 import styles from "./AskPanel.module.css";
@@ -67,7 +67,7 @@ export function AskPanel({ onAnswered, initialQuestion }: { onAnswered?: () => v
       setResult(answer);
       if (!answer.error && answer.evidence?.length) { discover("askpix"); onAnswered?.(); }
     } catch {
-      const local = buildEvidence(q, experiments, findings, saffireRuns);
+      const local = buildEvidence(q, experiments, findings, saffireRuns, luciRuns);
       setResult({ mode: "evidence-only", reason: "Offline evidence notebook: these saved NASA records match your question. No AI answer was generated.", evidence: local.items, outside: local.outside });
       if (local.items.length) { discover("askpix"); onAnswered?.(); }
     } finally {
