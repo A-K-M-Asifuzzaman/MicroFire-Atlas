@@ -31,7 +31,7 @@ test("discoveries are unique, placed in the box and open real routes", async () 
   assert.equal(new Set(DISCOVERIES.map((d) => d.id)).size, DISCOVERIES.length);
   for (const d of DISCOVERIES) {
     assert.ok(d.x >= 0 && d.x <= 100 && d.y >= 0 && d.y <= 100, d.id);
-    assert.match(d.href, /^\/(story|atlas|gaps|sources|expedition|analyze|compare|mission|ask|experiments\/bass2-B\d+)?$/, d.id);
+    assert.match(d.href, /^\/(story|atlas|gaps|sources|expedition|analyze|compare|mission|methodology|ask|experiments\/bass2-B\d+)?$/, d.id);
   }
 });
 

@@ -256,3 +256,5 @@ html[data-motion="gentle"] .nav-panel { animation: none; }
 }
 
 .home-learn { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 32px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.method-page section p, .method-page section li { line-height: 1.65; }
+.method-page section h3 { margin-top: 10px; color: #ffe2ac; }

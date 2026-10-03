@@ -9,6 +9,10 @@ import { OBSERVED_MIN } from "@/lib/gaps";
 import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, rank, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
 import { ladderRobustness, RANGES, rankRobustness, SAMPLES } from "@/lib/robustness";
 import { runEval, type EvalQuestion } from "@/lib/eval";
+import { FoolTheChecker } from "@/components/method/FoolTheChecker";
+import { WeightPlayground } from "@/components/method/WeightPlayground";
+import { QuestBoard } from "@/components/quest/QuestBoard";
+import mstyles from "@/components/method/Method.module.css";
 import evalSet from "@/eval/microfire-eval-v1.json";
 import live from "@/eval/results-live.json";
 
@@ -72,12 +76,23 @@ export default function MethodologyPage() {
       </nav>
 
       <div className="space-y-14">
-        <header>
-          <h1 className="display text-3xl sm:text-4xl">How MicroFire Atlas works</h1>
-          <p className="mt-3 text-muted max-w-[70ch]">
-            Every number and rule behind the site, so you can check it. The scores here are MicroFire Atlas heuristics.
-            NASA did not set, review or endorse them.
-          </p>
+        <header className="space-y-8">
+          <div>
+            <p className="text-signal text-sm">Showing our work</p>
+            <h1 className="display text-4xl sm:text-5xl mt-2">How MicroFire knows what it knows</h1>
+            <p className="mt-3 text-muted max-w-[68ch] text-[17px]">
+              Five steps turn NASA&apos;s reports into answers you can check. Tap a step to see how it works, and try the two games
+              below: they run the real code. The scores are MicroFire Atlas heuristics; NASA did not set, review or endorse them.
+            </p>
+          </div>
+          <nav className={mstyles.pipeline} aria-label="How the atlas is built">
+            <a href="#data"><b>{sources.length}</b><strong>NASA reports</strong><span>Downloaded from NASA&apos;s technical reports server, each with a fingerprint (SHA-256)</span></a>
+            <a href="#data"><b>{evidenceRecords.length}</b><strong>Test records typed in</strong><span>From NASA&apos;s own test tables, in NASA&apos;s units and words</span></a>
+            <a href="#data"><b>{findings.length}</b><strong>Quotes verified</strong><span>The build fails if one word is missing from the PDF</span></a>
+            <a href="#ladder"><b>4</b><strong>Evidence Ladder rungs</strong><span>Direct, analogous, mechanistic, gap, stress-tested {SAMPLES.toLocaleString("en-US")} ways</span></a>
+            <a href="#evaluate"><b>{ev.questions}</b><strong>Test questions for the AI</strong><span>Every AI claim is checked against the cited NASA text</span></a>
+          </nav>
+          <QuestBoard page="methodology" crew="mei" />
         </header>
 
         <Section id="data" title="Where the data comes from">
@@ -278,6 +293,7 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             relevance and never merged into it: a stable rank means the test stays among the closest under many reasonable
             assumptions, not that a fire is likely or unlikely.
           </p>
+          <WeightPlayground />
           <div className="overflow-x-auto">
             <table className="w-full text-[14px] num">
               <caption className="text-left text-muted mb-2">
@@ -352,6 +368,8 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             system was changed, never the question.{" "}
             <a href="https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas/blob/main/apps/web/eval/microfire-eval-v1.json" className="link">Read every question</a>
           </p>
+          <h3 className="text-lg font-semibold">Play: fool the checker</h3>
+          <FoolTheChecker />
           <h3 className="text-lg font-semibold">Before the model: retrieval and the claim checker (recomputed on every build)</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-[14px] num">

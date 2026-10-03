@@ -155,6 +155,8 @@ const JOURNEY: Omit<Discovery, "x" | "y">[] = [
   { id: "profile", label: "Compared NASA's two exploration atmospheres", href: "/mission", kind: "act" },
   { id: "whypath", label: "Followed a clue's Why path to its NASA page", href: "/mission", kind: "record" },
   { id: "brief", label: "Opened a Mission Evidence Brief", href: "/mission", kind: "gap" },
+  { id: "weights", label: "Moved a ranking weight and watched the order change", href: "/methodology", kind: "act" },
+  { id: "checker", label: "Tried to fool the AI claim checker", href: "/methodology", kind: "act" },
 ];
 
 /** Page quests: three real actions per page, each one a discovery star. */
@@ -163,6 +165,11 @@ export const QUESTS: Record<string, { id: string; how: string }[]> = {
     { id: "family", how: "Switch to the Saffire spacecraft fires" },
     { id: "crewnote", how: "Tap a test tile to read what NASA recorded" },
     { id: "detective", how: "Open the Table and solve a detective challenge" },
+  ],
+  methodology: [
+    { id: "weights", how: "Drag a ranking weight in the playground" },
+    { id: "checker", how: "Play “Fool the checker” with three sentences" },
+    { id: "source", how: "Open any NASA report link" },
   ],
   mission: [
     { id: "profile", how: "Pick the alternate exploration atmosphere" },
