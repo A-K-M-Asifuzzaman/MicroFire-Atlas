@@ -27,6 +27,8 @@ hawk:
       - /story
       - /expedition
       - /saffire
+      - /tour
+      - /compare?preset=fabric-three-sizes
       - /mission?context=moon-base
       - /analyze
       - /analyze/saffire-vi-pmma
