@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { QuestBoard } from "@/components/quest/QuestBoard";
 import { Cite, Quote } from "@/components/Cite";
 import { FrontierCards } from "@/components/FrontierCards";
+import { GroundVsGravity, ResearchHorizon, SafetyMatrix } from "@/components/FrontierExtras";
 import { GapMap } from "@/components/GapMap";
 import { evidenceRecords, findings, saffireRuns } from "@/lib/data";
 import { RouteStage } from "@/components/world/RouteStage";
@@ -24,6 +25,30 @@ export default function GapsPage() {
           no test has answered yet. The suggested tests are research ideas, not NASA plans.
         </p>
         <div className="mt-8"><FrontierCards /></div>
+      </section>
+
+      <section className="mt-16" aria-labelledby="horizon">
+        <h2 id="horizon" className="display text-2xl">Research horizon</h2>
+        <p className="mt-2 text-muted max-w-[78ch]">The next experiment NASA has planned on the Moon, and which of the open questions above it is designed to reach.</p>
+        <div className="mt-6"><ResearchHorizon /></div>
+      </section>
+
+      <section className="mt-16" aria-labelledby="matrix">
+        <h2 id="matrix" className="display text-2xl">Spacecraft fire safety: what this atlas covers</h2>
+        <p className="mt-2 text-muted max-w-[78ch]">
+          Fire safety is more than how a flame spreads. Each area counts the verified NASA evidence in this atlas. An empty area
+          means we have not collected it yet, not that NASA has no work there.
+        </p>
+        <div className="mt-6"><SafetyMatrix /></div>
+      </section>
+
+      <section className="mt-16" aria-labelledby="ground">
+        <h2 id="ground" className="display text-2xl">From the Earth test to the Moon</h2>
+        <p className="mt-2 text-muted max-w-[78ch]">
+          NASA screens materials with a standard test in normal gravity (NASA-STD-6001). Reduced-gravity experiments show why that
+          is not the whole story. Every step below is NASA&apos;s own words.
+        </p>
+        <div className="mt-8"><GroundVsGravity /></div>
       </section>
 
       <section className="mt-20" aria-labelledby="map-title">

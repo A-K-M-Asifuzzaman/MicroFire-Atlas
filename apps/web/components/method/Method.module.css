@@ -21,7 +21,7 @@
 .claims li[data-state="right"] { border-color: #3ddc97; background: #3ddc970f; }
 .claims li[data-state="wrong"] { border-color: #ff8a5a; background: #ff8a5a0f; animation: shake .4s ease both; }
 .claimText { font-size: 15px; }
-.claimText small { display: inline-block; margin-left: 4px; font-size: 11px; padding: 1px 7px; border-radius: 8px; background: #ffffff10; color: var(--muted); }
+.claimText small { display: inline-block; margin-left: 4px; font-size: 12px; padding: 1px 7px; border-radius: 8px; background: #ffffff10; color: var(--muted); }
 .claimBtns { display: flex; flex-wrap: wrap; gap: 6px; }
 .claimBtns button { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rule-strong); background: #0a1326; color: var(--ink); font-size: 13px; cursor: pointer; }
 .claimBtns button:hover, .claimBtns button:focus-visible { border-color: var(--signal); }

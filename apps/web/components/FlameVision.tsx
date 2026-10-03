@@ -23,7 +23,7 @@ export function frameAt(frames: FrameMetrics[], t: number) {
 }
 
 export function FlameVision({ item, initialMode = "vision", compact = false, onInspect }: { item: MediaItem; initialMode?: Mode; compact?: boolean; onInspect?: () => void }) {
-  const { discover } = useExplorer();
+  const { discover, mode: audience } = useExplorer();
   const ctx = MEDIA_CONTEXT[item.slug];
   const video = useRef<HTMLVideoElement>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -81,7 +81,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
             {(
               [
                 ["raw", "Raw footage"],
-                ["vision", "AI vision"],
+                ["vision", audience === "pro" ? "Computer vision" : "AI vision"],
                 ...(isVideo ? ([["motion", "Motion"]] as [Mode, string][]) : []),
                 ["measure", "Measurements"],
               ] as [Mode, string][]

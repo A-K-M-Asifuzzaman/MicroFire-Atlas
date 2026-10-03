@@ -185,6 +185,61 @@
   "kind": "observed"
  },
  {
+  "id": "fm2-measurements",
+  "source_id": "fm2-plan",
+  "in": "abstract",
+  "quote": "The results of flame size, spread rate, atmosphere changes, and extinction oxygen concentration will then be analyzed and used to help quantify the risk and mitigation for future exploration missions.",
+  "topics": [
+   "partial-gravity"
+  ],
+  "kind": "context"
+ },
+ {
+  "id": "fm2-atmospheres",
+  "source_id": "fm2-atmospheres",
+  "in": "abstract",
+  "quote": "The environmental control system can replicate and conduct fire experiments automatically in the expected atmospheres, specifically 21% oxygen at 14.7 psia, and 34% oxygen at 8.2 psia, which are of immediate interest to the Human Lander System (HLS) and Lunar Rover.",
+  "topics": [
+   "partial-gravity",
+   "oxygen",
+   "pressure"
+  ],
+  "kind": "context"
+ },
+ {
+  "id": "fm2-samples",
+  "source_id": "fm2-atmospheres",
+  "in": "abstract",
+  "quote": "There are four samples currently planned; two SIBAL fabrics (cotton/fiberglass blend) which will be burned in air and two acrylic rods which will be burned in Normoxic Space Exploration Atmospheres (SEA).",
+  "topics": [
+   "partial-gravity",
+   "materials-screening"
+  ],
+  "kind": "context"
+ },
+ {
+  "id": "sibal-lunar-downward",
+  "source_id": "fm2-atmospheres",
+  "in": "abstract",
+  "quote": "SIBAL fabric has been found to only burn downward in air in lunar gravity (via Lunar gravity centrifuge and parabolic flight) where on Earth’s gravity it extinguishes immediately after ignition.",
+  "topics": [
+   "partial-gravity",
+   "materials-screening"
+  ],
+  "kind": "observed"
+ },
+ {
+  "id": "lunar-goldilocks",
+  "source_id": "fm2-atmospheres",
+  "in": "abstract",
+  "quote": "Lunar gravity has been found to increase the limits of flammability for some materials compared to Earth gravity, presenting a goldilocks zone of reduced convective heat loss, while generating enough buoyant flow to replenish fresh oxygen into the flame zone.",
+  "topics": [
+   "partial-gravity",
+   "oxygen"
+  ],
+  "kind": "interpretation"
+ },
+ {
   "id": "confinement-small-gap",
   "source_id": "confinement",
   "in": "abstract",

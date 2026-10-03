@@ -13,8 +13,8 @@
   --rule: #1e2940;
   --rule-strong: #2c3a58;
   --ink: #e6eaf2;
-  --muted: #8f9ab1;
-  --faint: #5d6880;
+  --muted: #a6b0c6; /* 8:1 on the panels */
+  --faint: #8a96b0; /* at least 4.5:1 (WCAG AA) on every panel colour */
 
   --signal: #56d4e4; /* interaction, links, focus */
   --flame: #f0a044; /* kept burning */

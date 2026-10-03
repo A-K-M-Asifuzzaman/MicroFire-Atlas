@@ -221,6 +221,48 @@
     "abstract": "INTRODUCTION:\nSpace suits operate at low pressures to optimize astronauts’ performance. The drop in pressure from the habitat environment to the suit carries a risk of decompression sickness (DCS), which is mitigated by a 95% O2 prebreathe protocol. Prebreathe protocols for the lunar surface have a significantly higher risk compared to International Space Station microgravity Extravehicular Activities (EVA). In previous studies, we validated a prebreathe protocol from a 56.5 kPa 34% O2 cabin to a 29.6 kPa EVA pressure; however, the enriched oxygen cabin environment poses a flammability risk that requires significant changes to material design and selections. Here, we report outcomes for prebreathe protocols from a sub-30% O2 cabin and associated changes necessary to control DCS risk critical to upcoming lunar missions.\n\nMETHODS:\nFourteen volunteers completed 11-day hypobaric chamber studies with an “alternate exploration atmosphere” of 66.2kPa, 28.5% O2. Subjects acclimated for 48 hrs and then participated in five 6-hour simulated EVAs at 29.6 or 35.6kPa, 95% O2. Prior to EVA, subjects underwent a 20, 90, or 150-minute prebreathe. The EVA simulation was designed to be representative of future planetary EVAs, proportionate to the subject’s VO2max. Decompression stress was monitored by real-time doppler and echocardiograph alternating every 15 min, as well as clinical monitoring for DCS signs/symptoms. Venous gas emboli (VGE) and DCS outcomes were verified against NASA-STD-3001 acceptance criteria.\n\nRESULTS AND DISCUSSION:\nVenous gas emboli (VGE) were identified during all EVAs. A neurological DCS case was identified in the 90-min/29.6kPa prebreathe, terminating further testing of this protocol. No DCS cases were identified in the 150 min/29.6kPa protocol. The 20 min/36.5kPa protocol was rejected due to a Type II DCS case. All DCS symptoms resolved with treatment, with no sequelae post initial treatment of DCS. These various test points highlighted to the significant benefit of elevated suit pressure to shorten prebreathe protocols, but also the difficulty in assessing and managing DCS during sustained EVA operations in remote planetary surfaces."
   },
   {
+    "source_id": "fm2-plan",
+    "ntrs_id": "20240008623",
+    "title": "Flammability of Materials on the Moon",
+    "authors": [
+      "Jennifer Zayac",
+      "Michael Johnston",
+      "Gary Ruff",
+      "Paul Ferkul"
+    ],
+    "organization": "NASA",
+    "document_type": "POSTER",
+    "published": null,
+    "url": "https://ntrs.nasa.gov/citations/20240008623",
+    "pdf_url": "https://ntrs.nasa.gov/api/citations/20240008623/downloads/20240008623.pdf",
+    "copyright": "GOV_PERMITTED",
+    "sha256": "b96e5a0e72466792c3a135c232084ec9cc729f33b4906ac6b3fc32ff051bcbac",
+    "retrieved": "2026-10-03",
+    "used_for": "FM2: planned lunar-surface burns of SIBAL fabric and PMMA rods, and what they will measure",
+    "abstract": "Some materials have recently been found to exhibit increased flammability in Lunar gravity.   The reduced buoyancy driven flow on the Moon may present a goldilocks region of decreased convective cooling, while still supplying adequate oxidizer to the flame zone.   Combined with the desired elevated oxygen habitat of exploration architectures and the difficulty of rescue, the combination could present increased risk to crew.  Flammability of Materials on the Moon will be delivered to the Lunar surface on an HLS lander, and will burn four samples; SIBAL fabric  will be exposed to normal air while the PMMA rods will be exposed to the normoxic Space Exploration Atmospheres (SEA) with elevated oxygen in a small atmospheric chamber. Each fuel will have two tests each, one burning upward and one burning downward. The results of flame size, spread rate, atmosphere changes, and extinction oxygen concentration will then be analyzed and used to help quantify the risk and mitigation for future exploration missions."
+  },
+  {
+    "source_id": "fm2-atmospheres",
+    "ntrs_id": "20240015307",
+    "title": "Flammability of Materials on the Moon",
+    "authors": [
+      "Jennifer Zayac",
+      "Michael Johnston",
+      "Gary Ruff",
+      "Paul Ferkul"
+    ],
+    "organization": "NASA",
+    "document_type": "POSTER",
+    "published": null,
+    "url": "https://ntrs.nasa.gov/citations/20240015307",
+    "pdf_url": "https://ntrs.nasa.gov/api/citations/20240015307/downloads/Glenn_2024_ZayacPoster.pdf",
+    "copyright": "GOV_PERMITTED",
+    "sha256": "eb86f426ee83c3edb3eda8053f33382248394f5bcb6aa6be171b59ddab5c3e47",
+    "retrieved": "2026-10-03",
+    "used_for": "FM2: planned atmospheres, samples, and SIBAL burning downward in lunar gravity",
+    "abstract": "Lunar gravity has been found to increase the limits of flammability for some materials compared to Earth gravity, presenting a goldilocks zone of reduced convective heat loss, while generating enough buoyant flow to replenish fresh oxygen into the flame zone.  Combined with the elevated oxygen concentrations of planned Space Exploration Atmospheres (Sea), a long duration fire experiment in Lunar gravity is important to help understand and mitigate the increased risk.\n\nFlammability of Materials on the Moon (FM2) is a robotic, self-contained, combustion chamber which will be sent to the surface of the Moon on a Commercial Lunar Payload Services (CLPS) lander mission CP-21. The environmental control system can replicate and conduct fire experiments automatically in the expected atmospheres, specifically 21% oxygen at 14.7 psia, and 34% oxygen at 8.2 psia, which are of immediate interest to the Human Lander System (HLS) and Lunar Rover.\n\nThe laboratory prototype became operational this summer. There are four samples currently planned; two SIBAL fabrics (cotton/fiberglass blend) which will be burned in air and two acrylic rods which will be burned in Normoxic Space Exploration Atmospheres (SEA). One of each fuel will be burned upward and downward. SIBAL fabric has been found to only burn downward in air in lunar gravity (via Lunar gravity centrifuge and parabolic flight) where on Earth’s gravity it extinguishes immediately after ignition."
+  },
+  {
     "source_id": "ea-6",
     "ntrs_id": "20260003261",
     "title": "NASA Exploration Atmosphere Test 6: Back to Back EVAs",

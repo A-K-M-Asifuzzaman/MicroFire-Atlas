@@ -17,7 +17,7 @@ import type { Experiment, Finding, OutcomeGroup, SaffireRun } from "./types";
 import type { Gravity } from "./relevance";
 
 export type Phase = "solid" | "liquid" | "gas";
-export type FamilyId = "bass2" | "saffire" | "luci" | "partial-g" | "sofie" | "flex" | "acme" | "context";
+export type FamilyId = "bass2" | "saffire" | "luci" | "partial-g" | "sofie" | "fm2" | "flex" | "acme" | "context";
 export type Rung = "direct" | "analogous" | "mechanistic" | "gap";
 
 export type Family = {
@@ -37,6 +37,7 @@ export const FAMILIES: Record<FamilyId, Family> = {
   luci: { id: "luci", name: "LUCI", phase: "solid", fuel: "fabric samples", scale: "centimetres", platform: "spinning New Shepard sounding rocket", gravity: "lunar (simulated)", kid: "A spinning rocket that made Moon-like gravity for a few minutes." },
   "partial-g": { id: "partial-g", name: "Martian-gravity drop tests", phase: "solid", fuel: "spacecraft materials", scale: "centimetres", platform: "drop tower", gravity: "martian (simulated)", kid: "Short falls in a drop tower that feel like Mars gravity." },
   sofie: { id: "sofie", name: "SoFIE", phase: "solid", fuel: "PMMA and engineering materials", scale: "centimetres", platform: "Combustion Integrated Rack aboard the ISS", gravity: "microgravity", kid: "A space-station lab built to test materials in Moon-base air." },
+  fm2: { id: "fm2", name: "FM² (planned)", phase: "solid", fuel: "SIBAL fabric and PMMA rods", scale: "centimetres", platform: "robotic chamber on a lunar lander, not yet flown", gravity: "lunar", kid: "A fire test that will happen on the Moon itself. No results yet." },
   flex: { id: "flex", name: "FLEX", phase: "liquid", fuel: "methanol and heptane droplets (2 to 5 mm)", scale: "millimetres", platform: "Combustion Integrated Rack aboard the ISS", gravity: "microgravity", kid: "Tiny burning droplets that float in space." },
   acme: { id: "acme", name: "ACME", phase: "gas", fuel: "gaseous fuel jets", scale: "millimetres to centimetres", platform: "Combustion Integrated Rack aboard the ISS", gravity: "microgravity", kid: "Gas flames that form perfect spheres in space." },
   context: { id: "context", name: "Mission context", phase: null, fuel: "not a fire experiment", scale: "", platform: "", gravity: null, kid: "Information about the air a future Moon base might use." },
@@ -60,6 +61,8 @@ export const SOURCE_FAMILY: Record<string, FamilyId> = {
   acme: "acme",
   "exploration-atmosphere": "context",
   "ea-alt": "context",
+  "fm2-plan": "fm2",
+  "fm2-atmospheres": "fm2",
   "ea-6": "context",
 };
 

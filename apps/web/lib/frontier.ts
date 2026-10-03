@@ -9,8 +9,8 @@ import { ladder, type EvidenceRecord, type MissionQuestion } from "./ontology.ts
 export type FrontierQuestion = { id: string; title: string; kid: string; q: MissionQuestion; context: string };
 
 export const FRONTIER: FrontierQuestion[] = [
-  { id: "moon-base", title: "A Moon base in exploration air", kid: "Could a plastic panel burn in Moon-base air?", q: { material: "PMMA", oxygen: 34, pressureKpa: 56.5, gravity: "lunar", flow: 20 }, context: "moon-base" },
-  { id: "mars-fabric", title: "Fabric in a Mars habitat", kid: "What about cloth on Mars?", q: { material: "SIBAL fabric", oxygen: 34, pressureKpa: 56.5, gravity: "martian" }, context: "mars-fabric" },
+  { id: "moon-base", title: "A Moon base in exploration atmosphere A", kid: "Could a plastic panel burn in a Moon base with extra oxygen?", q: { material: "PMMA", oxygen: 34, pressureKpa: 56.5, gravity: "lunar", flow: 20 }, context: "moon-base" },
+  { id: "mars-fabric", title: "Fabric in a Mars habitat, atmosphere A", kid: "What about cloth on Mars?", q: { material: "SIBAL fabric", oxygen: 34, pressureKpa: 56.5, gravity: "martian" }, context: "mars-fabric" },
   { id: "lunar-normal-air", title: "A lunar habitat with Earth-like air", kid: "Moon gravity, normal air", q: { material: "SIBAL fabric", oxygen: 21, pressureKpa: 101.3, gravity: "lunar" }, context: "lunar" },
   { id: "iss-still-air", title: "The ISS with its fans off", kid: "Space station with the fans off", q: { material: "PMMA", oxygen: 21, pressureKpa: 101.3, gravity: "microgravity", flow: 1 }, context: "still-air" },
 ];
@@ -41,7 +41,7 @@ export function frontier(fq: FrontierQuestion, records: EvidenceRecord[], findin
     know.push(`${r.label}: ${r.material}, ${r.oxygen ?? "?"} % oxygen${p != null ? `, ${p} kPa` : ""}, microgravity. NASA recorded: ${r.outcomeLabel.toLowerCase()}.`);
   }
   if (!l.direct.length && l.analogous.length > 2) know.push(`${l.analogous.length - 2} more solid-fuel tests differ from this question in named ways.`);
-  if (l.findings.analogous.length) know.push(`${l.findings.analogous.length} NASA finding${l.findings.analogous.length === 1 ? "" : "s"} about reduced gravity or exploration air.`);
+  if (l.findings.analogous.length) know.push(`${l.findings.analogous.length} NASA finding${l.findings.analogous.length === 1 ? "" : "s"} about reduced gravity or exploration atmospheres.`);
 
   const why: Why[] = [];
   for (const g of l.gaps) {

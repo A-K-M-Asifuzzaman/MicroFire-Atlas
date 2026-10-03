@@ -28,6 +28,8 @@ SOURCES = {
     "luci": ("20250010653", "Lunar-gravity flammability from a rotating sounding rocket"),
     "exploration-atmosphere": ("20220009546", "Source for the 56.5 kPa, 34 % O2 exploration cabin atmosphere scenario"),
     "ea-alt": ("20240013238", "Exploration Atmosphere Tests 3 and 4: the alternate 66.2 kPa, 28.5 % O2 cabin atmosphere"),
+    "fm2-plan": ("20240008623", "FM2: planned lunar-surface burns of SIBAL fabric and PMMA rods, and what they will measure"),
+    "fm2-atmospheres": ("20240015307", "FM2: planned atmospheres, samples, and SIBAL burning downward in lunar gravity"),
     "ea-6": ("20260003261", "Exploration Atmosphere Test 6: 66.2 kPa, 28.5 % O2 named the proposed Exploration Atmosphere"),
     # second family and cross-regime evidence (each kept in its own physical regime; see apps/web/lib/ontology.ts)
     "saffire-1-3": ("20170008805", "Saffire I-III: large-scale flame spread aboard Cygnus"),
