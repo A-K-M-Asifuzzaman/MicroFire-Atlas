@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
 import { ladderRobustness, RANGES, SAMPLES } from "@/lib/robustness";
+import { useExplorer } from "@/components/guide/EmberGuide";
 import { Cite } from "@/components/Cite";
 import { evidenceRecords, findings } from "@/lib/data";
 import { FAMILIES, KIND_LABEL, ladder, TOLERANCE, whyPath, type LadderItem, type MissionQuestion, type WhyStep } from "@/lib/ontology";
@@ -160,6 +161,7 @@ function Rung({ title, note, on, missing = false, children }: { title: string; n
 const MARK: Record<WhyStep["kind"], string> = { question: "?", match: "✓", differs: "✗", unknown: "–", rung: "▲" };
 
 function Cards({ items, q }: { items: LadderItem[]; q: MissionQuestion }) {
+  const { discover } = useExplorer();
   return (
     <ul className={styles.cards}>
       {items.map(({ record: r, differs }) => (
@@ -179,7 +181,7 @@ function Cards({ items, q }: { items: LadderItem[]; q: MissionQuestion }) {
               </span>
             )}
           </Link>
-          <details className={styles.whyBox}>
+          <details className={styles.whyBox} onToggle={(e) => { if (e.currentTarget.open) discover("whypath"); }}>
             <summary>Why is this evidence shown?</summary>
             <ol className={styles.whyPath}>
               {whyPath(r, q).map((st, i) => (

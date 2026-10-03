@@ -8,6 +8,7 @@ import { FAMILIES, ladder, TOLERANCE, type MissionQuestion } from "@/lib/ontolog
 import { rank, type Gravity } from "@/lib/relevance";
 import { ladderRobustness, rankRobustness, SAMPLES } from "@/lib/robustness";
 import { PrintButton } from "./PrintButton";
+import { Discover } from "@/components/quest/Discover";
 
 export const metadata: Metadata = { title: "Mission Evidence Brief", robots: { index: false } };
 
@@ -44,6 +45,7 @@ export default async function BriefPage({ searchParams }: { searchParams: Promis
 
   return (
     <article className="brief mx-auto max-w-4xl px-4 sm:px-6 py-10">
+      <Discover id="brief" />
       <header className="brief-head">
         <p className="text-signal text-sm">MicroFire Atlas · Mission Evidence Brief</p>
         <h1 className="display text-3xl sm:text-4xl mt-2">

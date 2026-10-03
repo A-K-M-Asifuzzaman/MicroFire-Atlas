@@ -8,6 +8,7 @@ import { EvidenceLadder } from "@/components/EvidenceLadder";
 import { AtmosphereProfiles } from "@/components/analyst/AtmosphereProfiles";
 import { ConditionInstrument } from "@/components/analyst/ConditionInstrument";
 import { EvidenceStatus } from "@/components/analyst/EvidenceStatus";
+import { QuestBoard } from "@/components/quest/QuestBoard";
 import { ladder } from "@/lib/ontology";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
 import { Legend, OutcomeTag } from "@/components/Outcome";
@@ -140,6 +141,7 @@ export function MissionLab() {
 
   return (
     <div className="mission-workspace analyst space-y-12">
+      <QuestBoard page="mission" crew="tala" />
       <section aria-labelledby="presets" className="analyst-presets" data-guide="contexts">
         <h2 id="presets" className="sr-only">Mission presets</h2>
         <p className="text-sm text-muted">Start from a mission</p>

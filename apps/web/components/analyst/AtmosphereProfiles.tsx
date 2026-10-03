@@ -3,11 +3,13 @@
 import { Cite } from "@/components/Cite";
 import { findings } from "@/lib/data";
 import { ATMOSPHERES, profileFor } from "@/lib/atmospheres";
+import { useExplorer } from "@/components/guide/EmberGuide";
 import styles from "./AtmosphereProfiles.module.css";
 
 /** Mission atmosphere profiles, each with its NASA source. None of them is "the" Moon-base atmosphere. */
 export function AtmosphereProfiles({ o2, kpa, onPick }: { o2: number; kpa: number; onPick: (o2: number, kpa: number) => void }) {
   const cur = profileFor(o2, kpa);
+  const { discover } = useExplorer();
   const f = cur.finding ? findings.find((x) => x.id === cur.finding) : null;
   return (
     <div className={styles.wrap}>
@@ -15,7 +17,7 @@ export function AtmosphereProfiles({ o2, kpa, onPick }: { o2: number; kpa: numbe
         {ATMOSPHERES.map((a) => (
           <button
             key={a.id} role="radio" aria-checked={cur.id === a.id} className={styles.card} data-profile={a.id}
-            onClick={() => a.o2 != null && a.kpa != null ? onPick(a.o2, a.kpa) : undefined}
+            onClick={() => { if (a.o2 == null || a.kpa == null) return; onPick(a.o2, a.kpa); if (a.id === "ea-alt") discover("profile"); }}
             disabled={a.id === "custom" && cur.id !== "custom"}
           >
             <span className={styles.gauge} aria-hidden="true">

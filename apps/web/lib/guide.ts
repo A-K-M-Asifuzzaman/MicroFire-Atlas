@@ -149,7 +149,27 @@ const JOURNEY: Omit<Discovery, "x" | "y">[] = [
   { id: "edge", label: "Found where the evidence stops", href: "/gaps", kind: "gap" },
   { id: "askpix", label: "Asked PIX a question with sources", href: "/ask", kind: "act" },
   { id: "source", label: "Opened a real NASA report page", href: "/sources", kind: "source" },
+  { id: "family", label: "Explored a second experiment family", href: "/atlas", kind: "record" },
+  { id: "crewnote", label: "Read a crew's note, word for word", href: "/atlas", kind: "record" },
+  { id: "detective", label: "Solved a data-detective challenge", href: "/atlas", kind: "act" },
+  { id: "profile", label: "Compared NASA's two exploration atmospheres", href: "/mission", kind: "act" },
+  { id: "whypath", label: "Followed a clue's Why path to its NASA page", href: "/mission", kind: "record" },
+  { id: "brief", label: "Opened a Mission Evidence Brief", href: "/mission", kind: "gap" },
 ];
+
+/** Page quests: three real actions per page, each one a discovery star. */
+export const QUESTS: Record<string, { id: string; how: string }[]> = {
+  atlas: [
+    { id: "family", how: "Switch to the Saffire spacecraft fires" },
+    { id: "crewnote", how: "Tap a test tile to read what NASA recorded" },
+    { id: "detective", how: "Open the Table and solve a detective challenge" },
+  ],
+  mission: [
+    { id: "profile", how: "Pick the alternate exploration atmosphere" },
+    { id: "whypath", how: "Open “Why is this evidence shown?” on a ladder card" },
+    { id: "brief", how: "Export a Mission Evidence Brief" },
+  ],
+};
 /** Teardrop: x = sin θ · sin(θ/2), y = cos θ, tip at the top; the journey starts at the bottom. */
 export const DISCOVERIES: Discovery[] = JOURNEY.map((d, i) => {
   const t = Math.PI + (2 * Math.PI * (i + 0.5)) / JOURNEY.length; // half-step offset: one star sits on the tip
