@@ -5,7 +5,7 @@ import { RealFlameReveal } from "@/components/world/RealFlameReveal";
 import { HomePaths } from "@/components/HomePaths";
 import { Legend } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
-import { evidenceRecords, experiments, findings, saffireRuns, sources } from "@/lib/data";
+import { evidenceRecords, experiments, findings, luciRuns, saffireRuns, sources } from "@/lib/data";
 
 const FATES = ["bass2-B16", "bass2-B20", "bass2-B19"];
 const WHY = ["low-flow-sensitivity", "dim-blue-low-flow", "tiny-flame-undetected", "low-g-burns-lower-o2"];
@@ -37,11 +37,18 @@ export default function Home() {
     <>
       <SparkJourney />
       <HomePaths />
+      <section className="mx-auto max-w-7xl px-5 py-8" aria-labelledby="corpus-title">
+        <h2 id="corpus-title" className="display text-2xl">Curated evidence corpus</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+          {[[evidenceRecords.length, "structured test records", "/atlas"], [new Set(evidenceRecords.map(r => r.family)).size, "structured experiment families", "/atlas"], [findings.length, "checked NASA findings", "/sources"], [sources.length, "source documents", "/sources"]].map(([n, label, href]) => <Link className="border border-rule rounded-xl p-4 hover:bg-panel" href={String(href)} key={String(label)}><strong className="display text-3xl block">{n}</strong><span>{label}</span></Link>)}
+        </div>
+        <p className="text-muted mt-3">{experiments.length} BASS/BASS-II · {saffireRuns.length} Saffire · {luciRuns.length} LUCI. Curated atlas — not the complete NASA combustion archive.</p>
+      </section>
       <RealFlameReveal />
       <section className="home-learn mx-auto max-w-7xl px-5 py-10" aria-labelledby="learn-teaser">
         <div>
           <h2 id="learn-teaser" className="display text-2xl sm:text-3xl">Why does a flame change shape in space?</h2>
-          <p className="text-muted mt-2 max-w-[60ch]">Flip gravity off yourself, then scroll through three real tests where only the airflow changed.</p>
+          <p className="text-muted mt-2 max-w-[60ch]">Flip gravity off yourself, then scroll through three near-matched tests with different airflow and 16.4–16.5 % oxygen.</p>
         </div>
         <Link href="/learn" className="story-cta inline-flex">Explore the science</Link>
       </section>
@@ -49,7 +56,7 @@ export default function Home() {
       <section className="border-b border-rule">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center">
           <div>
-            <h2 className="display text-2xl sm:text-3xl">Every test on one map</h2>
+            <h2 className="display text-2xl sm:text-3xl">BASS tests on one map</h2>
             <p className="mt-3 text-muted">
               Each dot is a real test aboard the ISS, placed by its oxygen level and airflow and coloured by what NASA
               recorded. Select any dot to open its record.
@@ -64,7 +71,7 @@ export default function Home() {
             <FlowO2Plot
               data={experiments}
               highlight={FATES}
-              label="Every NASA test in the atlas, plotted by oxygen and airflow. Tests B16, B20 and B19 are highlighted."
+              label="BASS tests plotted by oxygen and airflow. Tests B16, B20 and B19 are highlighted."
             />
             <Legend className="mt-3 px-1" />
           </div>
@@ -86,7 +93,7 @@ export default function Home() {
         <div>
           <h2 className="display text-2xl sm:text-3xl">How the atlas works</h2>
           <p className="mt-4 text-muted">
-            {experiments.length} BASS-II test records and {saffireRuns.length} Saffire runs across {materials} materials, drawn from {sources.length} NASA
+            {experiments.length} BASS/BASS-II test records, {saffireRuns.length} Saffire runs and {luciRuns.length} LUCI burns across {materials} materials, drawn from {sources.length} NASA
             documents, with {findings.length} quoted findings checked against the original text.
           </p>
         </div>

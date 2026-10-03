@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useDeferredValue, useMemo, useState } from "react";
-import { Quote } from "@/components/Cite";
+import { RankedFindings, FireSafetyInsight } from "@/components/analyst/RankedFindings";
+import { rankFindings, findingRobustness, fireInsight } from "@/lib/finding-relevance";
 import { EvidenceLadder } from "@/components/EvidenceLadder";
 import { AtmosphereProfiles } from "@/components/analyst/AtmosphereProfiles";
 import { ConditionInstrument } from "@/components/analyst/ConditionInstrument";
@@ -48,7 +49,7 @@ export const CONTEXTS: { id: string; label: string; detail: string; form: Form }
   {
     id: "exploration",
     label: "Exploration atmosphere A, in orbit",
-    detail: "56.5 kPa with 34 % oxygen: one NASA exploration-atmosphere scenario, recommended for future Moon and Mars missions.",
+    detail: "56.5 kPa with 34 % oxygen: a NASA-studied and previously recommended exploration-atmosphere configuration.",
     form: { oxygen: 34, flow: 10, pressureKpa: 56.5, gravity: "microgravity", material: "any", flowDirection: "any" },
   },
   {
@@ -90,16 +91,6 @@ function toScenario(f: Form): Scenario {
   };
 }
 
-/** Findings relevant to where the scenario sits. Topic-matched, never generated. */
-function findingsForScenario(f: Form) {
-  const topics = new Set<string>();
-  if (f.flow <= 5) topics.add("airflow");
-  if (f.gravity !== "microgravity") topics.add("partial-gravity");
-  if (f.oxygen > 21 || f.pressureKpa < 95) topics.add("pressure");
-  if (f.oxygen < 19) topics.add("quench");
-  return findings.filter((x) => x.topics.some((t) => topics.has(t))).slice(0, 4);
-}
-
 /** One line: how stable this test's place is when MicroFire's own weights change. */
 function Robust({ r }: { r: RankStability }) {
   return (
@@ -115,6 +106,7 @@ export function MissionLab() {
   const [ctx, setCtx] = useState(initial.id);
   const [form, setForm] = useState<Form>(initial.form);
   const [open, setOpen] = useState<string | null>(null);
+  const [focusTopic, setFocusTopic] = useState("airflow");
 
   const ranked = useMemo(() => rank(experiments, toScenario(form)), [form]);
   const settled = useDeferredValue(form); // robustness reruns the ranking 1,000 times, so it trails slider drags
@@ -125,13 +117,17 @@ export function MissionLab() {
     acc[r.experiment.outcome_group] = (acc[r.experiment.outcome_group] ?? 0) + 1;
     return acc;
   }, {});
-  const quotes = findingsForScenario(form);
   const question = useMemo(
     () => ({ material: form.material === "any" ? undefined : form.material, oxygen: form.oxygen, pressureKpa: form.pressureKpa, gravity: form.gravity, flow: form.flow }),
     [form],
   );
 
   const lad = useMemo(() => ladder(evidenceRecords, findings, question), [question]);
+  const findingQuery = useMemo(() => ({ scenario: question, topics: focusTopic ? [focusTopic] : [] }), [question, focusTopic]);
+  const findingRanks = useMemo(() => rankFindings(findings, evidenceRecords, findingQuery), [findingQuery]);
+  const settledFindings = useDeferredValue(findingQuery);
+  const findingStability = useMemo(() => findingRobustness(findings, evidenceRecords, settledFindings), [settledFindings]);
+  const insight = fireInsight(findingRanks, findings);
   const briefHref = `/mission/brief?${new URLSearchParams({ o2: String(form.oxygen), kpa: String(form.pressureKpa), flow: String(form.flow), g: form.gravity, m: form.material, dir: form.flowDirection })}`;
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => {
@@ -142,6 +138,11 @@ export function MissionLab() {
   return (
     <div className="mission-workspace analyst space-y-12">
       <QuestBoard page="mission" crew="tala" />
+      <label className="block text-sm">Scientific question
+        <select className="ml-3 bg-panel border border-rule rounded-sm p-3 max-w-full" value={focusTopic} onChange={e=>setFocusTopic(e.target.value)}>
+          <option value="airflow">How is airflow relevant?</option><option value="detection">What matters for detecting combustion?</option><option value="smoke">What do smoke and gas measurements show?</option><option value="materials-screening">What do material-screening findings tell us?</option><option value="scale">How does experimental scale matter?</option><option value="">Use selected conditions only</option>
+        </select>
+      </label>
       <section aria-labelledby="presets" className="analyst-presets" data-guide="contexts">
         <h2 id="presets" className="sr-only">Mission presets</h2>
         <p className="text-sm text-muted">Start from a mission</p>
@@ -171,7 +172,8 @@ export function MissionLab() {
       </section>
 
       <div className="min-w-0 space-y-10">
-        <h2 className="analyst-step-title"><span>4</span>How close the evidence gets</h2>
+        <RankedFindings ranked={findingRanks} stability={findingQuery === settledFindings ? findingStability : {}} />
+        <h2 className="analyst-step-title"><span>5</span>How close the evidence gets</h2>
         <EvidenceLadder q={question} />
 
         <section aria-labelledby="summary">
@@ -203,7 +205,7 @@ export function MissionLab() {
         </section>
 
         <section aria-labelledby="ranked">
-          <h2 id="ranked" className="analyst-step-title"><span>5</span>Most similar BASS-II tests, with the arithmetic</h2>
+          <h2 id="ranked" className="analyst-step-title"><span>6</span>Most similar BASS-II tests, with the arithmetic</h2>
           <p className="mt-1 text-sm text-faint">
             Mission Relevance, Evidence Confidence and Ranking Robustness are three separate project heuristics, not NASA
             ratings. Robustness reranks every test {SAMPLES.toLocaleString("en-US")} times with each weight varied ×
@@ -294,16 +296,13 @@ export function MissionLab() {
           </ol>
         </section>
 
-        {quotes.length > 0 && (
-          <section aria-labelledby="context-findings">
-            <h2 id="context-findings" className="analyst-step-title"><span>6</span>What NASA reports about conditions like these</h2>
-            <div className="mt-6 grid gap-x-10 gap-y-8 md:grid-cols-2">
-              {quotes.map((f) => (
-                <Quote key={f.id} f={f} />
-              ))}
-            </div>
-          </section>
-        )}
+        <FireSafetyInsight insight={insight} />
+        <section aria-labelledby="remaining-gaps"><h2 id="remaining-gaps" className="analyst-step-title"><span>8</span>Where this atlas stops</h2>
+          {lad.gaps.length ? <ul className="mt-4 text-muted list-disc pl-5">{lad.gaps.map(g=><li key={g.dim}>{g.text}</li>)}</ul>
+            : <p className="mt-4 text-muted max-w-[75ch]">{lad.direct.length} NASA test record{lad.direct.length === 1 ? "" : "s"} match every condition you set, so no single condition is missing. Their limits (sample size, duration, platform) still apply; open each record to read them.</p>}
+          {lad.nextExperiment && <><h3 className="mt-5 font-semibold">The matched-condition experiment that would close this evidence gap</h3><p className="mt-2 text-muted">{lad.nextExperiment}</p><p className="text-xs text-faint mt-2">A deterministic research question, not a NASA-endorsed experiment plan.</p></>}
+          <Link href="/sources" className="link inline-block mt-5">Source trail: NASA documents and open data</Link>
+        </section>
       </div>
     </div>
   );

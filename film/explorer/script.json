@@ -60,7 +60,7 @@
    ],
    [
     "Then, a puzzle. Turn the airflow down on test B20.",
-    "Change one thing"
+    "Compare near-matched tests"
    ],
    [
     "The atlas finds the real test, but hides the answer. Predict first!",
@@ -87,7 +87,7 @@
     "Tiny burning droplets? They explain how fire works. Not how plastic burns."
    ],
    [
-    "And the top rung stays empty. Nobody has run this test yet.",
+    "And the top rung stays empty. No current record in this atlas matches these conditions.",
     "The top rung is empty"
    ]
   ]
@@ -137,7 +137,7 @@
    ],
    [
     "Slide to thirty-four percent oxygen... and you're in empty space.",
-    "No test reaches 34 % oxygen"
+    "No record reaches 34 % oxygen"
    ],
    [
     "So MicroFire says it plainly: the evidence doesn't cover this yet. No risk score. No guessing.",
@@ -149,7 +149,7 @@
   "id": "trust",
   "lines": [
    [
-    "Can you trust it? Every ranking is re-run a thousand ways,",
+    "Can you trust it? Experiment ranking is re-run a thousand ways,",
     "Tested 1,000 ways"
    ],
    [

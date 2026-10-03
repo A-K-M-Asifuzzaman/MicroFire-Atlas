@@ -8,13 +8,14 @@ import { FRONTIER } from "@/lib/frontier";
 import { OBSERVED_MIN } from "@/lib/gaps";
 import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, rank, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
 import { ladderRobustness, RANGES, rankRobustness, SAMPLES } from "@/lib/robustness";
-import { runEval, type EvalQuestion } from "@/lib/eval";
+import { runEval, runFindingEval, type EvalQuestion } from "@/lib/eval";
 import { FoolTheChecker } from "@/components/method/FoolTheChecker";
 import { WeightPlayground } from "@/components/method/WeightPlayground";
 import { QuestBoard } from "@/components/quest/QuestBoard";
 import mstyles from "@/components/method/Method.module.css";
 import evalSet from "@/eval/microfire-eval-v1.json";
 import live from "@/eval/results-live.json";
+import findingLabels from "@/eval/finding-labels-v1.json";
 
 export const metadata: Metadata = { title: "Methodology" };
 
@@ -47,6 +48,7 @@ export default function MethodologyPage() {
   const demoRob = rankRobustness(experiments, demo);
   const moonRob = ladderRobustness(evidenceRecords, findings, moon.q);
   const ev = runEval(evalSet.questions as EvalQuestion[], experiments, findings, saffireRuns, luciRuns);
+  const fev = runFindingEval(findingLabels.cases, experiments, findings, saffireRuns, luciRuns);
   const pc = (x: number | null) => (x == null ? "—" : `${Math.round(x * 1000) / 10} %`);
   const lm = live.metrics, lr = live.rescored;
   return (
@@ -59,6 +61,7 @@ export default function MethodologyPage() {
             ["labels", "Observed, series, derived"],
             ["outcomes", "Outcome codes"],
             ["relevance", "Mission Relevance"],
+            ["finding-relevance", "How findings are ranked"],
             ["robustness", "Ranking robustness"],
             ["confidence", "Evidence Confidence"],
             ["gaps", "Evidence gaps"],
@@ -355,6 +358,18 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
           </p>
         </Section>
 
+        <Section id="finding-relevance" title="How findings are ranked">
+          <p>Finding Relevance ranks verified NASA statements for a question; experiment relevance compares individual test conditions. Both are MicroFire heuristics. NASA did not create, validate or endorse this ranking.</p>
+          <p>Requested topics come from the question selector plus explicit triggers: airflow at ≤5 cm/s; oxygen above 21 % or below 19 %; quench below 19 %; pressure below 95 kPa; partial gravity when lunar or Martian gravity is selected. These thresholds organize retrieval; they are not combustion limits.</p>
+          <p><code>Relevance = 100 × (5 × topic recall + 3 × material match + 2 × gravity match) / requested-feature weights.</code> Topic recall is the fraction of requested topics found in the curated tags. Exact material and gravity matches are 1, otherwise 0. Unrequested features leave the denominator; requested features with unknown metadata remain in it and contribute zero. A finding must match a topic or material to enter the list.</p>
+          <p>Evidence type constrains sorting first: direct, analogous, mechanistic, context; only then relevance descending, with finding ID as the stable tie-break. Direct requires an observed finding with explicit row links and all linked rows matching the selected conditions under the existing Evidence Ladder tolerances, without platform caveats. Publication-level solid-fuel findings remain analogous. Liquid/gas evidence stays mechanistic; planned FM² work and background remain context.</p>
+          <p>Material comes from explicit row links, material-specific sources, or literal material names in the quote. Gravity comes from linked records or a known experiment family. LUCI always retains its simulated-lunar-gravity limitation. These associations do not establish matched pressure, oxygen, geometry or flow history.</p>
+          <p>Only explicit curated record IDs count as supporting records; a shared family or publication never creates row links. Support count is not a replication count. Coverage is the average fraction of requested condition fields reported in linked rows, not the fraction matching. Publication-level coverage is unknown. Only curated abstract labels establish source role; an unspecified PDF section stays unclassified.</p>
+          <p>For example, weak-flow PMMA questions retrieve low-airflow findings. A lunar question also retrieves partial-gravity findings, with the simulated-platform limitation. A droplet result cannot outrank relevant solid-fuel evidence through topic count alone. A high relevance number can coexist with an analogous rung and unknown coverage.</p>
+          <p>Finding sensitivity uses 200 repeatable variations (seed 19), independently multiplying each weight by a uniform factor from 0.75 to 1.25. Evidence-type ordering stays fixed. Top-3 frequency is reported separately from relevance; it measures sensitivity to project weights, not measurement uncertainty or scientific confidence. Existing experiment sensitivity still uses 1,000 variations.</p>
+          <p>Fire-Safety Insight uses a small set of source-bound interpretation templates. NASA observations retain their exact quotes; MicroFire interpretations are labelled and preserve mismatches. Without a reviewed template, the panel abstains. This is neither mission certification nor a crew procedure.</p>
+        </Section>
+
         <Section id="ai" title="Where AI is used">
           <p>
             Ranking, the Evidence Ladder, comparison and the gap map are deterministic code. The Ask page uses a language model
@@ -363,6 +378,8 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             flags unit mix-ups, microgravity results described as lunar, causal or safety wording, and predictions. Without the
             model, every other page works unchanged.
           </p>
+          <p>The Verified Example on Ask is a saved synthesis rechecked against the current evidence and checker at build/test time; it makes no live request. The checker detects defined citation, numeric, unit and wording errors. It cannot prove full semantic entailment or real-world transfer.</p>
+          <p>Flame Vision is classical OpenCV segmentation, with no trained fire-prediction model. Not yet validated against hand-annotated real frames. Pixel measurements describe the image, not temperature or a calibrated physical flame size.</p>
         </Section>
 
         <Section id="evaluate" title="Evaluate MicroFire AI">
@@ -400,10 +417,23 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             wording, predictions and uncited facts, ten of each. Still failing: {ev.failures.map((f) => `“${f.q}”`).join(" and ")}.
           </p>
           <h3 className="text-lg font-semibold">With the model: one paid run, {lm.ranAt.slice(0, 10)}</h3>
+          <h3 className="text-lg font-semibold">Finding-ranking extension — provisional source-reading labels</h3>
+          <p>Seven existing benchmark questions have finding-ID labels read from verified quotes, plus six supplemental adversarial questions. These are engineering labels awaiting independent scientific adjudication, not LLM-generated reference answers. They measure the finding ranker using the existing question parser; Mission Analyst uses explicit condition and topic controls.</p>
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div><dt>Gold finding Recall@3 / Recall@5</dt><dd>{pc(fev.recall3)} / {pc(fev.recall5)}</dd></div>
+            <div><dt>Mean reciprocal rank</dt><dd>{fev.mrr?.toFixed(3) ?? "—"}</dd></div>
+            <div><dt>Wrong-regime ordering violations</dt><dd>{fev.wrongRegimePromotions} / {fev.cases} cases</dd></div>
+            <div><dt>Source-role checks</dt><dd>{fev.sourceRoles.correct} / {fev.sourceRoles.n}</dd></div>
+            <div><dt>Adversarial finding-gap handling</dt><dd>{fev.abstention.correct} / {fev.abstention.n}</dd></div>
+            <div><dt>Template-rule unsupported implication rate</dt><dd>{pc(fev.unsupportedMissionImplicationRate)} across {fev.implications} outputs</dd></div>
+            <div><dt>Injected unsafe/directive/probability claims rejected</dt><dd>{fev.adversarialImplications.rejected} / {fev.adversarialImplications.n}</dd></div>
+          </dl>
+          <p className="text-sm text-muted">Wrong-regime checks detect mechanistic findings promoted ahead of relevant solid evidence. Implication checks enforce source-bound templates and reject injected prohibited statements; a zero rate is not an independent semantic or scientific accuracy measurement. Abstention requires a flagged request limitation and no direct finding. Source-role checks include correctly leaving PDF sections unknown. Labels and per-case output are in <code>eval/finding-labels-v1.json</code> and <code>node lib/eval-run.ts</code>.</p>
+          <h3 className="text-lg font-semibold">Historical live-model run</h3>
           <p>
             All {lm.questions} questions were sent to the live Ask pipeline with {lm.model}. {lm.questions - lm.aiAnswers} matched no
             evidence, so the model was never called. The {lm.claims} claims in the other answers were checked by
-            the same verifier users see. Re-scored: the saved answers re-checked after we fixed verifier false alarms (chemical
+            the verifier at that time. These are saved historical metrics, not a new run or a rescore of this hardening pass. Re-scored: the saved answers re-checked after we fixed verifier false alarms (chemical
             formulas read as numbers, the question&apos;s own numbers, arithmetic in derived claims, negated safety words), with no
             new model calls.
           </p>

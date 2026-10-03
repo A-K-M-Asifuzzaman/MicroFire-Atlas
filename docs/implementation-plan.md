@@ -28,7 +28,7 @@ Milestone 0 audit against `MicroFire-Atlas-Claude-Code-Master-Prompt (1).md` (Ex
 Ranked by judge impact; each is something the current site does not do.
 
 1. **Flame Vision on real NASA footage** (§9, §16, §26). NASA's image library has public Saffire-V (2021) and Saffire-VI (2024) flame-spread videos of PMMA burning inside Cygnus, plus BASS/BASS-II flame stills from the ISS. A reproducible OpenCV pipeline can segment the flame per frame and report pixel-domain area, extent, centroid and leading-edge position with an overlay. That makes the "AI/CV contribution" visible, which nothing on the site does now.
-2. **Analyze page** with RAW / AI VISION / MEASUREMENTS modes, a scrubbable timeline, chart ↔ video sync and metric hover highlighting.
+2. **Analyze page** with RAW / FLAME VISION / MEASUREMENTS modes, a scrubbable timeline, chart ↔ video sync and metric hover highlighting.
 3. **Story = evidence journey** (§6–14): ignition concept → gravity shift → real experiment → Flame Vision → change one condition (matched experiment, never interpolated) → compare → Moon scenario → ask → evidence boundary.
 4. **Evidence categories** in Mission Lab (Strong direct / Related / Partial / Evidence gap) with documented thresholds.
 5. **Global Evidence drawer** (§19) with source, caveats and processing provenance; bottom sheet on mobile.
@@ -54,7 +54,7 @@ Not upgrades (already met or skipped deliberately): typed data contracts and loc
 |---|---|---|
 | M2 | Media manifest + downloaded, re-encoded NASA videos/stills with provenance | Every media file has NASA ID, URL, licence note, hash |
 | M4 | CV pipeline (`pipelines/flame_vision.py`, OpenCV) + precomputed `frame_metrics.json`, overlays, processing version | Deterministic; documented thresholds; quality flags; tested on synthetic frames |
-| M4 | `/analyze/[mediaId]` Flame Vision UI | RAW / AI VISION / MEASUREMENTS; scrub; chart click seeks; hover highlights |
+| M4 | `/analyze/[mediaId]` Flame Vision UI | RAW / FLAME VISION / MEASUREMENTS; scrub; chart click seeks; hover highlights |
 | M3 | Evidence-journey story on home | Real NASA footage within 20 s |
 | M6 | Evidence categories in Mission Lab | Thresholds documented and tested |
 | M1 | Global evidence drawer | Keyboard, focus return, bottom sheet on mobile |

@@ -10,7 +10,9 @@
  * None of this calls a model, so it costs nothing and runs in the test suite. Live model metrics come from
  * eval-live.ts, which needs an API key.
  */
-import { buildEvidence, checkAnswer, type ClaimType, type EvidenceItem } from "./ask-core.ts";
+import { buildEvidence, checkAnswer, parseQuestion, type ClaimType, type EvidenceItem } from "./ask-core.ts";
+import { fromBass, fromSaffire, fromLuci } from "./ontology.ts";
+import { rankFindings, fireInsight, validateInsight } from "./finding-relevance.ts";
 import type { Experiment, Finding, LuciRun, SaffireRun } from "./types";
 
 export type EvalQuestion = {
@@ -22,6 +24,41 @@ export type EvalQuestion = {
   expect?: { signal?: "direct" | "gap" | "abstain"; gaps?: string[]; mechanistic?: boolean };
 };
 export type Signal = "direct" | "gap" | "empty" | "partial";
+
+/** Supplemental finding labels extend MicroFire-Eval; the frozen 100-question set is unchanged. */
+export type FindingEvalCase = { id: string; q: string; gold: string[]; abstain?: boolean; rationale: string };
+export function runFindingEval(cases: FindingEvalCase[], exps: Experiment[], finds: Finding[], saffire: SaffireRun[], luci: LuciRun[]) {
+  const records = [...exps.map(fromBass), ...saffire.map(fromSaffire), ...luci.map(fromLuci)];
+  const rows = cases.map(c => {
+    const parsed = parseQuestion(c.q);
+    const ranked = rankFindings(finds, records, { scenario: parsed.scenario, topics: [...parsed.topics] });
+    const ids = ranked.map(r => r.findingId);
+    const positions = c.gold.map(id => ids.indexOf(id)).filter(i => i >= 0);
+    const insight = fireInsight(ranked, finds);
+    // Wrong-regime promotion means non-solid evidence ordered before relevant solid evidence.
+    const firstMechanism = ranked.findIndex(r => r.rung === "mechanistic");
+    const wrongRegime = firstMechanism >= 0 && ranked.some((r,i) => i > firstMechanism && (r.rung === "direct" || r.rung === "analogous"));
+    const rejected = insight ? ["This material is safe on the Moon.", "Turn off ventilation.", "The probability of fire is 2 %."]
+      .filter(interpretation => !validateInsight({...insight, interpretation}, finds)).length : 0;
+    return { id:c.id, top5:ids.slice(0,5), recall3:c.gold.length ? c.gold.filter(id=>ids.slice(0,3).includes(id)).length/c.gold.length : null,
+      recall5:c.gold.length ? c.gold.filter(id=>ids.slice(0,5).includes(id)).length/c.gold.length : null,
+      reciprocalRank:c.gold.length ? (positions.length ? 1/(Math.min(...positions)+1) : 0) : null,
+      wrongRegime, implication:!!insight, unsupportedImplication:!!insight&&!validateInsight(insight,finds), mutationChecks:insight?3:0, rejected,
+      abstention:c.abstain ? signalOf(buildEvidence(c.q,exps,finds,saffire,luci)) === "gap" && !ranked.some(r=>r.rung==="direct") : null };
+  });
+  // Independently specified expectations for the labelled quotes: unknown PDF sections must stay unknown.
+  const roles: Record<string,string|undefined> = { "luci-first-lunar":"abstract", "tiny-flame-undetected":"abstract", "sibal-quench-speeds":"abstract", "dim-blue-low-flow":undefined, "saffire-alarm-981-s":undefined, "saffire-co-co2-limits":undefined, "saffire-flame-jumped-gap":undefined, "sibal-5-duration":undefined };
+  const roleResults = Object.entries(roles).map(([id, expected]) => {
+    const f = finds.find(f=>f.id===id);
+    return !!f && rankFindings([f],records,{scenario:{},topics:f.topics})[0]?.sourceRole===expected;
+  });
+  const mean = (key:"recall3"|"recall5"|"reciprocalRank") => { const a=rows.flatMap(r=>r[key]===null?[]:[r[key]]);return a.length?a.reduce((a,b)=>a+b,0)/a.length:null; };
+  const implications=rows.filter(r=>r.implication).length;
+  return { cases:rows.length, labelled:rows.filter(r=>r.recall3!==null).length, recall3:mean("recall3"), recall5:mean("recall5"), mrr:mean("reciprocalRank"),
+    wrongRegimePromotions:rows.filter(r=>r.wrongRegime).length, implications, unsupportedMissionImplicationRate:implications?rows.filter(r=>r.unsupportedImplication).length/implications:null,
+    sourceRoles:{correct:roleResults.filter(Boolean).length,n:roleResults.length}, abstention:{correct:rows.filter(r=>r.abstention===true).length,n:rows.filter(r=>r.abstention!==null).length},
+    adversarialImplications:{rejected:rows.reduce((s,r)=>s+r.rejected,0),n:rows.reduce((s,r)=>s+r.mutationChecks,0)}, rows };
+}
 
 export function signalOf(ev: ReturnType<typeof buildEvidence>): Signal {
   // a missing named record, a forecast request or a false premise outranks any matching evidence

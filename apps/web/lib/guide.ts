@@ -42,7 +42,7 @@ export const PAGES: GuidePage[] = [
     match: (p) => p.startsWith("/analyze"),
     steps: [
       { target: "fv-video", kid: "This is a real NASA video of fire in space! Press Play and watch it spread.", pro: "NASA Image and Video Library footage (Saffire / BASS), local web copy with provenance." },
-      { target: "fv-modes", kid: "Press AI vision. The computer draws a line around the flame by itself, in every frame!", pro: "Classical OpenCV segmentation: luminous and dim-blue masks inside a documented ROI." },
+      { target: "fv-modes", kid: "Press Flame Vision. The computer draws a line around the flame by itself, in every frame!", pro: "Classical OpenCV segmentation: luminous and dim-blue masks inside a documented ROI." },
       { target: "fv-metrics", kid: "Point at a number and I'll light up what it measures on the picture.", pro: "Per-frame pixel-domain metrics; no spatial calibration exists, so nothing is converted to cm." },
       { target: "fv-charts", kid: "These lines show how big the flame was over time. Click a line to jump the video there!", pro: "Area and edge time series; click to seek." },
     ],
@@ -52,7 +52,7 @@ export const PAGES: GuidePage[] = [
     name: "Compare",
     match: (p) => p === "/compare",
     steps: [
-      { target: "presets", kid: "Pick a comparison. The same material, with only one thing changed: that's a fair test, like at school!", pro: "Curated presets hold conditions constant where the tables allow." },
+      { target: "presets", kid: "Pick a comparison. Look at near-matched tests, then check every condition that changed.", pro: "Curated presets expose both matching and differing recorded conditions." },
       { target: "matrix", kid: "The blue words show what is different between the tests.", pro: "Condition matrix: differing values highlighted." },
       { target: "observed", kid: "'Observed' is what NASA saw. 'Interpretation' is our best guess. Real scientists always keep those apart!", pro: "Observed, interpretation and data gaps are separated." },
     ],
@@ -73,7 +73,7 @@ export const PAGES: GuidePage[] = [
     match: (p) => p === "/gaps",
     steps: [
       { target: "grid", kid: "Each box counts tests. Empty boxes mean nobody has tested there yet. That's a job for future scientists, maybe you!", pro: "O₂ × airflow bins: observed (3+), sparse (1-2), outside evidence (0)." },
-      { target: "grid", kid: "The orange rows have more oxygen than the air on Earth. Moon bases might use air like that, and no test here went there.", pro: "No test above 21 % O₂; NASA's recommended exploration atmosphere is 34 % O₂ at 56.5 kPa." },
+      { target: "grid", kid: "The orange rows have more oxygen than the air on Earth. Moon bases might use air like that, and no test here went there.", pro: "These BASS records stop at 21 % O₂. NASA has studied 56.5 kPa / 34 % O₂ and a later alternate 66.2 kPa / 28.5 % O₂; neither is a guaranteed final lunar atmosphere." },
     ],
   },
   {
@@ -142,8 +142,8 @@ const JOURNEY: Omit<Discovery, "x" | "y">[] = [
   { id: "clue", label: "Pinned a real crew-log clue", href: "/story", kind: "record" },
   { id: "quiet", label: "Found the hidden dim flame", href: "/story", kind: "act" },
   { id: "realflame", label: "Picked a real NASA flame video", href: "/expedition", kind: "record" },
-  { id: "aivision", label: "Used AI Vision to measure a real flame", href: "/analyze", kind: "act" },
-  { id: "hop", label: "Changed one thing between two real tests", href: "/expedition", kind: "record" },
+  { id: "aivision", label: "Used Flame Vision to measure a real flame", href: "/analyze", kind: "act" },
+  { id: "hop", label: "Compared near-matched tests between two real tests", href: "/expedition", kind: "record" },
   { id: "difference", label: "Spotted the difference NASA recorded", href: "/compare", kind: "record" },
   { id: "moonmatch", label: "Found the closest evidence for a Moon habitat", href: "/mission", kind: "act" },
   { id: "edge", label: "Found where the evidence stops", href: "/gaps", kind: "gap" },
@@ -232,10 +232,10 @@ export const CREW: Record<CrewId, { name: string; job: string; img: string; pose
 
 /** "What am I looking for?": one short goal per page, in Explorer and Scientist words. */
 export const GOALS: Record<string, { crew: CrewId; kid: string; pro: string; next?: { label: string; href: string } }> = {
-  learn: { crew: "kofi", kid: "Flip gravity off, then scroll slowly: three real tests show what changes when only the airflow changes.", pro: "Explainer: gravity illustration plus the B16/B20/B19 scroll story, each beat a recorded outcome.", next: { label: "Build the experiment", href: "/story" } },
+  learn: { crew: "kofi", kid: "Flip gravity off, then scroll slowly: three real tests show what changes across near-matched tests with different airflow.", pro: "Explainer: gravity illustration plus the B16/B20/B19 scroll story, each beat a recorded outcome.", next: { label: "Build the experiment", href: "/story" } },
   home: { crew: "tala", kid: "Press Follow the Spark to start the adventure, or scroll down: a real flame NASA filmed in space is waiting!", pro: "Cinematic opener, real NASA footage, the B16/B20/B19 map and where the evidence stops.", next: { label: "Follow the Spark", href: "/expedition" } },
   atlas: { crew: "mei", kid: "Every dot is a real fire test from the space station. Tap a dot, then read what the astronauts wrote.", pro: "All 56 records by O₂ and airflow; select a point for its full provenance.", next: { label: "Compare two tests", href: "/compare" } },
-  analyze: { crew: "kofi", kid: "Play the real NASA video, then press AI vision to see the computer find the flame.", pro: "Classical CV on NASA footage; pixel units only.", next: { label: "Explore the tests", href: "/atlas" } },
+  analyze: { crew: "kofi", kid: "Play the real NASA video, then press Flame Vision to see the computer find the flame.", pro: "Classical CV on NASA footage; pixel units only.", next: { label: "Explore the tests", href: "/atlas" } },
   compare: { crew: "mei", kid: "Look at what stayed the same and what changed. Then read what NASA saw, and what we can't say yet.", pro: "Held constant, changed and recorded are computed from the records; can and can't say follow from them.", next: { label: "Explore the Research Frontier", href: "/gaps" } },
   mission: { crew: "kofi", kid: "Pick a place for a space crew to live. Then climb the Evidence Ladder: how close can real NASA tests get?", pro: "Evidence Ladder (direct, analogous, mechanistic, gap) above the Mission Relevance arithmetic; not a risk score.", next: { label: "See the Research Frontier", href: "/gaps" } },
   gaps: { crew: "tala", kid: "Empty squares are places no test has been. Finding them is a real discovery!", pro: "O₂ × airflow coverage; empty cells make no claim.", next: { label: "Ask a question", href: "/ask" } },

@@ -232,8 +232,8 @@ export function buildEvidence(q: string, exps: Experiment[], finds: Finding[], s
   for (const id of testIds) if (!named.some((e) => e.test_id.toUpperCase() === id)) gaps.push({ dim: "record", text: `This atlas holds no test ${id}.` });
   if (/\bfm\s*[2²]\b/i.test(q)) gaps.push({ dim: "record", text: "FM² has not flown yet: no FM² results exist. Its planned conditions are listed on the Research Frontier page." });
   // a question asking for danger, safety or a probability: the atlas reports evidence, never a forecast
-  if (/\b(probability|chance of|how likely|how long until|dangerous|is it safe|safe to|will .{0,40}\b(be safe|be dangerous|catch fire))\b/i.test(q))
-    gaps.push({ dim: "prediction", text: "MicroFire Atlas reports NASA evidence; it does not predict danger, safety or probability." });
+  if (/\b(probability|chance of|how likely|how long until|dangerous|safe|safest|unsafe|prove|proves|caused|predict\w*|will .{0,40}\b(burn|ignite|be safe|be dangerous|catch fire))\b/i.test(q))
+    gaps.push({ dim: "prediction", text: "MicroFire Atlas reports NASA evidence; these records do not establish mission safety, fire probability, predictions or isolated causal proof." });
   // a premise that contradicts a named record: B19 did not burn on the Moon
   if (scenario.gravity && scenario.gravity !== "microgravity")
     for (const e of named) gaps.push({ dim: "premise", text: `Test ${e.test_id} ran in microgravity aboard the ISS, not at ${scenario.gravity} gravity.` });
@@ -270,7 +270,7 @@ Return a short summary and a list of claims. Each claim has a type:
 Rules:
 - Cite only keys that appear in the evidence list, exactly as written (for example "E:bass2-B19" or "F:low-flow-sensitivity").
 - Copy numbers exactly as they appear in the cited items.
-- All tests were run in microgravity aboard the ISS. Never present them as Moon or Mars measurements; if asked about other gravity levels, say what the cited partial-gravity quotes report and add a DATA_GAP claim.
+- BASS/BASS-II ran in microgravity aboard the ISS; Saffire ran in uncrewed Cygnus vehicles. LUCI simulated lunar gravity on a spinning rocket, not on the Moon surface. Preserve each cited item's actual platform and gravity; report unmatched conditions as DATA_GAP claims.
 - These are past test outcomes, not predictions or safety ratings. Do not give operational crew advice.
 - Never write that something causes, proves, ensures or guarantees an outcome, or that a material or habitat is safe, unless a cited NASA quote says so. Say "was recorded with" or "differed in" instead.
 - Never predict ("will burn", "would ignite"). If asked, say what was recorded and add a DATA_GAP claim.

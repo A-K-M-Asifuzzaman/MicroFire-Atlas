@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ScrollStory } from "@/components/ScrollStory";
 import { GravityTeaser } from "@/components/world/GravityTeaser";
 
-export const metadata: Metadata = { title: "Why flames change in space", description: "Switch gravity off, then scroll through three real NASA tests where only the airflow changed." };
+export const metadata: Metadata = { title: "Why flames change in space", description: "Switch gravity off, then scroll through three real NASA tests with different airflow and near-identical oxygen." };
 
 /** The science explainer, moved off the home page so the home page stays short. */
 export default function LearnPage() {

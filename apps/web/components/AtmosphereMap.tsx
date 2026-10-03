@@ -7,7 +7,7 @@ const x = (kpa: number) => L + ((kpa - P0) / (P1 - P0)) * (W - L - R);
 const y = (o2: number) => H - B - ((o2 - O0) / (O1 - O0)) * (H - T - B);
 
 /**
- * Every test with both pressure and oxygen recorded, on one atmosphere map, with NASA's proposed
+ * Every test with both pressure and oxygen recorded, on one atmosphere map, with NASA's two studied
  * exploration atmosphere marked. Shows how close (and how far) the evidence gets to habitat air.
  * Server-rendered SVG: attributes only, so the strict CSP holds.
  */

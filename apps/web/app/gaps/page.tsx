@@ -67,7 +67,7 @@ export default function GapsPage() {
         <dl className="mt-6 grid gap-px bg-rule border border-rule md:grid-cols-2 lg:grid-cols-4">
           {[
             ["Gravity", `${evidenceRecords.filter((r) => r.gravity === "microgravity").length} of ${evidenceRecords.length} test records ran in microgravity. ${evidenceRecords.filter((r) => r.gravity === "lunar").length} ran in simulated lunar gravity (LUCI, normal air). None ran at Martian gravity.`],
-            ["Pressure", `BASS-II ran near 1 atm. Saffire IV to VI went down to ${Math.min(...saffireRuns.filter((r) => r.pressure_kpa != null).map((r) => r.pressure_kpa!))} kPa. NASA's proposed exploration atmosphere is 56.5 kPa with 34 % oxygen.`],
+            ["Pressure", `BASS-II ran near 1 atm. Saffire IV to VI went down to ${Math.min(...saffireRuns.filter((r) => r.pressure_kpa != null).map((r) => r.pressure_kpa!))} kPa. NASA studied 56.5 kPa with 34 % oxygen and later evaluated 66.2 kPa with 28.5 % oxygen; neither is a universal lunar habitat specification.`],
             ["Materials", `${[...new Set(evidenceRecords.map((r) => r.material))].join(", ")}. Real cabins hold many more.`],
             ["Scale", `From a ${Math.min(...evidenceRecords.filter((r) => r.sizeCm).map((r) => r.sizeCm!))} cm strip to a ${Math.max(...evidenceRecords.filter((r) => r.sizeCm).map((r) => r.sizeCm!))} cm sheet. NASA reports that larger Saffire burns spread more slowly than small-duct tests of the same fabric.`],
           ].map(([k, v]) => (

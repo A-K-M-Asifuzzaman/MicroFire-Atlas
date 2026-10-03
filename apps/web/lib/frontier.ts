@@ -38,7 +38,7 @@ export function frontier(fq: FrontierQuestion, records: EvidenceRecord[], findin
   if (l.direct.length) know.push(`${l.direct.length} NASA test${l.direct.length === 1 ? "" : "s"} match every condition: for example ${l.direct.slice(0, 3).map((x) => x.record.label).join(", ")}.`);
   for (const { record: r } of l.analogous.slice(0, l.direct.length ? 0 : 2)) {
     const p = pressureMid(r);
-    know.push(`${r.label}: ${r.material}, ${r.oxygen ?? "?"} % oxygen${p != null ? `, ${p} kPa` : ""}, microgravity. NASA recorded: ${r.outcomeLabel.toLowerCase()}.`);
+    know.push(`${r.label}: ${r.material}, ${r.oxygen ?? "?"} % oxygen${p != null ? `, ${p} kPa` : ""}, ${GRAVITY[r.gravity]}. ${r.caveat ? `${r.caveat}. ` : ""}NASA recorded: ${r.outcomeLabel.toLowerCase()}.`);
   }
   if (!l.direct.length && l.analogous.length > 2) know.push(`${l.analogous.length - 2} more solid-fuel tests differ from this question in named ways.`);
   if (l.findings.analogous.length) know.push(`${l.findings.analogous.length} NASA finding${l.findings.analogous.length === 1 ? "" : "s"} about reduced gravity or exploration atmospheres.`);

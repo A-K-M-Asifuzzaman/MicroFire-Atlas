@@ -52,7 +52,7 @@ await session({ width: 1440, height: 900 }, 2, async ({ p, go, btn, click, to, s
   await click(p.locator("button", { hasText: "Investigate this flame" }));
   await p.waitForTimeout(1500);
   await click(p.getByRole("button", { name: "Play", exact: true }));
-  await click(p.getByRole("tab", { name: "AI vision" }));
+  await click(p.getByRole("tab", { name: "Flame Vision" }));
   await click(p.locator(".exp-metrics button"));
   await click(p.getByRole("tab", { name: "Measurements" }));
   await p.waitForTimeout(3500);

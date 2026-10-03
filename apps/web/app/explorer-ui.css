@@ -258,3 +258,6 @@ html[data-motion="gentle"] .nav-panel { animation: none; }
 .home-learn { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 32px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .method-page section p, .method-page section li { line-height: 1.65; }
 .method-page section h3 { margin-top: 10px; color: #ffe2ac; }
+/* The offline example separates retrieval, saved synthesis and the checks. */
+.verified-example{margin:32px 0;padding:26px;border:1px solid var(--rule-strong);border-radius:18px;background:var(--panel);scroll-margin-top:80px}.verified-example-flow{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:28px;margin-top:24px}.verified-example-flow h3{font-size:13px;color:var(--signal);margin-bottom:12px}.verified-example-flow p,.verified-example-flow li{font-size:13px;line-height:1.75}.verified-example-flow ul{display:grid;gap:7px}.verified-example details{border-top:1px solid var(--rule);margin-top:24px;padding-top:12px;font-size:13px;line-height:1.7}.verified-example summary{cursor:pointer;min-height:44px;color:var(--signal)}
+@media(max-width:900px){.verified-example-flow{grid-template-columns:1fr}.verified-example{padding:20px}}

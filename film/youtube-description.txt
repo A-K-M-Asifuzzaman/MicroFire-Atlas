@@ -12,7 +12,7 @@ Code: https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas
 What's inside:
 - 56 individual tests transcribed from NASA's BASS-II Summary Report (NASA/TM-20210011385), each linked to its PDF page
 - 19 NASA findings, each checked word for word against the source when the site is built
-- Mission Lab: ranks tests against a cabin scenario, including NASA's recommended 34% O2 / 56.5 kPa exploration atmosphere
+- Mission Lab: ranks tests against a cabin scenario, including NASA-studied 34% O2 / 56.5 kPa atmosphere A
 - Evidence Gap Map: where tests exist and where they don't
 - Ask: AI answers built only from cited evidence, with every citation checked
 

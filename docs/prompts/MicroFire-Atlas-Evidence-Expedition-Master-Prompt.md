@@ -13,7 +13,7 @@ the real data, media and code this repository already has.
 
 Build **The Evidence Expedition**, the second act of MicroFire Atlas. In Act I (Mission Freefall) the child builds
 NASA's BASS-II wind tunnel and lights a sample. In Act II the child leaves the workbench and becomes an
-**evidence explorer**: they pick a real NASA flame, switch on AI Vision, measure it, change one thing between two
+**evidence explorer**: they pick a real NASA flame, switch on Flame Vision, measure it, compare conditions between two
 real tests, spot the difference, help a Moon habitat find its closest evidence, discover a science gap, ask PIX a
 question and finish with a personal evidence constellation and certificate.
 
@@ -23,7 +23,7 @@ an accessible dialog with one honest sentence and return focus on close.
 
 The result must prove, in the child's own words:
 
-> I saw a real NASA flame. I used AI Vision to measure it. I changed one thing and saw what NASA recorded. I helped
+> I saw a real NASA flame. I used Flame Vision to measure it. I changed one thing and saw what NASA recorded. I helped
 > a Moon habitat find its closest evidence. I found something scientists still need to study. I followed the source.
 
 ## 2. The whole product on one page
@@ -38,9 +38,9 @@ ACT I · MISSION FREEFALL  ─ build ─ check ─ ignite B20 ─ B16/B19/fabric
 ACT II · THE EVIDENCE EXPEDITION   ◀── this phase
   1 Follow the spark (scroll cinematic)          Concept visualization
   2 Pick a real NASA flame (media cards)         Real evidence starts here
-  3 Flame Lab: Real video → AI Vision → Measure  Computed (pixels)
+  3 Flame Lab: Real video → Flame Vision → Measure  Computed (pixels)
   4 Trace the flame (mini-game)                  Computed outline revealed
-  5 Change one thing (supported changes only)    Matched records
+  5 Compare near-matched tests (supported changes only)    Matched records
   6 Spot the difference                          Recorded outcomes
   7 Help the Moon habitat (closest evidence)     Evidence proximity + coverage
   8 Science gap reveal                           Uncertainty = discovery
@@ -67,7 +67,7 @@ optional nickname that stays in the browser.
 | Character | Job | Art |
 |---|---|---|
 | **Ember** | Host and main voice; reacts to flame changes | Existing SVG, moods; add mouth animation while speaking |
-| **PIX** | The AI companion. Only speaks about AI Vision, matching and Ask. Says "Here's what I found in these experiments", never "I know the answer" | New original SVG: white rounded shell, dark faceplate, cyan eyes, small side fins; moods idle / scanning / happy / unsure; mouth/eye animation while speaking |
+| **PIX** | The AI companion. Only speaks about Flame Vision, matching and Ask. Says "Here's what I found in these experiments", never "I know the answer" | New original SVG: white rounded shell, dark faceplate, cyan eyes, small side fins; moods idle / scanning / happy / unsure; mouth/eye animation while speaking |
 | **Tala** | Navigator: where to go next (route goals) | Generated 3D-film art |
 | **Kofi** | Engineer: how to play a control | Generated 3D-film art |
 | **Dr. Mei** | Scientist: what the evidence says | Generated 3D-film art |
@@ -104,10 +104,10 @@ label flips **Concept visualization → Real experimental evidence**.
 
 ### 6.3 Flame Lab
 
-The real media dominates. Three big modes: **Real video**, **AI Vision**, **Measure**.
+The real media dominates. Three big modes: **Real video**, **Flame Vision**, **Measure**.
 
 - Real video: play/pause, large touch scrubber, NASA source badge.
-- AI Vision: PIX "I'm tracing the flame so we can measure it!" then the outline from
+- Flame Vision: PIX "I'm tracing the flame so we can measure it!" then the outline from
   `public/media/<slug>/analysis.json` for the current frame (the shipped OpenCV pipeline). Child names: AI flame
   outline, Flame center, Measurement guides.
 - Measure: at most four metrics (Height, Width, Area, Shape) in **px** with the tooltip "Pixels are picture units.
@@ -119,16 +119,16 @@ The real media dominates. Three big modes: **Real video**, **AI Vision**, **Meas
 "Which outline matches the flame best?" Three candidates drawn over the same frame: the real computed outline and two
 honest distractors produced by deterministic transforms of it (scaled 1.35× about the centroid; shifted by 25 % of the
 box width). The child picks; reveal "Here's PIX's AI outline" with the real one highlighted. Feedback: "Nice
-spotting!" or "Almost: look at the left edge." Reward: **AI Vision** discovery. Distractors are labelled as made-up
+spotting!" or "Almost: look at the left edge." Reward: **Flame Vision** discovery. Distractors are labelled as made-up
 in Science Notes.
 
-### 6.5 Change one thing
+### 6.5 Compare near-matched tests
 
-"What if we change just one thing?" Offer only changes the dataset supports, computed from `experiments.json`:
+"What changes across near-matched tests?" Offer only changes the dataset supports, computed from `experiments.json`:
 
 | Start | Change | Result label | Records |
 |---|---|---|---|
-| B20 (PMMA film, 16.5 % O₂, 5 cm/s, burned) | More airflow | **Matched experiment found** | B19 (16.4 %, 10 cm/s, blew off) |
+| B20 (PMMA film, 16.5 % O₂, 5 cm/s, burned) | More airflow | **Closest experiment; oxygen also differs** | B19 (16.4 %, 10 cm/s, blew off) |
 | B20 | Less airflow | **Matched experiment found** | B16 (16.5 %, 3 cm/s start, quenched) |
 | B20 | More oxygen (same film) | **Closest experiment found** (state what differs) | nearest PMMA-film record by oxygen with flow difference shown |
 | B20 | Moon gravity or 34 % O₂ | **We don't have a matching experiment yet** → "That's a science gap." | none |
@@ -179,7 +179,7 @@ competitor's debrief timeline, filled with real actions, not invented percentage
 Every claim maps to a specific record or verified finding. Recorded / derived / interpreted / not stated stay
 labelled. B16's quench is not "all slow flames go out". Oxygen % is not partial pressure. Atlas rows ≠ all lunar
 research. Pixel metrics stay in px. Media is never claimed to show a BASS test it doesn't show. The 34 % / 56.5 kPa
-habitat atmosphere is a proposal. AI answers cite retrieved evidence only; uncited answers are replaced by the
+configuration is NASA-studied and previously recommended, alongside a later 66.2 kPa / 28.5 % alternate; neither is a final universal lunar atmosphere. AI answers cite retrieved evidence only; uncited answers are replaced by the
 deterministic summary.
 
 ## 8. Evidence accounting (our equivalent of their budget model)
@@ -232,7 +232,7 @@ and the secret check; HawkScan after the commit; deploy.
 
 ## 14. Judge path (75–90 s)
 
-0–10 s spark cinematic → 10–20 s pick Saffire-VI, concept→real flip → 20–35 s AI Vision + Width → 35–50 s change
+0–10 s spark cinematic → 10–20 s pick Saffire-VI, concept→real flip → 20–35 s Flame Vision + Width → 35–50 s change
 airflow B20→B19 → 50–60 s spot the difference → 60–75 s Moon habitat closest match → 75–82 s science gap → 82–90 s
 Ask PIX, open a Source, certificate.
 

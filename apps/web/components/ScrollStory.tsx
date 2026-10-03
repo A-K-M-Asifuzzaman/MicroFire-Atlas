@@ -58,7 +58,7 @@ export function ScrollStory() {
       id: "orbit",
       kicker: "In orbit",
       title: "Take gravity away and nothing rises",
-      body: <>Without buoyancy, the flame only gets the oxygen that drifts or is blown in. It turns small, round and blue. The ventilation fan now decides its fate.</>,
+      body: <>Without buoyant flow, oxygen can arrive by diffusion and ventilation. Some microgravity flames become dim and blue. This illustration shows one possible shape; behavior also depends on fuel and conditions.</>,
       scene: { view: "bench", gravity: "orbit", o2: 21, flow: 0, outcome: "dim" },
     },
     {
@@ -122,7 +122,7 @@ export function ScrollStory() {
       title: "And here the evidence stops",
       body: (
         <>
-          NASA recommends 34 % oxygen at 56.5 kPa for future Moon and Mars cabins. No test in this atlas went there. That gap is
+          NASA studied 34 % oxygen at 56.5 kPa as one exploration-atmosphere configuration. No BASS-II test shown here matched it. That gap is
           where new experiments matter. <Cite sourceId="exploration-atmosphere" />
         </>
       ),

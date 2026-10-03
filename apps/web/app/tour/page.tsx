@@ -32,7 +32,7 @@ export default function TourPage() {
     },
     {
       t: "10 s", title: "Computer vision on a real NASA flame", href: "/analyze/saffire-vi-pmma",
-      look: "Switch AI vision on, then Measurements.",
+      look: "Switch Flame Vision on, then Measurements.",
       why: "Classical OpenCV segmentation of NASA's own footage, reported in pixels with quality flags. No invented physical units.",
       criteria: "Best use of technology",
     },
