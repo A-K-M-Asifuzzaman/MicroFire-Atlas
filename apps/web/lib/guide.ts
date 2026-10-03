@@ -172,6 +172,7 @@ export const CREW: Record<CrewId, { name: string; job: string; img: string; pose
 
 /** "What am I looking for?": one short goal per page, in Explorer and Scientist words. */
 export const GOALS: Record<string, { crew: CrewId; kid: string; pro: string; next?: { label: string; href: string } }> = {
+  learn: { crew: "kofi", kid: "Flip gravity off, then scroll slowly: three real tests show what changes when only the airflow changes.", pro: "Explainer: gravity illustration plus the B16/B20/B19 scroll story, each beat a recorded outcome.", next: { label: "Build the experiment", href: "/story" } },
   home: { crew: "tala", kid: "Press Follow the Spark to start the adventure, or scroll down: a real flame NASA filmed in space is waiting!", pro: "Cinematic opener, real NASA footage, the B16/B20/B19 map and where the evidence stops.", next: { label: "Follow the Spark", href: "/expedition" } },
   atlas: { crew: "mei", kid: "Every dot is a real fire test from the space station. Tap a dot, then read what the astronauts wrote.", pro: "All 56 records by O₂ and airflow; select a point for its full provenance.", next: { label: "Compare two tests", href: "/compare" } },
   analyze: { crew: "kofi", kid: "Play the real NASA video, then press AI vision to see the computer find the flame.", pro: "Classical CV on NASA footage; pixel units only.", next: { label: "Explore the tests", href: "/atlas" } },
