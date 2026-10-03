@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Cite } from "@/components/Cite";
 import { OutcomeMark } from "@/components/Outcome";
-import { experiments, findings, OUTCOME_STYLE, sources } from "@/lib/data";
+import { evidenceRecords, experiments, findings, OUTCOME_STYLE, saffireRuns, sources } from "@/lib/data";
+import { FAMILIES, ladder, TOLERANCE } from "@/lib/ontology";
+import { FRONTIER } from "@/lib/frontier";
 import { OBSERVED_MIN } from "@/lib/gaps";
 import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
 
@@ -30,12 +32,15 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 export default function MethodologyPage() {
   const sc = scalesFrom(experiments);
+  const moon = FRONTIER.find((f) => f.id === "moon-base")!;
+  const ml = ladder(evidenceRecords, findings, moon.q);
   return (
     <div className="explorer-page method-page mx-auto max-w-7xl px-4 sm:px-6 py-12 grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
       <nav aria-label="On this page" className="text-sm lg:sticky lg:top-6 lg:self-start">
         <ul className="space-y-2 text-muted">
           {[
             ["data", "Where the data comes from"],
+            ["ladder", "The Evidence Ladder"],
             ["labels", "Observed, series, derived"],
             ["outcomes", "Outcome codes"],
             ["relevance", "Mission Relevance"],
@@ -74,6 +79,11 @@ export default function MethodologyPage() {
             Unit tests check the conversions and spot-check values against the PDF.
           </p>
           <p>
+            The {saffireRuns.length} Saffire runs come from the test-matrix and results tables of three NASA Saffire reports.
+            A build check finds every transcribed number on the exact table line it came from, and fails if one is missing. Each run links to its table and PDF page on the{" "}
+            <Link href="/saffire" className="link">Saffire page</Link>.
+          </p>
+          <p>
             The {findings.length} quoted findings are checked automatically: the build fails if any quote does not appear
             word for word in its source&apos;s abstract or PDF text, and records the PDF page where it was found.
           </p>
@@ -83,6 +93,63 @@ export default function MethodologyPage() {
               Sources page
             </Link>
             .
+          </p>
+        </Section>
+
+        <Section id="ladder" title="The Evidence Ladder">
+          <p>
+            NASA&apos;s fire experiments burn different things in different physical regimes, so they are never merged into one
+            table. Each record keeps its own columns and is also described along shared dimensions: fuel phase, material, size,
+            gravity, oxygen, pressure and airflow. A mission question then sorts the evidence onto four rungs:
+          </p>
+          <dl className="grid grid-cols-1 sm:grid-cols-[9rem_minmax(0,1fr)] gap-x-4 gap-y-2">
+            <dt className="font-semibold">Direct</dt>
+            <dd className="text-muted">Same fuel phase, same material and same gravity, with every condition you set within tolerance.</dd>
+            <dt className="font-semibold">Analogous</dt>
+            <dd className="text-muted">Solid-fuel tests that differ in named ways, listed on each card. Fewer differences rank higher.</dd>
+            <dt className="font-semibold">Mechanistic</dt>
+            <dd className="text-muted">Other regimes, such as droplets or gas flames. They explain how flames behave, never how a material burns.</dd>
+            <dt className="font-semibold">Gap</dt>
+            <dd className="text-muted">What no record covers, written as the matched-condition test that would fill it.</dd>
+          </dl>
+          <p>
+            Tolerances: oxygen ±{TOLERANCE.oxygen} percentage points, pressure ±{TOLERANCE.pressureKpa} kPa, airflow ±
+            {TOLERANCE.flowFraction * 100} %. A value a record does not state never counts as a match. These are MicroFire Atlas
+            choices, not NASA criteria. Every ladder card has a &ldquo;Why is this evidence shown?&rdquo; path that walks
+            through each check.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[14px]">
+              <caption className="text-left text-muted mb-2">Experiment families</caption>
+              <thead>
+                <tr className="border-b border-rule text-left text-muted">
+                  <th className="font-normal py-1.5 pr-4">Family</th>
+                  <th className="font-normal py-1.5 pr-4">Fuel</th>
+                  <th className="font-normal py-1.5 pr-4">Where</th>
+                  <th className="font-normal py-1.5">Highest rung</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.values(FAMILIES)
+                  .filter((f) => f.phase)
+                  .map((f) => (
+                    <tr key={f.id} className="border-b border-rule align-top">
+                      <th scope="row" className="text-left font-semibold py-2 pr-4 whitespace-nowrap">{f.name}</th>
+                      <td className="py-2 pr-4 text-muted">{f.fuel}</td>
+                      <td className="py-2 pr-4 text-muted">{f.platform}</td>
+                      <td className="py-2">
+                        {f.phase !== "solid" ? "Mechanistic" : f.id === "bass2" || f.id === "saffire" ? "Direct (test rows)" : "Analogous (findings)"}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Worked example, computed live: <strong>{moon.title}</strong>. Direct:{" "}
+            {ml.direct.length} tests. Analogous: {ml.analogous.length} tests, the closest being {ml.analogous[0]?.record.label} (
+            {ml.analogous[0]?.differs.map((d) => d.text).join("; ")}). Missing: {ml.gaps.map((g) => g.dim).join(", ")}.{" "}
+            <Link href="/mission?context=moon-base" className="link">See this ladder</Link>
           </p>
         </Section>
 
@@ -197,16 +264,21 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
 
         <Section id="ai" title="Where AI is used">
           <p>
-            Ranking, comparison and the gap map are deterministic code. The Ask page uses a language model only to phrase
-            answers from an evidence package of these records and verified quotes. Every cited ID in an answer is checked against
-            that package, and the page states when the evidence does not cover a question. Without the model, every other page
-            works unchanged.
+            Ranking, the Evidence Ladder, comparison and the gap map are deterministic code. The Ask page uses a language model
+            only to phrase answers from an evidence package of these records and verified quotes. Each claim in an answer is
+            checked before it is shown: cited IDs must be in the package, numbers must appear in the cited record, and the page
+            flags unit mix-ups, microgravity results described as lunar, causal or safety wording, and predictions. Without the
+            model, every other page works unchanged.
           </p>
         </Section>
 
         <Section id="limits" title="Limitations">
           <ul className="list-disc pl-5 space-y-2">
-            <li>{experiments.length} tests, three materials, all thin samples in a small duct, all in orbit near 1 atm.</li>
+            <li>
+              {experiments.length} BASS tests (thin samples in a small duct, near 1 atm) and {saffireRuns.length} Saffire runs
+              (large samples, some at reduced pressure, 54 to 73 kPa). All {evidenceRecords.length} test rows ran in microgravity: no test row
+              comes from Moon or Mars gravity.
+            </li>
             <li>Many flows ended at fan settings with no recorded velocity, so exact quench and blowoff speeds are often unknown.</li>
             <li>Outcome codes are our reading of short crew and ground notes.</li>
             <li>Spread rates appear in NASA figures, not tables, and are not transcribed.</li>
