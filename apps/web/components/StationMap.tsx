@@ -9,6 +9,7 @@ export const NAV_GROUPS: NavGroup[] = [
     id: "explore", label: "Explore", blurb: "Start here: the story-led adventure",
     items: [
       { href: "/expedition", label: "Follow the Spark", title: "Follow the Spark", detail: "The main adventure: watch real NASA flames, find clues and take them to the Moon.", icon: "orbit" },
+      { href: "/learn", label: "Why flames change", title: "Why flames change", detail: "Switch gravity off, then scroll through three real tests where only the airflow changed.", icon: "fire" },
       { href: "/story", label: "Build the experiment", title: "Build the experiment", detail: "Mission Freefall: assemble NASA's wind tunnel in 3D and light a real test.", icon: "rocket" },
     ],
   },

@@ -279,11 +279,21 @@ export function userMessage(q: string, items: EvidenceItem[], outside: string[])
 }
 
 const NUMBER = /\d+(?:\.\d+)?/g;
+/** Digits inside chemical formulas (O2, CO2, N2) are not measurements. */
+const FORMULA = /\b(?:CO|O|N|H|CH)[2-4](?!\.?\d)|\b(?:CO|O|N)[₂₃₄]/g;
+const numbersIn = (t: string) => t.replace(FORMULA, " ").match(NUMBER) ?? [];
+/** A derived number may be the sum or difference of two cited numbers ("1200 s − 780 s = 420 s"). */
+const derivable = (n: string, cited: string[]) => {
+  const v = Number(n), dp = (n.split(".")[1] ?? "").length, vals = [...new Set(cited)].map(Number);
+  const same = (x: number) => Math.abs(Number(x.toFixed(dp)) - v) < 1e-9;
+  return vals.some((a, i) => vals.some((b, j) => i !== j && (same(Math.abs(a - b)) || same(a + b))));
+};
 /** Number + unit pairs. Longer units first so "mm/s" is never read as "mm". */
 const UNIT_PAIR = /(\d+(?:\.\d+)?)\s*(mm\/s|cm\/s|m\/s|kPa|psi|atm|mm|cm|kW|W|%)(?![a-zA-Z/])/g;
 const pairs = (t: string) => [...t.matchAll(UNIT_PAIR)].map((m) => [m[1], m[2]] as const);
 const OTHER_GRAVITY = /\b(moon|lunar|mars|martian|partial[- ]gravity)\b/i;
 const NEGATED = /\b(not|no|never|none|only|without|lack|cannot|can't|unknown|untested)\b/i;
+const NEG_CAUSAL_PREFIX = String.raw`\b(?:not|no|never|cannot|can't|neither|nor|without)\b[^.]{0,90}?`;
 const CAUSAL = /\b(caus(?:e|es|ed|ing)|prov(?:e|es|ed|en|ing)|ensur(?:e|es|ed)|guarantee[sd]?|leads? to|led to|makes? (?:it |them )?safe|made (?:it |them )?safe|(?:is|are) safe|safe to use|demonstrates? safety)\b/i;
 const PREDICTION = /\b(will|would|is (?:likely|expected|predicted) to|are (?:likely|expected|predicted) to|predicts?)\b[^.]{0,40}?\b(burn|ignite|spread|go out|extinguish|quench|blow off|catch fire|behave|react|happen|be (?:safe|dangerous|the same))/i;
 const UNCERTAIN = /\b(cannot|can't|unknown|not known|no evidence|whether|untested|would need|needs? to be tested)\b/i;
@@ -297,8 +307,10 @@ const UNCERTAIN = /\b(cannot|can't|unknown|not known|no evidence|whether|unteste
  * - no causal or safety wording appears unless a cited NASA item uses the same word;
  * - no past outcome is turned into a prediction ("PMMA will burn on the Moon").
  */
-export function checkAnswer(raw: RawAnswer, items: EvidenceItem[]): CheckedClaim[] {
+export function checkAnswer(raw: RawAnswer, items: EvidenceItem[], question = ""): CheckedClaim[] {
   const byKey = new Map(items.map((i) => [i.key, i]));
+  const asked = new Set(numbersIn(question)); // restating the question's own conditions is not a new fact
+  const negCausal = new RegExp(NEG_CAUSAL_PREFIX + CAUSAL.source, "i");
   return raw.claims.slice(0, 8).map((c) => {
     const issues: string[] = [];
     const cites = c.cites.filter((k) => byKey.has(k));
@@ -309,8 +321,9 @@ export function checkAnswer(raw: RawAnswer, items: EvidenceItem[]): CheckedClaim
     if (c.type === "INTERPRETATION" && cites.length === 0) issues.push("Interpretation cites no evidence");
     if (factual && cites.length) {
       // Compare whole numbers, not substrings: "12" must not match inside "112".
-      const citedNumbers = new Set(cites.flatMap((k) => byKey.get(k)!.text.match(NUMBER) ?? []));
-      const missing = (c.text.match(NUMBER) ?? []).filter((n) => !citedNumbers.has(n));
+      const citedList = cites.flatMap((k) => numbersIn(byKey.get(k)!.text));
+      const citedNumbers = new Set(citedList);
+      const missing = numbersIn(c.text).filter((n) => !citedNumbers.has(n) && !asked.has(n) && !(c.type === "DERIVED" && derivable(n, citedList)));
       if (missing.length) issues.push(`Numbers not found in cited evidence: ${missing.join(", ")}`);
       const cited = cites.flatMap((k) => pairs(byKey.get(k)!.text));
       for (const [n, unit] of pairs(c.text)) {
@@ -321,7 +334,7 @@ export function checkAnswer(raw: RawAnswer, items: EvidenceItem[]): CheckedClaim
       if (OTHER_GRAVITY.test(c.text) && !NEGATED.test(c.text) && cites.every((k) => byKey.get(k)!.gravity !== "partial"))
         issues.push("Describes microgravity evidence as a Moon or Mars result");
     }
-    const causal = c.text.match(CAUSAL);
+    const causal = negCausal.test(c.text) ? null : c.text.match(CAUSAL); // "does not prove it is safe" is the honest sentence
     if (causal && !cites.some((k) => byKey.get(k)!.text.toLowerCase().includes(causal[1].toLowerCase().slice(0, 5))))
       issues.push(`Causal or safety wording ("${causal[0]}") that no cited NASA item states`);
     if (c.type !== "DATA_GAP" && PREDICTION.test(c.text) && !UNCERTAIN.test(c.text))

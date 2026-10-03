@@ -5,9 +5,13 @@ import { useSearchParams } from "next/navigation";
 import { useDeferredValue, useMemo, useState } from "react";
 import { Quote } from "@/components/Cite";
 import { EvidenceLadder } from "@/components/EvidenceLadder";
+import { AtmosphereProfiles } from "@/components/analyst/AtmosphereProfiles";
+import { ConditionInstrument } from "@/components/analyst/ConditionInstrument";
+import { EvidenceStatus } from "@/components/analyst/EvidenceStatus";
+import { ladder } from "@/lib/ontology";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
 import { Legend, OutcomeTag } from "@/components/Outcome";
-import { experiments, findings, GROUP_LABEL } from "@/lib/data";
+import { evidenceRecords, experiments, findings, GROUP_LABEL } from "@/lib/data";
 import { confidence, rank, type Gravity, type Scenario } from "@/lib/relevance";
 import { RANGES, rankRobustness, SAMPLES, type RankStability } from "@/lib/robustness";
 import type { OutcomeGroup } from "@/lib/types";
@@ -42,21 +46,27 @@ export const CONTEXTS: { id: string; label: string; detail: string; form: Form }
   },
   {
     id: "exploration",
-    label: "Exploration atmosphere",
-    detail: "56.5 kPa with 34 % oxygen, the cabin atmosphere NASA recommends for Moon and Mars missions.",
+    label: "Exploration atmosphere A, in orbit",
+    detail: "56.5 kPa with 34 % oxygen: one NASA exploration-atmosphere scenario, recommended for future Moon and Mars missions.",
     form: { oxygen: 34, flow: 10, pressureKpa: 56.5, gravity: "microgravity", material: "any", flowDirection: "any" },
   },
   {
     id: "moon-base",
-    label: "Moon base, exploration air",
+    label: "Lunar habitat, atmosphere A",
     detail: "PMMA in 34 % oxygen at 56.5 kPa, at lunar gravity: the hardest question in this atlas.",
     form: { oxygen: 34, flow: 20, pressureKpa: 56.5, gravity: "lunar", material: "PMMA", flowDirection: "any" },
   },
   {
     id: "mars-fabric",
-    label: "Mars habitat, exploration air",
+    label: "Mars habitat, atmosphere A",
     detail: "Cotton-fiberglass fabric in 34 % oxygen at 56.5 kPa, at Martian gravity.",
     form: { oxygen: 34, flow: 10, pressureKpa: 56.5, gravity: "martian", material: "SIBAL fabric", flowDirection: "any" },
+  },
+  {
+    id: "moon-base-alt",
+    label: "Lunar habitat, alternate atmosphere",
+    detail: "PMMA in 28.5 % oxygen at 66.2 kPa, the alternate exploration atmosphere NASA evaluated later, at lunar gravity.",
+    form: { oxygen: 28.5, flow: 20, pressureKpa: 66.2, gravity: "lunar", material: "PMMA", flowDirection: "any" },
   },
   {
     id: "lunar",
@@ -120,73 +130,46 @@ export function MissionLab() {
     [form],
   );
 
+  const lad = useMemo(() => ladder(evidenceRecords, findings, question), [question]);
+  const briefHref = `/mission/brief?${new URLSearchParams({ o2: String(form.oxygen), kpa: String(form.pressureKpa), flow: String(form.flow), g: form.gravity, m: form.material, dir: form.flowDirection })}`;
+
   const set = <K extends keyof Form>(k: K, v: Form[K]) => {
     setCtx("custom");
     setForm((f) => ({ ...f, [k]: v }));
   };
 
   return (
-    <div className="mission-workspace grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
-      <aside aria-label="Scenario" className="control-desk space-y-7 lg:self-start">
-        <div><h2 className="display text-2xl">Your cabin controls</h2><p className="text-sm text-muted mt-2">Choose a starting point, then change the conditions.</p></div>
-        <fieldset data-guide="contexts">
-          <legend className="text-sm text-muted">Start from a mission context</legend>
-          <div className="mt-2 grid gap-2">
-            {CONTEXTS.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => {
-                  setCtx(c.id);
-                  setForm(c.form);
-                }}
-                aria-pressed={ctx === c.id}
-                className={`text-left px-3 py-2.5 rounded-sm border text-sm ${
-                  ctx === c.id ? "border-signal bg-panel" : "border-rule hover:border-rule-strong"
-                }`}
-              >
-                <span className="font-medium">{c.label}</span>
-                <span className="block text-xs text-muted mt-0.5">{c.detail}</span>
-              </button>
-            ))}
-          </div>
-        </fieldset>
+    <div className="mission-workspace analyst space-y-12">
+      <section aria-labelledby="presets" className="analyst-presets" data-guide="contexts">
+        <h2 id="presets" className="sr-only">Mission presets</h2>
+        <p className="text-sm text-muted">Start from a mission</p>
+        <div className="analyst-preset-row">
+          {CONTEXTS.map((c) => (
+            <button key={c.id} onClick={() => { setCtx(c.id); setForm(c.form); }} aria-pressed={ctx === c.id} className="analyst-preset" title={c.detail}>
+              {c.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
-        <fieldset data-guide="sliders" className="space-y-5 text-sm">
-          <legend className="text-muted">Or set conditions</legend>
-          <Slider label="Oxygen" unit="%" value={form.oxygen} min={14} max={36} step={0.5} onChange={(v) => set("oxygen", v)} />
-          <Slider label="Airflow" unit="cm/s" value={form.flow} min={0.5} max={60} step={0.5} onChange={(v) => set("flow", v)} />
-          <Slider label="Pressure" unit="kPa" value={form.pressureKpa} min={50} max={102} step={0.5} onChange={(v) => set("pressureKpa", v)} />
-          <label className="block">
-            <span className="text-muted">Gravity</span>
-            <select value={form.gravity} onChange={(e) => set("gravity", e.target.value as Gravity)} className="mt-1 w-full bg-panel border border-rule rounded-sm px-2 py-2">
-              <option value="microgravity">Microgravity (orbit)</option>
-              <option value="lunar">Lunar</option>
-              <option value="martian">Martian</option>
-            </select>
-          </label>
-          <label className="block">
-            <span className="text-muted">Material</span>
-            <select value={form.material} onChange={(e) => set("material", e.target.value)} className="mt-1 w-full bg-panel border border-rule rounded-sm px-2 py-2">
-              <option value="any">Any material</option>
-              <option>PMMA</option>
-              <option>SIBAL fabric</option>
-              <option>Nomex</option>
-              <option>Silicone</option>
-              <option>Cotton jersey</option>
-            </select>
-          </label>
-          <label className="block">
-            <span className="text-muted">Flow direction</span>
-            <select value={form.flowDirection} onChange={(e) => set("flowDirection", e.target.value)} className="mt-1 w-full bg-panel border border-rule rounded-sm px-2 py-2">
-              <option value="any">Either</option>
-              <option value="opposed">Opposed</option>
-              <option value="concurrent">Concurrent</option>
-            </select>
-          </label>
-        </fieldset>
-      </aside>
+      <section aria-labelledby="step-atmosphere" className="analyst-step">
+        <h2 id="step-atmosphere" className="analyst-step-title"><span>1</span>Cabin atmosphere</h2>
+        <AtmosphereProfiles o2={form.oxygen} kpa={form.pressureKpa} onPick={(o2, kpa) => { setCtx("custom"); setForm((f) => ({ ...f, oxygen: o2, pressureKpa: kpa })); }} />
+      </section>
+
+      <section aria-labelledby="step-conditions" className="analyst-step" data-guide="sliders">
+        <h2 id="step-conditions" className="analyst-step-title"><span>2</span>Mission conditions, on top of NASA&apos;s evidence</h2>
+        <p className="analyst-step-note">Drag a marker. Each tick underneath is one NASA test record at its recorded value, and the dashed window is the tolerance the Evidence Ladder uses.</p>
+        <ConditionInstrument form={form} set={set} records={evidenceRecords} joint={lad.direct.length} />
+      </section>
+
+      <section aria-labelledby="step-status" className="analyst-step">
+        <h2 id="step-status" className="analyst-step-title"><span>3</span>Evidence status</h2>
+        <EvidenceStatus q={question} l={lad} briefHref={briefHref} />
+      </section>
 
       <div className="min-w-0 space-y-10">
+        <h2 className="analyst-step-title"><span>4</span>How close the evidence gets</h2>
         <EvidenceLadder q={question} />
 
         <section aria-labelledby="summary">
@@ -218,9 +201,7 @@ export function MissionLab() {
         </section>
 
         <section aria-labelledby="ranked">
-          <h2 id="ranked" className="display text-xl">
-            Most similar BASS-II tests, with the arithmetic
-          </h2>
+          <h2 id="ranked" className="analyst-step-title"><span>5</span>Most similar BASS-II tests, with the arithmetic</h2>
           <p className="mt-1 text-sm text-faint">
             Mission Relevance, Evidence Confidence and Ranking Robustness are three separate project heuristics, not NASA
             ratings. Robustness reranks every test {SAMPLES.toLocaleString("en-US")} times with each weight varied ×
@@ -313,9 +294,7 @@ export function MissionLab() {
 
         {quotes.length > 0 && (
           <section aria-labelledby="context-findings">
-            <h2 id="context-findings" className="display text-xl">
-              What NASA reports about conditions like these
-            </h2>
+            <h2 id="context-findings" className="analyst-step-title"><span>6</span>What NASA reports about conditions like these</h2>
             <div className="mt-6 grid gap-x-10 gap-y-8 md:grid-cols-2">
               {quotes.map((f) => (
                 <Quote key={f.id} f={f} />
@@ -325,27 +304,5 @@ export function MissionLab() {
         )}
       </div>
     </div>
-  );
-}
-
-function Slider(props: { label: string; unit: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void }) {
-  return (
-    <label className="block">
-      <span className="flex justify-between">
-        <span className="text-muted">{props.label}</span>
-        <span className="num">
-          {props.value} {props.unit}
-        </span>
-      </span>
-      <input
-        type="range"
-        min={props.min}
-        max={props.max}
-        step={props.step}
-        value={props.value}
-        onChange={(e) => props.onChange(Number(e.target.value))}
-        className="mt-2 w-full accent-[var(--signal)]"
-      />
-    </label>
   );
 }

@@ -12,6 +12,8 @@ const SHORT: Record<string, string> = {
   "partial-g": "Microgravity vs Martian gravity",
   luci: "Lunar Combustion Investigation",
   "exploration-atmosphere": "Exploration atmosphere pilot study",
+  "ea-alt": "Exploration Atmosphere Tests 3 and 4",
+  "ea-6": "Exploration Atmosphere Test 6",
   "saffire-1-3": "Saffire I-III results",
   "saffire-4-5": "Saffire IV and V results",
   "saffire-6": "Saffire VI results",

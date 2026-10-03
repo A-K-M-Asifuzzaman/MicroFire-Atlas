@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
-import { ScrollStory } from "@/components/ScrollStory";
-import { EvidenceConstellation } from "@/components/world/EvidenceConstellation";
-import { GravityTeaser } from "@/components/world/GravityTeaser";
 import { SparkJourney } from "@/components/world/CinematicWorld";
 import { RealFlameReveal } from "@/components/world/RealFlameReveal";
-import { StationMap } from "@/components/StationMap";
+import { HomePaths } from "@/components/HomePaths";
 import { Legend } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
 import { evidenceRecords, experiments, findings, saffireRuns, sources } from "@/lib/data";
@@ -39,29 +36,15 @@ export default function Home() {
   return (
     <>
       <SparkJourney />
+      <HomePaths />
       <RealFlameReveal />
-      <section className="home-gravity mx-auto max-w-7xl px-5 py-16 grid gap-8 lg:grid-cols-2 items-center">
-        <div><p className="text-signal">Your first mystery</p><h2 className="display text-4xl mt-3">What happens when<br />gravity changes?</h2><p className="text-muted mt-5 max-w-md">Try the switch. This illustration helps you imagine a change; real flames depend on their fuel, airflow, and surroundings too.</p><Link href="/story" className="story-cta inline-flex mt-7">Build the 3D experiment</Link></div>
-        <GravityTeaser />
-      </section>
-
-      <StationMap />
-      <section className="border-y border-rule bg-panel/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center">
-          <div>
-            <h2 className="display text-2xl sm:text-3xl">Your evidence map</h2>
-            <p className="mt-3 text-muted max-w-[44ch]">
-              Every star is something you can do or a real NASA record. Stars light up when you discover them, and any
-              star takes you there.
-            </p>
-          </div>
-          <EvidenceConstellation />
+      <section className="home-learn mx-auto max-w-7xl px-5 py-10" aria-labelledby="learn-teaser">
+        <div>
+          <h2 id="learn-teaser" className="display text-2xl sm:text-3xl">Why does a flame change shape in space?</h2>
+          <p className="text-muted mt-2 max-w-[60ch]">Flip gravity off yourself, then scroll through three real tests where only the airflow changed.</p>
         </div>
+        <Link href="/learn" className="story-cta inline-flex">Explore the science</Link>
       </section>
-
-      <div data-guide="scroll-story" id="scroll-story">
-        <ScrollStory />
-      </div>
 
       <section className="border-b border-rule">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center">

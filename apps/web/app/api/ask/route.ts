@@ -111,7 +111,7 @@ export async function POST(request: Request) {
     if (!out.ok) return json({ ...base, mode: "evidence-only", reason: `${out.reason} The matching evidence is below.` });
     if (!isRawAnswer(out.parsed))
       return json({ ...base, mode: "evidence-only", reason: "The AI answer could not be read. The matching evidence is below." });
-    const body = { ...base, mode: "ai", provider: out.provider, summary: out.parsed.summary, claims: checkAnswer(out.parsed, items) };
+    const body = { ...base, mode: "ai", provider: out.provider, summary: out.parsed.summary, claims: checkAnswer(out.parsed, items, q) };
     if (answers.size >= CACHE_MAX) answers.delete(answers.keys().next().value!);
     answers.set(cacheKey, { at: Date.now(), body });
     return json(body);

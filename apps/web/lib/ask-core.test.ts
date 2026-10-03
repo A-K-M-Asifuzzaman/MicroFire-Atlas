@@ -85,3 +85,16 @@ test("validators catch unit swaps, gravity mix-ups, causal wording and predictio
   assert.equal(run("We cannot say whether PMMA would burn on the Moon.", "DATA_GAP", []).verified, true);
   assert.match(run("This material is safe for a Moon base.", "INTERPRETATION", ["E:bass2-B16"]).issues.join(), /safety wording/);
 });
+
+test("verifier precision: formulas, the question's own numbers, arithmetic and negated safety words are not flagged", () => {
+  const ev = buildEvidence("Compare Saffire VI-3 and VI-4.", exps, finds, saffire);
+  const check = (text: string, type: "OBSERVED" | "DERIVED" | "INTERPRETATION" | "DATA_GAP", cites: string[], q = "") =>
+    checkAnswer({ summary: "", claims: [{ text, type, cites }] }, ev.items, q)[0];
+  assert.ok(check("VI-3 burned at 30.3 % O2 and 54.6 kPa.", "OBSERVED", ["S:saffire-vi-3"]).verified);
+  assert.ok(check("VI-3 is the closest run to about 30 % at 54 kPa.", "OBSERVED", ["S:saffire-vi-3"], "Which runs used about 30% oxygen at 54 kPa?").verified);
+  assert.ok(check("VI-4 burned 420 s longer than VI-3 (1200 s minus 780 s).", "DERIVED", ["S:saffire-vi-3", "S:saffire-vi-4"]).verified);
+  assert.ok(!check("VI-4 burned 421 s longer than VI-3.", "DERIVED", ["S:saffire-vi-3", "S:saffire-vi-4"]).verified);
+  assert.ok(!check("VI-3 burned for 420 s.", "OBSERVED", ["S:saffire-vi-3", "S:saffire-vi-4"]).verified); // arithmetic is only allowed for DERIVED claims
+  assert.ok(check("These records do not demonstrate that PMMA is safe at 34 % oxygen.", "DATA_GAP", []).verified);
+  assert.ok(!check("These records show PMMA is safe at 34 % oxygen.", "INTERPRETATION", ["S:saffire-vi-3"]).verified);
+});

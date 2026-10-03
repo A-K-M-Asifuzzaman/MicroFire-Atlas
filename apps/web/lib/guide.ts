@@ -15,9 +15,15 @@ export const PAGES: GuidePage[] = [
     match: (p) => p === "/",
     steps: [
       { target: "hero", kid: "Hi, I'm Ember! On Earth, flames like me stand tall because hot air rises. In space nothing rises, so we change shape!", pro: "MicroFire Atlas: 56 BASS/BASS-II tests transcribed from NASA/TM-20210011385, with page-level citations and verified quotes." },
-      { target: "hero", kid: "Try the gravity switch next to me, then read the real NASA clue. It comes straight from the astronauts' logbook!", pro: "Hero: gravity teaser (illustration) and test B19's verbatim crew note with its Table A.1 page." },
+      { target: "paths", kid: "Pick your way in: the adventure with me and the crew, or the mission desk where scientists check the evidence.", pro: "Two entry points to the same evidence: Explorer (Follow the Spark) and Mission Analyst (Evidence Ladder, robustness, brief)." },
+    ],
+  },
+  {
+    id: "learn",
+    name: "Why flames change",
+    match: (p) => p === "/learn",
+    steps: [
       { target: "scroll-story", kid: "Scroll down slowly and watch me change from Earth to space. Every result you see really happened on the space station.", pro: "Scroll story: each beat drives the 3D illustration with a recorded outcome (B16 quench, B20 burned, B19 blowoff)." },
-      { target: "play", kid: "Want to build a real NASA experiment and light it yourself? Press Start the mission!", pro: "Mission Freefall: guided game built on the same records and verified quotes." },
     ],
   },
   {

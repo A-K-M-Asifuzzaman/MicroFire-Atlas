@@ -8,6 +8,9 @@ import { FRONTIER } from "@/lib/frontier";
 import { OBSERVED_MIN } from "@/lib/gaps";
 import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, rank, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
 import { ladderRobustness, RANGES, rankRobustness, SAMPLES } from "@/lib/robustness";
+import { runEval, type EvalQuestion } from "@/lib/eval";
+import evalSet from "@/eval/microfire-eval-v1.json";
+import live from "@/eval/results-live.json";
 
 export const metadata: Metadata = { title: "Methodology" };
 
@@ -39,6 +42,9 @@ export default function MethodologyPage() {
   const demoRank = rank(experiments, demo).slice(0, 5);
   const demoRob = rankRobustness(experiments, demo);
   const moonRob = ladderRobustness(evidenceRecords, findings, moon.q);
+  const ev = runEval(evalSet.questions as EvalQuestion[], experiments, findings, saffireRuns);
+  const pc = (x: number | null) => (x == null ? "—" : `${Math.round(x * 1000) / 10} %`);
+  const lm = live.metrics, lr = live.rescored;
   return (
     <div className="explorer-page method-page mx-auto max-w-7xl px-4 sm:px-6 py-12 grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,1fr)]">
       <nav aria-label="On this page" className="text-sm lg:sticky lg:top-6 lg:self-start">
@@ -53,6 +59,7 @@ export default function MethodologyPage() {
             ["confidence", "Evidence Confidence"],
             ["gaps", "Evidence gaps"],
             ["ai", "Where AI is used"],
+            ["evaluate", "Evaluate MicroFire AI"],
             ["limits", "Limitations"],
           ].map(([id, l]) => (
             <li key={id}>
@@ -334,6 +341,71 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             checked before it is shown: cited IDs must be in the package, numbers must appear in the cited record, and the page
             flags unit mix-ups, microgravity results described as lunar, causal or safety wording, and predictions. Without the
             model, every other page works unchanged.
+          </p>
+        </Section>
+
+        <Section id="evaluate" title="Evaluate MicroFire AI">
+          <p>
+            MicroFire-Eval v1 is {ev.questions} questions written before the measurements and then frozen: direct lookups, numbers,
+            comparisons, synthesis across reports, mission scenarios, deliberately unanswerable questions and misleading premises.
+            Gold answers are NASA record IDs taken from the data, not from the system. When the system failed a question, the
+            system was changed, never the question.{" "}
+            <a href="https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas/blob/main/apps/web/eval/microfire-eval-v1.json" className="link">Read every question</a>
+          </p>
+          <h3 className="text-lg font-semibold">Before the model: retrieval and the claim checker (recomputed on every build)</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[14px] num">
+              <tbody>
+                {[
+                  ["Questions passed", `${ev.passed} of ${ev.questions}`],
+                  ["Gold evidence retrieved (anywhere in the package)", pc(ev.recallAll)],
+                  ["Gold evidence in the first five items", pc(ev.recall5)],
+                  ["Unanswerable questions that flag a gap or return nothing", `${ev.abstention.correct} of ${ev.abstention.n}`],
+                  ["Gap questions that name the right missing conditions", `${ev.gapFlags.correct} of ${ev.gapFlags.n}`],
+                  ["Unanswerable or gap questions given “direct” evidence", String(ev.overClaims)],
+                  ["Broken claims caught by the checker", `${ev.verifier.caught} of ${ev.verifier.faulty}`],
+                  ["Correct claims wrongly flagged", `${ev.verifier.falseAlarms} of ${ev.verifier.correct}`],
+                ].map(([k, v]) => (
+                  <tr key={k} className="border-b border-rule"><th scope="row" className="text-left font-normal py-1.5 pr-6">{k}</th><td>{v}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-sm text-muted">
+            The broken claims cover invented citations, wrong numbers, swapped units, microgravity results told as lunar, causal
+            wording, predictions and uncited facts, ten of each. Still failing: {ev.failures.map((f) => `“${f.q}”`).join(" and ")}.
+          </p>
+          <h3 className="text-lg font-semibold">With the model: one paid run, {lm.ranAt.slice(0, 10)}</h3>
+          <p>
+            All {lm.questions} questions were sent to the live Ask pipeline with {lm.model}. {lm.questions - lm.aiAnswers} matched no
+            evidence, so the model was never called. The {lm.claims} claims in the other answers were checked by
+            the same verifier users see. Re-scored: the saved answers re-checked after we fixed verifier false alarms (chemical
+            formulas read as numbers, the question&apos;s own numbers, arithmetic in derived claims, negated safety words), with no
+            new model calls.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[14px] num">
+              <thead><tr className="border-b border-rule text-left text-muted"><th className="font-normal py-1.5 pr-6">Metric</th><th className="font-normal pr-6">At run time</th><th className="font-normal">Re-scored</th></tr></thead>
+              <tbody>
+                {([
+                  ["Citation precision (cited IDs that exist in the evidence)", pc(lm.citationPrecision), pc(lr.citationPrecision)],
+                  ["Numeric fidelity (numbers found in the cited evidence)", pc(lm.numericFidelity), pc(lr.numericFidelity)],
+                  ["Unit fidelity", pc(lm.unitFidelity), pc(lr.unitFidelity)],
+                  ["Microgravity results told as lunar or Martian", String(lm.crossGravityMisattributions), String(lr.crossGravityMisattributions)],
+                  ["Claims flagged as unverified on screen", pc(lm.unsupportedClaimRate), pc(lr.unsupportedClaimRate)],
+                  ["Gap and unanswerable questions where the answer admits the gap", `${lm.gapAdmission.admitted} of ${lm.gapAdmission.n}`, `${lr.gapAdmission.admitted} of ${lr.gapAdmission.n}`],
+                  ["Latency, median and 95th percentile", `${(lm.latencyMs.p50 / 1000).toFixed(1)} s, ${(lm.latencyMs.p95 / 1000).toFixed(1)} s`, "same answers"],
+                ] as const).map(([k, a, b]) => (
+                  <tr key={k} className="border-b border-rule"><th scope="row" className="text-left font-normal py-1.5 pr-6">{k}</th><td className="pr-6">{a}</td><td>{b}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-sm text-muted">
+            Flagged claims stay visible with the reason shown; most remaining flags are rounded ranges (“about 21–22 %”) or unit
+            conversions the checker cannot confirm. These checks measure faithfulness to the cited NASA text, not whether NASA&apos;s
+            results transfer to a mission. Every answer is in{" "}
+            <a href="https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas/blob/main/apps/web/eval/results-live.json" className="link">results-live.json</a>.
           </p>
         </Section>
 
