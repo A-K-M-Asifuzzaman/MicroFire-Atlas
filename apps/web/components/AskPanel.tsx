@@ -174,7 +174,7 @@ export function AskPanel({ onAnswered, initialQuestion }: { onAnswered?: () => v
                         {c.cites.length > 0 && (
                           <p className={styles.citeRow}>
                             {c.cites.map((k) => (
-                              <button key={k} onClick={() => setFocus(focus === `${i}:${k}` ? null : `${i}:${k}`)} aria-expanded={focus === `${i}:${k}`} className={styles.citeChip} data-family={byKey.get(k)?.family}>
+                              <button key={k} onClick={() => setFocus(focus === `${i}:${k}` ? null : `${i}:${k}`)} aria-expanded={focus === `${i}:${k}`} className={styles.citeChip} data-family={byKey.get(k)?.family} data-quest="cite-chip">
                                 {byKey.get(k)?.title ?? k}
                               </button>
                             ))}

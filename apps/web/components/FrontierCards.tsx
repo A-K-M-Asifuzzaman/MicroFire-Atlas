@@ -57,7 +57,7 @@ export function FrontierCards() {
               </div>
             )}
           </dl>
-          <Link href={`/mission?context=${e.question.context}`} className={styles.link}>
+          <Link href={`/mission?context=${e.question.context}`} className={styles.link} data-quest="frontier-link">
             Climb this question&apos;s Evidence Ladder
           </Link>
         </li>

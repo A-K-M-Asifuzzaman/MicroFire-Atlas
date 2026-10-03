@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { QuestBoard } from "@/components/quest/QuestBoard";
 import { findings, sources } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Sources" };
@@ -17,6 +18,7 @@ export default function SourcesPage() {
     <div className="explorer-page sources-page mx-auto max-w-5xl px-4 sm:px-6 py-12">
       <p className="text-signal text-sm">The station library</p>
       <h1 className="display text-4xl sm:text-5xl mt-3">Follow every clue to its source.</h1>
+      <div className="mt-6"><QuestBoard page="sources" crew="mei" /></div>
       <p className="mt-3 text-muted max-w-[70ch]">
         Every NASA document the atlas draws on, from the NASA Technical Reports Server. Hashes let you confirm you hold the
         same file. Copyright status is NTRS&apos;s own determination.

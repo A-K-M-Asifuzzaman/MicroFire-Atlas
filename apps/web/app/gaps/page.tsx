@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { QuestBoard } from "@/components/quest/QuestBoard";
 import { Cite, Quote } from "@/components/Cite";
 import { FrontierCards } from "@/components/FrontierCards";
 import { GapMap } from "@/components/GapMap";
@@ -14,6 +15,7 @@ export default function GapsPage() {
   return (
     <div className="explorer-page mx-auto max-w-7xl px-4 sm:px-6 py-12">
       <RouteStage kind="gaps" />
+      <div className="mt-6"><QuestBoard page="gaps" crew="tala" /></div>
       <section className="mt-10" aria-labelledby="frontier">
         <p className="text-signal text-sm">Research Frontier</p>
         <h2 id="frontier" className="display text-3xl mt-2">Where the evidence runs out, and what would push it further</h2>

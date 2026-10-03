@@ -64,6 +64,7 @@ export function GapMap() {
                     return (
                       <td key={j} className="p-0">
                         <button
+                          data-quest="gap-cell"
                           onClick={() => setSel([i, j])}
                           aria-pressed={active}
                           aria-label={`${binLabel(c.o2, " % oxygen")}, ${binLabel(c.flow, " cm/s")}: ${c.tests.length} tests, ${ZONE[c.zone].label}`}

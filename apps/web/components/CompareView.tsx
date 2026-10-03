@@ -231,6 +231,7 @@ export function CompareView() {
               <li key={e.id}>
                 <button
                   onClick={() => toggle(e.id)}
+                  data-quest="pick-record"
                   className={`text-sm px-3 py-1.5 rounded-sm border ${ids.includes(e.id) && !preset ? "border-signal" : "border-rule hover:border-rule-strong"}`}
                 >
                   {e.name} <span className="text-faint">{e.hint}</span>
@@ -250,7 +251,7 @@ function ComparePanel({ a }: { a: ReturnType<typeof analyze> }) {
   return (
     <section className={styles.panel} aria-label="What this comparison holds constant and what it can tell us">
       {a.crossFamily && (
-        <div className={styles.warning} role="note">
+        <div className={styles.warning} role="note" data-quest="cross-family">
           <strong>Comparability warning</strong>
           <p>These runs come from different experiments: {a.crossFamily.map((f) => `${f.name} (${f.fuel}, ${f.scale}, ${f.platform})`).join("; ")}. They illuminate related fire behaviour but are not replicas. Matching column names do not make the values interchangeable.</p>
         </div>

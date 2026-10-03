@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { QuestBoard } from "@/components/quest/QuestBoard";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FlameVision } from "@/components/FlameVision";
@@ -26,6 +27,7 @@ export default async function AnalyzePage({ params }: PageProps<"/analyze/[slug]
         Real NASA footage, measured frame by frame with a documented computer-vision pipeline. Switch between the raw
         footage, the computed flame outline, and the measurements.
       </p>
+      <div className="mt-6"><QuestBoard page="analyze" crew="mei" /></div>
       <div className="mt-8">
         <FlameVision item={item} />
       </div>

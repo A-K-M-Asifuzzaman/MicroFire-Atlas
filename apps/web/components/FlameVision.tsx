@@ -88,6 +88,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
             ).map(([m, label]) => (
               <button
                 key={m}
+                data-mode={m}
                 role="tab"
                 aria-selected={mode === m}
                 onClick={() => { setMode(m); if (m !== "raw" && f) discover("aivision"); }}

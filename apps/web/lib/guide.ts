@@ -157,10 +157,43 @@ const JOURNEY: Omit<Discovery, "x" | "y">[] = [
   { id: "brief", label: "Opened a Mission Evidence Brief", href: "/mission", kind: "gap" },
   { id: "weights", label: "Moved a ranking weight and watched the order change", href: "/methodology", kind: "act" },
   { id: "checker", label: "Tried to fool the AI claim checker", href: "/methodology", kind: "act" },
+  { id: "ownpair", label: "Built your own comparison", href: "/compare", kind: "act" },
+  { id: "crossfamily", label: "Met a comparability warning between two experiments", href: "/compare", kind: "record" },
+  { id: "frontier", label: "Opened a frontier question's Evidence Ladder", href: "/gaps", kind: "gap" },
+  { id: "motion", label: "Tracked a flame's motion frame by frame", href: "/analyze", kind: "act" },
+  { id: "citechip", label: "Opened the NASA evidence behind an AI claim", href: "/ask", kind: "source" },
+  { id: "download", label: "Downloaded NASA data to check it yourself", href: "/sources", kind: "source" },
 ];
 
-/** Page quests: three real actions per page, each one a discovery star. */
-export const QUESTS: Record<string, { id: string; how: string }[]> = {
+/**
+ * Page quests: real actions per page, each one a discovery star. `click` (a CSS selector) or `visible`
+ * (an element that appears) lets the quest board notice the action without wiring every component.
+ */
+export type Quest = { id: string; how: string; click?: string; visible?: string };
+export const QUESTS: Record<string, Quest[]> = {
+  compare: [
+    { id: "difference", how: "Open one of NASA's mystery comparisons", click: ".comparison-presets a" },
+    { id: "ownpair", how: "Add or remove a test to build your own comparison", click: '[data-quest="pick-record"], [aria-label^="Remove "]' },
+    { id: "crossfamily", how: "Compare tests from two experiments and read the warning", visible: '[data-quest="cross-family"]' },
+  ],
+  gaps: [
+    { id: "edge", how: "Tap a square on the evidence map", click: '[data-quest="gap-cell"]' },
+    { id: "frontier", how: "Open a frontier question's Evidence Ladder", click: '[data-quest="frontier-link"]' },
+    { id: "source", how: "Follow a NASA citation", click: 'a[href*="nasa.gov"]' },
+  ],
+  analyze: [
+    { id: "aivision", how: "Switch on the computer's outline", click: '[data-mode="vision"], [data-mode="measure"]' },
+    { id: "motion", how: "Open Motion mode on a video", click: '[data-mode="motion"]' },
+    { id: "realflame", how: "Step through the film frame by frame", click: '[aria-label="Forward one analysed frame"], [aria-label="Back one analysed frame"]' },
+  ],
+  ask: [
+    { id: "askpix", how: "Ask a question and see its NASA evidence" },
+    { id: "citechip", how: "Open a citation chip on an answer", click: '[data-quest="cite-chip"]' },
+  ],
+  sources: [
+    { id: "source", how: "Open a NASA report on its official site", click: 'a[href*="nasa.gov"]' },
+    { id: "download", how: "Download a dataset", click: 'a[href^="/downloads/"]' },
+  ],
   atlas: [
     { id: "family", how: "Switch to the Saffire spacecraft fires" },
     { id: "crewnote", how: "Tap a test tile to read what NASA recorded" },
