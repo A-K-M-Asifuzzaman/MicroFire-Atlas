@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FLAG_TEXT, MEDIA_CONTEXT, type Analysis, type FrameMetrics, type MediaItem } from "@/lib/media";
+import { motion } from "@/lib/motion";
 import { useExplorer } from "@/components/guide/EmberGuide";
 
-type Mode = "raw" | "vision" | "measure";
+type Mode = "raw" | "vision" | "motion" | "measure";
 type Highlight = "area" | "extent" | "centroid" | null;
 
 const pct = (x: number) => `${(x * 100).toFixed(2)} %`;
@@ -64,6 +65,10 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
   }, []);
 
   const f = analysis ? frameAt(analysis.frames, t) : undefined;
+  const mo = useMemo(() => (analysis && item.kind === "video" ? motion(analysis.frames, analysis.frame_size) : null), [analysis, item.kind]);
+  const fi = analysis && f ? analysis.frames.indexOf(f) : -1;
+  const m = mo && fi >= 0 ? mo.frames[fi] : null;
+  const W0 = analysis?.frame_size[0] ?? 1;
   const dur = item.duration_s ?? 0;
   const step = analysis?.sample_fps ? 1 / analysis.sample_fps : 0.2;
   const showOverlay = mode !== "raw" && f;
@@ -77,6 +82,7 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
               [
                 ["raw", "Raw footage"],
                 ["vision", "AI vision"],
+                ...(isVideo ? ([["motion", "Motion"]] as [Mode, string][]) : []),
                 ["measure", "Measurements"],
               ] as [Mode, string][]
             ).map(([m, label]) => (
@@ -151,6 +157,17 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
                   vectorEffect="non-scaling-stroke"
                 />
               )}
+              {mode === "motion" && analysis && (
+                <g>
+                  <polyline
+                    points={analysis.frames.filter((x) => x.t <= t && x.centroid && !x.flags.includes("weak_or_no_flame")).map((x) => x.centroid!.join(",")).join(" ")}
+                    fill="none" stroke="#c7b8ff" strokeWidth="2" strokeOpacity=".85" vectorEffect="non-scaling-stroke"
+                  />
+                  {m?.leadPx != null && (
+                    <line x1={m.leadPx / W0} x2={m.leadPx / W0} y1={analysis.roi[1]} y2={analysis.roi[3]} stroke="#ff8a5a" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
+                  )}
+                </g>
+              )}
               {f.centroid && (
                 <g stroke="#ffffff" strokeWidth={hl === "centroid" ? 2.5 : 1.5} vectorEffect="non-scaling-stroke">
                   <line x1={f.centroid[0] - 0.02} x2={f.centroid[0] + 0.02} y1={f.centroid[1]} y2={f.centroid[1]} vectorEffect="non-scaling-stroke" />
@@ -162,6 +179,11 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
           {showOverlay && (
             <span className="absolute left-3 top-3 text-[11px] px-2 py-1 rounded bg-black/70 text-signal num">
               {isVideo ? `t = ${f!.t.toFixed(1)} s (video time)` : "single photograph"} · {analysis?.version}
+            </span>
+          )}
+          {mode === "motion" && mo && (
+            <span className="absolute right-3 top-3 text-[11px] px-2 py-1 rounded bg-black/70 text-[#c7b8ff]">
+              {mo.direction === "none" ? "No consistent horizontal travel" : `Travels ${mo.direction}ward`} · {Math.round(mo.reliableShare * 100)}% of frames flag-free
             </span>
           )}
         </div>
@@ -199,6 +221,35 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
         </div>}
         {error && <p className="mt-3 text-sm text-flame">{error}</p>}
         {!analysis && !error && <p className="mt-3 text-sm text-muted animate-pulse">Loading measurements…</p>}
+
+        {mode === "motion" && analysis && mo && !compact && (
+          <div className="mt-6">
+            <p className="text-sm text-muted max-w-[72ch]">
+              Purple: the path of the flame centre so far. Orange: the leading edge in the direction of travel. Image-domain measurement; no physical
+              spatial calibration available, and speeds are per second of video time.
+            </p>
+            <div data-guide="fv-motion" className="mt-4 grid gap-6 md:grid-cols-2">
+              <Chart title="Flame centre, horizontal position (px)" frames={analysis.frames}
+                series={[{ key: "cx", label: "Centre x", color: "#c7b8ff", get: (x) => (x.centroid && !x.flags.includes("weak_or_no_flame") ? x.centroid[0] * W0 : null) }]}
+                format={(v) => `${v.toFixed(0)} px`} t={t} onSeek={seek} />
+              <Chart title="Flame area change (px² per second of video)" frames={analysis.frames}
+                series={[{ key: "ar", label: "Area change rate", color: "#ffcf7a", get: (x) => mo.frames[analysis.frames.indexOf(x)]?.areaRate ?? null }]}
+                format={(v) => `${v.toFixed(0)} px²/s`} t={t} onSeek={seek} />
+              {mo.direction !== "none" && (
+                <Chart title={`Leading-edge advance, ${mo.direction}ward (px per second of video)`} frames={analysis.frames}
+                  series={[{ key: "ls", label: "Edge advance", color: "#ff8a5a", get: (x) => mo.frames[analysis.frames.indexOf(x)]?.leadSpeed ?? null }]}
+                  format={(v) => `${v.toFixed(1)} px/s`} t={t} onSeek={seek} />
+              )}
+              <Chart title="Mean brightness inside the flame (0 to 255)" frames={analysis.frames}
+                series={[{ key: "br", label: "Brightness", color: "#56d4e4", get: (x) => x.mean_brightness ?? null }]}
+                format={(v) => `${v.toFixed(0)}`} t={t} onSeek={seek} />
+            </div>
+            <p className="mt-3 text-xs text-faint">
+              {Math.round(mo.reliableShare * 100)}% of analysed frames carry no quality flag. Overexposed frames still locate the flame, but their
+              brightness saturates, so the brightness trace is a proxy at best.
+            </p>
+          </div>
+        )}
 
         {mode === "measure" && analysis && isVideo && !compact && (
           <div data-guide="fv-charts" className="mt-6 grid gap-6 md:grid-cols-2">
@@ -243,6 +294,10 @@ export function FlameVision({ item, initialMode = "vision", compact = false, onI
                 <Metric k="centroid" label="Centroid (x, y)" hl={hl} setHl={setHl} value={f.centroid ? `${f.centroid[0].toFixed(2)}, ${f.centroid[1].toFixed(2)} of frame` : "—"} />
                 <Metric k={null} label="Separate regions" hl={hl} setHl={setHl} value={String(f.regions)} />
                 <Metric k={null} label="Mean brightness" hl={hl} setHl={setHl} value={f.mean_brightness != null ? `${f.mean_brightness} / 255` : "—"} />
+                {m && <Metric k={null} label="Leading edge" hl={hl} setHl={setHl} value={m.leadPx != null ? `${m.leadPx.toFixed(0)} px` : mo?.direction === "none" ? "no consistent travel" : "—"} />}
+                {m && <Metric k={null} label="Edge advance" hl={hl} setHl={setHl} value={m.leadSpeed != null ? `${m.leadSpeed.toFixed(1)} px/s` : "—"} />}
+                {m && <Metric k={null} label="Area change" hl={hl} setHl={setHl} value={m.areaRate != null ? `${m.areaRate.toFixed(0)} px²/s` : "—"} />}
+                <Metric k={null} label="Frame quality" hl={hl} setHl={setHl} value={f.flags.length ? "flagged (see below)" : "no quality flag"} />
               </dl>
             ) : (
               <p className="mt-2 text-sm text-muted">Waiting for measurements.</p>
@@ -320,8 +375,9 @@ function Chart({ title, frames, series, format, t, onSeek }: { title: string; fr
   const tMax = frames[frames.length - 1]?.t || 1;
   const vals = series.flatMap((s) => frames.map((f) => s.get(f)).filter((v): v is number => v != null));
   const vMax = Math.max(1e-6, ...vals);
+  const vMin = Math.min(0, ...vals); // rates can be negative: show retreats instead of clipping them
   const x = (tt: number) => P.l + (tt / tMax) * (W - P.l - P.r);
-  const y = (v: number) => P.t + (1 - v / vMax) * (H - P.t - P.b);
+  const y = (v: number) => P.t + (1 - (v - vMin) / (vMax - vMin)) * (H - P.t - P.b);
   const paths = useMemo(
     () =>
       series.map((s) => {
@@ -353,7 +409,7 @@ function Chart({ title, frames, series, format, t, onSeek }: { title: string; fr
           onSeek(Math.max(0, Math.min(tMax, ((px - P.l) / (W - P.l - P.r)) * tMax)));
         }}
       >
-        <line x1={P.l} x2={W - P.r} y1={H - P.b} y2={H - P.b} stroke="var(--rule-strong)" />
+        <line x1={P.l} x2={W - P.r} y1={y(0)} y2={y(0)} stroke="var(--rule-strong)" />
         {paths.map((d, i) => (
           <path key={series[i].key} d={d} fill="none" stroke={series[i].color} strokeWidth="1.6" />
         ))}
