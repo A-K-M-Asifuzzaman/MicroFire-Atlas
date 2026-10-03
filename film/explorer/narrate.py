@@ -7,9 +7,10 @@ The voice is AI-generated; the film shows an on-screen disclosure.
 """
 import hashlib, json, os, subprocess
 VOICE = os.environ.get("VOICE", "en-US-AvaMultilingualNeural")
-RATE = os.environ.get("RATE", "+4%")
+RATE = os.environ.get("RATE", "-2%")
 EDGE = os.environ.get("EDGE_TTS", "edge-tts")
-LEAD, GAP, TAIL, END_TAIL = 0.5, 0.42, 0.8, 3.4  # seconds; the final scene keeps a longer tail for the end card
+# seconds; the final scene keeps a longer tail for the end card. Roomier pauses give animations time to land.
+LEAD, GAP, TAIL, END_TAIL = (float(os.environ.get(k, d)) for k, d in (("LEAD", 0.9), ("GAP", 0.65), ("TAIL", 1.5), ("END_TAIL", 4.0)))
 os.makedirs("build", exist_ok=True)
 dur = lambda f: float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f], capture_output=True, text=True, check=True).stdout)
 out = []

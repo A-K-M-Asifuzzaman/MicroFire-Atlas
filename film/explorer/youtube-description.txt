@@ -12,24 +12,23 @@ Code: https://github.com/A-K-M-Asifuzzaman/MicroFire-Atlas
 
 Chapters
 0:00 Fire without gravity
-0:20 The open Moon question
-0:42 Mission Freefall
-0:55 The adventure begins
-1:09 AI vision on a real NASA film
-1:24 Spot the real outline
-1:36 Predict, then check NASA's record
-1:58 Climb the Evidence Ladder to the Moon
-2:31 Ask PIX, and your certificate
-2:45 Saffire: real fires inside a spacecraft
-3:07 The Evidence Ladder, and why each clue is shown
-3:30 Compare, Research Frontier and open data
-3:53 Follow the spark
+0:22 Two ways into NASA's evidence
+0:39 Build the real experiment
+0:49 Real NASA footage, then predict first
+1:14 Climb the Evidence Ladder to the Moon
+1:33 Quests, stars and the data detective
+1:55 Saffire: real fires inside a spacecraft
+2:09 The Mission Analyst workstation
+2:34 Tested 1,000 ways, graded on 100 questions
+2:54 FM²: fire on the Moon
+3:05 Follow the spark
 
 What's inside
-- 76 test records: 56 BASS-II tests and 20 Saffire spacecraft-fire runs, each traced to its NASA table and PDF page
-- 54 NASA findings, each quote checked word for word against its source at build time
-- The Evidence Ladder: every question sorted into direct, analogous, mechanistic and gap evidence, with a "Why is this shown?" path on every card
-- Predict-first comparisons between real tests (for example B20 → B16 as the airflow is turned down)
-- A Research Frontier for NASA's proposed 34% O2 at 56.5 kPa habitat air, and open data downloads
+- 78 NASA test records: 56 BASS-II tests, 20 Saffire spacecraft-fire runs and 2 LUCI burns in simulated lunar gravity, each value traced to its NASA page
+- 62 NASA findings, each quote checked word for word at build time
+- Explorer mode: quests and stars, a data-detective table, predict-first comparisons and the Evidence Ladder game
+- Mission Analyst mode: NASA's exploration atmospheres, a coverage instrument over the real evidence, and an evidence status that never guesses or scores risk
+- Rankings re-run 1,000 ways; the AI graded on 100 questions (98 pass before the model; 99.9 % citation precision in a live run)
+- FM², NASA's planned burn on the Moon, shown as a research horizon with no invented results
 
 Characters, scenery and the opening explainer are illustrations. NASA footage, photographs and test records are evidence. Not affiliated with or endorsed by NASA.

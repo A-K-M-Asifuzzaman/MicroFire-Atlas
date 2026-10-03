@@ -7,7 +7,7 @@
     "On Earth, flames reach up"
    ],
    [
-    "Hot air rises... and drags fresh air in behind it."
+    "Hot air rises, and pulls fresh air in behind it."
    ],
    [
     "Now take gravity away.",
@@ -17,28 +17,24 @@
     "Nothing rises. The flame turns small, round, and blue..."
    ],
    [
-    "and it lives or dies on one thing: the air drifting past it.",
-    "Airflow decides everything"
+    "and it lives or dies on the air drifting past it.",
+    "Airflow is one important condition"
    ]
   ]
  },
  {
-  "id": "problem",
+  "id": "intro",
   "lines": [
    [
     "NASA has been setting fires in space for decades. On purpose.",
-    "Decades of NASA fire research"
+    "Decades of NASA fire tests"
    ],
    [
-    "But the answers are locked inside test tables and two-hundred-page reports."
+    "MicroFire Atlas turns those real experiments into two adventures."
    ],
    [
-    "And the biggest question of all... how fire behaves on a Moon base... has never actually been tested.",
-    "The Moon question is still open"
-   ],
-   [
-    "So we asked: what if an eight-year-old could investigate it... like a detective?",
-    "What if kids could investigate?"
+    "One for young explorers... and one for the people planning missions.",
+    "Two ways in"
    ]
   ]
  },
@@ -46,88 +42,32 @@
   "id": "freefall",
   "lines": [
    [
-    "Meet MicroFire Atlas.",
-    "MicroFire Atlas"
-   ],
-   [
-    "It starts in Mission Freefall. Flip gravity off... and watch the flame change right in front of you.",
+    "Explorers start by flipping gravity off,",
     "Flip gravity off"
    ],
    [
-    "Then you build NASA's real wind tunnel, piece by piece.",
-    "Build NASA's BASS-II tunnel"
+    "then building NASA's real wind tunnel, piece by piece.",
+    "Build the real experiment"
    ]
   ]
  },
  {
-  "id": "adventure",
+  "id": "film",
   "lines": [
    [
-    "Then the adventure opens up.",
-    "Then: the adventure"
-   ],
-   [
-    "A crew of guides walks you through it. And PIX, our little evidence robot, has a hint whenever you're stuck.",
-    "Meet PIX, your hint robot"
-   ],
-   [
-    "Every chapter has one real job to do."
-   ]
-  ]
- },
- {
-  "id": "vision",
-  "lines": [
-   [
-    "This is real NASA footage.",
+    "This is real NASA footage. The computer outlines the flame, and measures it in pixels.",
     "Real NASA footage"
    ],
    [
-    "Switch on AI vision, and the computer traces the flame and measures it, in pixels.",
-    "AI vision measures the flame"
-   ],
-   [
-    "No made-up numbers. And it tells you when a frame is too bright to trust.",
-    "No made-up numbers"
-   ]
-  ]
- },
- {
-  "id": "trace",
-  "lines": [
-   [
-    "Now, a detective game. Which outline really matches this NASA photo?",
-    "Spot the real outline"
-   ],
-   [
-    "Two of them are fakes."
-   ],
-   [
-    "Get it right, and a clue lights up.",
-    "Clues raise your rank"
-   ]
-  ]
- },
- {
-  "id": "predict",
-  "lines": [
-   [
-    "And here's my favourite part.",
-    "The best part"
-   ],
-   [
-    "Start with test B20. Turn the airflow down.",
+    "Then, a puzzle. Turn the airflow down on test B20.",
     "Change one thing"
    ],
    [
-    "The atlas finds the real experiment, test B16... but it hides what happened."
+    "The atlas finds the real test, but hides the answer. Predict first!",
+    "Predict first!"
    ],
    [
-    "So you have to predict first.",
-    "Predict first"
-   ],
-   [
-    "Then NASA's own words appear, with the exact page they came from. That's how real science works.",
+    "Then NASA's own words appear, with the exact page they came from.",
     "Then check NASA's record"
    ]
   ]
@@ -140,44 +80,35 @@
     "Next stop: the Moon"
    ],
    [
-    "A future habitat might use thirty-four percent oxygen, at about half of Earth's air pressure.",
-    "34% O₂ at 56.5 kPa"
-   ],
-   [
-    "Your job: sort four real clues onto the Evidence Ladder.",
+    "Sort real clues onto the Evidence Ladder.",
     "Climb the Evidence Ladder"
    ],
    [
-    "A small flame in ordinary air? Close... but different."
+    "Tiny burning droplets? They explain how fire works. Not how plastic burns."
    ],
    [
-    "Tiny burning droplets? They explain how fire works. Not how plastic burns.",
-    "Droplets explain mechanisms"
-   ],
-   [
-    "And the top rung... stays empty. Nobody has run this test yet.",
+    "And the top rung stays empty. Nobody has run this test yet.",
     "The top rung is empty"
-   ],
-   [
-    "A gap isn't a promise of safety. It's the next experiment.",
-    "A gap is the next experiment"
    ]
   ]
  },
  {
-  "id": "finale",
+  "id": "atlas",
   "lines": [
    [
-    "You can ask PIX anything, and every answer points back to NASA's evidence.",
-    "Every answer cites NASA"
+    "Every page has a quest. Every real discovery lights a star.",
+    "Quests light stars"
    ],
    [
-    "And at the end, you don't get a generic score.",
-    "No generic score"
+    "In the Atlas, you become a data detective.",
+    "Be a data detective"
    ],
    [
-    "You get a list of exactly what you did... and a certificate with your name on it.",
-    "Your actions, your certificate"
+    "Find the lowest oxygen where a flame kept burning... Solved!"
+   ],
+   [
+    "And meet LUCI: fires in Moon-like gravity, made by a spinning rocket.",
+    "LUCI: Moon-like gravity"
    ]
   ]
  },
@@ -185,62 +116,61 @@
   "id": "saffire",
   "lines": [
    [
-    "But the real evidence goes much bigger.",
-    "Bigger fires"
+    "The biggest fires? NASA lit them inside an empty cargo spaceship.",
+    "Real fires in a spacecraft"
    ],
    [
-    "In NASA's Saffire experiments, an empty cargo ship left the space station... and NASA lit fires inside it.",
-    "Saffire: fires inside a spacecraft"
-   ],
-   [
-    "Twenty runs, and every single number is traced to its exact line in a NASA table.",
-    "20 runs, every number traced"
-   ],
-   [
-    "Saffire Six got closest to Moon-base air. Close... but not there.",
-    "Close to Moon air, not there"
+    "Twenty Saffire runs, and every number traced to its line in a NASA table.",
+    "Every number traced"
    ]
   ]
  },
  {
-  "id": "ladder",
+  "id": "analyst",
   "lines": [
    [
-    "For mentors and judges, every question climbs the same ladder.",
-    "One ladder for every question"
+    "For mission planners, there's a real workstation.",
+    "Mission Analyst"
    ],
    [
-    "Direct. Analogous. Mechanistic. Or a gap. Different kinds of fire are never mixed into one table.",
-    "Regimes are never mixed"
+    "Pick one of NASA's cabin atmospheres. Every tick underneath is a real NASA test."
    ],
    [
-    "And any card can answer: why am I here?",
-    "Why is this shown?"
+    "Slide to thirty-four percent oxygen... and you're in empty space.",
+    "No test reaches 34 % oxygen"
    ],
    [
-    "Each condition, matched or missed... then the rung... then the NASA page it came from.",
-    "Every step, traced to a page"
+    "So MicroFire says it plainly: the evidence doesn't cover this yet. No risk score. No guessing.",
+    "No guessing"
    ]
   ]
  },
  {
-  "id": "science",
+  "id": "trust",
   "lines": [
    [
-    "Compare two experiments, and it warns you they are not replicas.",
-    "It warns before you compare"
+    "Can you trust it? Every ranking is re-run a thousand ways,",
+    "Tested 1,000 ways"
    ],
    [
-    "The Research Frontier spells out what we know, what we don't, and the test that would close the gap.",
-    "Know. Don't know. Next test."
+    "and the AI is graded on a hundred test questions.",
+    "Graded on 100 questions"
    ],
    [
-    "Seventy-six test records. Fifty-four NASA findings, each quote checked word for word.",
-    "76 records · 54 findings, checked"
+    "Try to fool the claim checker. Made-up numbers, fake citations, Moon claims from orbit tests... it catches them.",
+    "Try to fool the checker"
+   ]
+  ]
+ },
+ {
+  "id": "frontier",
+  "lines": [
+   [
+    "And when NASA finally burns materials on the Moon itself,",
+    "Fire on the Moon: FM²"
    ],
    [
-    "And all of it is open. Download the data... and check our work.",
-    "Open data: check our work"
+    "MicroFire already shows which open questions it's built to answer."
    ]
   ]
  },

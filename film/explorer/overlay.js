@@ -84,7 +84,21 @@
 @keyframes vx-rise{from{transform:translateY(0);opacity:0}20%{opacity:1}to{transform:translateY(-90px);opacity:0}}
 @keyframes vx-inflow{0%,100%{transform:translateX(0);opacity:.4}50%{transform:translateX(10px);opacity:1}}
 @keyframes vx-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-@keyframes vx-stream{from{transform:translateX(-50px);opacity:0}25%{opacity:1}to{transform:translateX(60px);opacity:0}}`;
+@keyframes vx-stream{from{transform:translateX(-50px);opacity:0}25%{opacity:1}to{transform:translateX(60px);opacity:0}}
+#vox-crew{position:absolute;right:150px;bottom:0;display:flex;align-items:flex-end;gap:0;opacity:0;transform:translateY(120%);transition:none}
+#vox-crew.on{animation:vx-crewPop .7s cubic-bezier(.25,1.6,.45,1) both}
+#vox-crew.off{animation:vx-crewDrop .45s ease-in both}
+#vox-crew img{height:330px;width:auto;filter:drop-shadow(0 20px 30px #000b);animation:vx-sway 2.4s ease-in-out infinite alternate}
+#vox-crew .bubble{position:relative;margin:0 -14px 250px 0;max-width:340px;padding:16px 22px;border-radius:26px 26px 6px 26px;background:#fff;color:#16181d;font-size:28px;line-height:1.2;font-weight:800;box-shadow:0 14px 40px #0009;animation:vx-bubble .55s .25s cubic-bezier(.2,1.8,.4,1) both}
+#vox-crew .bubble small{display:block;font-size:15px;font-weight:700;color:#c9761a;margin-bottom:2px}
+.vox-star{position:absolute;font-size:42px;color:#ffcf6b;text-shadow:0 0 18px #ffb347;animation:vx-starFly 1.3s cubic-bezier(.15,.8,.3,1) both}
+.vox-sticker{position:absolute;padding:12px 22px;border-radius:18px;background:#ffcc79;color:#16181d;font-size:34px;font-weight:900;box-shadow:0 14px 40px #000a;border:4px solid #fff;animation:vx-sticker 2.2s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes vx-crewPop{from{opacity:0;transform:translateY(120%)}to{opacity:1;transform:none}}
+@keyframes vx-crewDrop{from{opacity:1;transform:none}to{opacity:0;transform:translateY(120%)}}
+@keyframes vx-sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg) translateY(-6px)}}
+@keyframes vx-bubble{from{opacity:0;transform:scale(.2) rotate(-8deg);transform-origin:100% 100%}to{opacity:1;transform:none}}
+@keyframes vx-starFly{0%{opacity:0;transform:translate(0,0) scale(.2) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(220deg)}}
+@keyframes vx-sticker{0%{opacity:0;transform:scale(0) rotate(-30deg)}18%{opacity:1;transform:scale(1.15) rotate(6deg)}28%{transform:scale(1) rotate(-4deg)}85%{opacity:1;transform:scale(1) rotate(-4deg)}100%{opacity:0;transform:scale(.8) rotate(-4deg) translateY(-30px)}}`;
 
   const ARROW = (d, c) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
   const CARD = `
@@ -178,6 +192,46 @@
       r.prepend(e);
     }
     for (let i = 1; i <= n; i++) e.classList.add("s" + i);
+  };
+  /** A crew member springs up from the bottom with a speech bubble; an empty name sends them back down. */
+  window.__voxCrew = (who, line, pose = "pointing") => {
+    const r = document.getElementById("vox-root");
+    if (!r) return;
+    let c = document.getElementById("vox-crew");
+    if (!who) { if (c) c.className = "off"; return; }
+    const names = { tala: "Tala", kofi: "Kofi", mei: "Dr. Mei" };
+    if (!c) { c = document.createElement("div"); c.id = "vox-crew"; r.append(c); }
+    c.className = "";
+    c.innerHTML = `<div class="bubble"><small>${names[who]}</small>${line}</div><img src="/art/crew/${who}-${pose}.webp" alt="">`;
+    void c.offsetWidth;
+    c.className = "on";
+  };
+  /** A burst of stars from (x, y): the film's version of earning a discovery. */
+  window.__voxStars = (x, y, n = 14) => {
+    const r = document.getElementById("vox-root");
+    if (!r) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "vox-star";
+      s.textContent = i % 3 ? "★" : "✦";
+      const a = (i / n) * Math.PI * 2, d = 140 + (i % 4) * 45;
+      s.style.left = x + "px"; s.style.top = y + "px";
+      s.style.setProperty("--dx", Math.cos(a) * d + "px"); s.style.setProperty("--dy", Math.sin(a) * d - 40 + "px");
+      s.style.animationDelay = (i % 5) * 0.03 + "s";
+      r.append(s);
+      setTimeout(() => s.remove(), 1600);
+    }
+  };
+  /** A wobbly sticker badge, gone after two seconds. */
+  window.__voxSticker = (text, x, y) => {
+    const r = document.getElementById("vox-root");
+    if (!r) return;
+    const s = document.createElement("div");
+    s.className = "vox-sticker";
+    s.textContent = text;
+    s.style.left = x + "px"; s.style.top = y + "px";
+    r.append(s);
+    setTimeout(() => s.remove(), 2300);
   };
   window.__voxCard = (stage) => { const c = document.getElementById("vox-card"); if (c) c.dataset.stage = stage; };
   if (document.readyState === "loading") addEventListener("DOMContentLoaded", mount); else mount();
