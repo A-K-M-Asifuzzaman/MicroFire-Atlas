@@ -1,0 +1,1367 @@
+{
+ "version": 1,
+ "status": "Candidate frames for human annotation. These are NOT annotations and NOT ground truth.",
+ "selection": "Up to 20 per video, round-robin across pipeline conditions, evenly spaced in time, at least 1.5 s apart.",
+ "frames": [
+  {
+   "id": "saffire-v-ribs-t000_000",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 0.0,
+   "frame_index": 0,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t000_000.frame.png",
+   "frame_sha256": "96fa859cabbfdfb548c9d4e9466a8a93e5f6a3004ea589530c1544d011d43c57",
+   "prediction": "candidates/saffire-v-ribs-t000_000.prediction.png",
+   "prediction_sha256": "4731bd855d94204409f03f75270f7ed1eeff1fd9efced6c5ac3ed3ef2c833bc3",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t003_400",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 3.4,
+   "frame_index": 102,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t003_400.frame.png",
+   "frame_sha256": "917161fba59cf74ad1e4304f2a2d798ad25448c40d297dfaf5f3d143c139b9c6",
+   "prediction": "candidates/saffire-v-ribs-t003_400.prediction.png",
+   "prediction_sha256": "60b4386d8081dd15aa7e3442e183b92faaa5a2cb2a193fe20884cc7b3ec433bf",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t006_800",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 6.8,
+   "frame_index": 204,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t006_800.frame.png",
+   "frame_sha256": "b3ab284910331c8954985853d016c1638b043e7ef3693f12ffe1588d15aa99af",
+   "prediction": "candidates/saffire-v-ribs-t006_800.prediction.png",
+   "prediction_sha256": "063fea587f53849cb2221bcb359243f8c65a632036a9ac8c8627bcff35d23854",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t010_600",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 10.6,
+   "frame_index": 318,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t010_600.frame.png",
+   "frame_sha256": "c0976fd0cf35fd086e6c48d885cf104ccc0d5ca074e2ffbf3f06cef30c7897e6",
+   "prediction": "candidates/saffire-v-ribs-t010_600.prediction.png",
+   "prediction_sha256": "bf7c85a135abf24071041702658a024f503a8783990189578616b79facb1700b",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t014_000",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 14.0,
+   "frame_index": 420,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t014_000.frame.png",
+   "frame_sha256": "5fa91ae5d8e9546d35721aee5d8904e73186734be5ed839fbafa1198cfbe06ba",
+   "prediction": "candidates/saffire-v-ribs-t014_000.prediction.png",
+   "prediction_sha256": "8272de3bf130cd03c137794cab0ab30e8f53f0687a771ebccb2d0d2eeb6b6fda",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t017_400",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 17.4,
+   "frame_index": 522,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t017_400.frame.png",
+   "frame_sha256": "1e095ce1c53882b9c3fbd982dffa66915cfbf0a1028a4277ad8995d20c3086b4",
+   "prediction": "candidates/saffire-v-ribs-t017_400.prediction.png",
+   "prediction_sha256": "14edc657f1d1a93806dca99748aff243287a04d0b445ad93ced5577d94a774a8",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t020_800",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 20.8,
+   "frame_index": 624,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t020_800.frame.png",
+   "frame_sha256": "a544b4765b4e8c283d6ef1ae03d991cb659c5f1026fb7021b125247d108cd172",
+   "prediction": "candidates/saffire-v-ribs-t020_800.prediction.png",
+   "prediction_sha256": "bc851b8a754ae87b9633d218a501c21ac7884fba05f0050e8c72919ac920fb92",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t024_200",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 24.2,
+   "frame_index": 726,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t024_200.frame.png",
+   "frame_sha256": "e0616e449abd3e6c23f4a0fc152d4a52a3942a885933e52c388866b411a6243c",
+   "prediction": "candidates/saffire-v-ribs-t024_200.prediction.png",
+   "prediction_sha256": "23bfc6ab9cc939f1df7a32033c0411f5248e4c8d047e33ada5b35688b2952519",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t027_600",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 27.6,
+   "frame_index": 828,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t027_600.frame.png",
+   "frame_sha256": "25c7ba9c5c1a833dd9656ab798707c19488284f2056da987672d874df71760ab",
+   "prediction": "candidates/saffire-v-ribs-t027_600.prediction.png",
+   "prediction_sha256": "8ea39482694d1b3efe0e3f895cfcca76f87bcfc47fc3e99bdbc1ae8fccdad5bf",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t031_000",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 31.0,
+   "frame_index": 930,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t031_000.frame.png",
+   "frame_sha256": "f6560454bb7776707dc61a59008a3468384f12e92188b18220e0e954632c356d",
+   "prediction": "candidates/saffire-v-ribs-t031_000.prediction.png",
+   "prediction_sha256": "a3bfd5f945ecf573696cbcf4e102ccd3424f947de47da5fff6a02036ac371b5e",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t034_600",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 34.6,
+   "frame_index": 1038,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t034_600.frame.png",
+   "frame_sha256": "22c518557611bf119a0104af5389177d3dc731749aa417d8c64b8c60ee234dd3",
+   "prediction": "candidates/saffire-v-ribs-t034_600.prediction.png",
+   "prediction_sha256": "6f78218da99b1a96a3368e7214062c4e687b1c2d54c47d70f073b7cdcbfb2185",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t038_000",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 38.0,
+   "frame_index": 1140,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t038_000.frame.png",
+   "frame_sha256": "1d8a89d69215e05fd2ba9fe4df740e92e34c19a0e3c0ecc3fc1f9119cde59c63",
+   "prediction": "candidates/saffire-v-ribs-t038_000.prediction.png",
+   "prediction_sha256": "e7a32c77e434ac1b1ba31a4ea36d2a53b6a98f775f09197b91bca375725ff4c9",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t041_400",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 41.4,
+   "frame_index": 1242,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-v-ribs-t041_400.frame.png",
+   "frame_sha256": "b9c60abe7fa221ec42789e351f78ff07ae240a1a35ab5ba3da34b87585159734",
+   "prediction": "candidates/saffire-v-ribs-t041_400.prediction.png",
+   "prediction_sha256": "a1699ec6cce1c3c9f5dc1d028f5da91c6a3235a2643599a021af485e95900975",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t056_400",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 56.4,
+   "frame_index": 1692,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t056_400.frame.png",
+   "frame_sha256": "fc6a364c062c4e26ab4770ea36a3dee659335c76f2d57bc302978fd0eff4a5c0",
+   "prediction": "candidates/saffire-v-ribs-t056_400.prediction.png",
+   "prediction_sha256": "fcb6ea4628f9887a55bdf8166349bacaf183c50e9aa9c33e40c4d9305cea0ce3",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t066_200",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 66.2,
+   "frame_index": 1986,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t066_200.frame.png",
+   "frame_sha256": "d829ff765536685dd65a3da14f93935bd360df04337223d10c93eb0aafb42bb7",
+   "prediction": "candidates/saffire-v-ribs-t066_200.prediction.png",
+   "prediction_sha256": "29cf93e4e8d95972e0fd0a3a2db0089889becc31736122e3a9e8d5758d0c0911",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t067_800",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 67.8,
+   "frame_index": 2034,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t067_800.frame.png",
+   "frame_sha256": "3bcd6cc73f0b5150b4d748601f7d643a0e6721a978c0adce4969d5d79c6db20b",
+   "prediction": "candidates/saffire-v-ribs-t067_800.prediction.png",
+   "prediction_sha256": "92722cb587180aabaef24faeed72b210a15fa4aa10fed9825db799592272b5f7",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t069_600",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 69.6,
+   "frame_index": 2088,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t069_600.frame.png",
+   "frame_sha256": "3640634ce2be0f8a763eda8ce0ab8e6559ec935ed948e3c23a5c3d71756f0047",
+   "prediction": "candidates/saffire-v-ribs-t069_600.prediction.png",
+   "prediction_sha256": "92722cb587180aabaef24faeed72b210a15fa4aa10fed9825db799592272b5f7",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t071_200",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 71.2,
+   "frame_index": 2136,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t071_200.frame.png",
+   "frame_sha256": "11d2a849d1cdd61bd7e0c48718aae6db0975574464b195d40fc34162a210c0f6",
+   "prediction": "candidates/saffire-v-ribs-t071_200.prediction.png",
+   "prediction_sha256": "92722cb587180aabaef24faeed72b210a15fa4aa10fed9825db799592272b5f7",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t073_000",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 73.0,
+   "frame_index": 2190,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t073_000.frame.png",
+   "frame_sha256": "6456a4327e70bff5da078fab96ecbae8b54dc7d65fd64ffc3a8bd0c4b56b405f",
+   "prediction": "candidates/saffire-v-ribs-t073_000.prediction.png",
+   "prediction_sha256": "92722cb587180aabaef24faeed72b210a15fa4aa10fed9825db799592272b5f7",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-v-ribs-t074_600",
+   "slug": "saffire-v-ribs",
+   "source_url": "https://images.nasa.gov/details/GRC-2021-CN-00008",
+   "file_url": "https://images-assets.nasa.gov/video/GRC-2021-CN-00008/GRC-2021-CN-00008~small.mp4",
+   "timestamp_s": 74.6,
+   "frame_index": 2238,
+   "frame_size": [
+    640,
+    466
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-v-ribs-t074_600.frame.png",
+   "frame_sha256": "b851a69fc7d53641d5a4060327f339f9ae43810aa895f93b55ab3d19a873aeb5",
+   "prediction": "candidates/saffire-v-ribs-t074_600.prediction.png",
+   "prediction_sha256": "92722cb587180aabaef24faeed72b210a15fa4aa10fed9825db799592272b5f7",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.135,
+     1.0,
+     0.985
+    ],
+    "luminous": {
+     "r_min": 170,
+     "r_over_g": 0.85
+    },
+    "blue": {
+     "b_min": 256,
+     "b_over_r": 25
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t000_000",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 0.0,
+   "frame_index": 0,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t000_000.frame.png",
+   "frame_sha256": "0ae7c2ddbf02912628814e574203613b53331b0824a2ed87098f1bd165e17fcc",
+   "prediction": "candidates/saffire-vi-pmma-t000_000.prediction.png",
+   "prediction_sha256": "32e37c974724c41ae21c0842f760aa9dd70706b37cf520e326668db765b99198",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t002_800",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 2.8,
+   "frame_index": 84,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t002_800.frame.png",
+   "frame_sha256": "e68a25ea9c3324d6bf0d9109262c33f736485b22a6a42e44cc15f5f9adae2842",
+   "prediction": "candidates/saffire-vi-pmma-t002_800.prediction.png",
+   "prediction_sha256": "1f168c9f0098b26d5480dcfa3c96b281f0f36925869326e95fa19191e7f5581a",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t006_200",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 6.2,
+   "frame_index": 186,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "clean_bright",
+   "frame": "candidates/saffire-vi-pmma-t006_200.frame.png",
+   "frame_sha256": "97a89ae41c130a87fc972c56cff87dabbc7851ecadaf82f1bcb63d04b274dc95",
+   "prediction": "candidates/saffire-vi-pmma-t006_200.prediction.png",
+   "prediction_sha256": "c7297de5081442d602f12b1f01eeb345f07cba04fe1e0860a6b2cf3d9113537a",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t010_000",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 10.0,
+   "frame_index": 300,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t010_000.frame.png",
+   "frame_sha256": "2b1e0b5d30ad829f99047e7d24afaa9086c50c02155bca5deb3c9dab9e8a90db",
+   "prediction": "candidates/saffire-vi-pmma-t010_000.prediction.png",
+   "prediction_sha256": "a484519ef5101000bd5cf25f0eece3049f0d9fe600b4351ac73dbf26748b07a9",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t012_200",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 12.2,
+   "frame_index": 366,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t012_200.frame.png",
+   "frame_sha256": "596b5a10b2c8216f4c7609a0179f23d5bdae95e96e61ea5a8bbd6f739083a705",
+   "prediction": "candidates/saffire-vi-pmma-t012_200.prediction.png",
+   "prediction_sha256": "9ffe50d839ed2fb5e853fd41558c03f4ff2510db95765f060ef8ec210db084a5",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t014_600",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 14.6,
+   "frame_index": 438,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t014_600.frame.png",
+   "frame_sha256": "7dc19fb11d5552b54fc7b44471b836833c15b7ea5903f16bbac0ff05cb0ba41a",
+   "prediction": "candidates/saffire-vi-pmma-t014_600.prediction.png",
+   "prediction_sha256": "b1858a750c1f0184aed129ae8ac9d3264ed06d9b3c489f2073a0dc05a52a703b",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t017_000",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 17.0,
+   "frame_index": 510,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t017_000.frame.png",
+   "frame_sha256": "487c7e64644cad12c3e8cd06ed79e3b593db5927a9cdd2c5c0bf3fd073836d10",
+   "prediction": "candidates/saffire-vi-pmma-t017_000.prediction.png",
+   "prediction_sha256": "3d6e37b4e07daee49ce3de79921468640a69793bb19c4a16e14d405c7bab3011",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t019_200",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 19.2,
+   "frame_index": 576,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t019_200.frame.png",
+   "frame_sha256": "e48de733fcc7f3bfcdf14f335a3b415a038736c2dbe2f1248cb35d56d76473c5",
+   "prediction": "candidates/saffire-vi-pmma-t019_200.prediction.png",
+   "prediction_sha256": "86ed04b6a9cee2817a780d68cf095588f3ed901491dd8c3e5c47d69a9b8aae81",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t021_600",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 21.6,
+   "frame_index": 648,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t021_600.frame.png",
+   "frame_sha256": "818c0ee4c28d2814a672ac987e234d5212d0b899be8384f1c3e56f17199ee779",
+   "prediction": "candidates/saffire-vi-pmma-t021_600.prediction.png",
+   "prediction_sha256": "ed40b8ce517888c8e9bab0c19f92a974b3e5010091968352e1e6639c1405e560",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t024_000",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 24.0,
+   "frame_index": 720,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t024_000.frame.png",
+   "frame_sha256": "1196a5ad9dc27d5ea7beea491eb9991c6b9d6510a37547b6454804eb8089f09b",
+   "prediction": "candidates/saffire-vi-pmma-t024_000.prediction.png",
+   "prediction_sha256": "7c65ae22e84a9671e4b3e61234036c5a62e6431f0b1149f79a28b22882cbde57",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t026_400",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 26.4,
+   "frame_index": 792,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t026_400.frame.png",
+   "frame_sha256": "c4fa15e48506929da131c12030025d07b94032b8d9a0d06b26f9a9c55fdbd370",
+   "prediction": "candidates/saffire-vi-pmma-t026_400.prediction.png",
+   "prediction_sha256": "dc989fc19bb423d6cf45ff292f4caf569fc588defaaa34714d3d2113d4216e19",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t028_600",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 28.6,
+   "frame_index": 858,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "overexposed",
+   "frame": "candidates/saffire-vi-pmma-t028_600.frame.png",
+   "frame_sha256": "2be3e432a068cdb3593ecd0064ba11e96cf33553f39644d25b029e667de9f322",
+   "prediction": "candidates/saffire-vi-pmma-t028_600.prediction.png",
+   "prediction_sha256": "10c9c71e4bcd1355513052d660845b9c01af3d857ef6a6f7b26651379cc8cdf6",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t046_400",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 46.4,
+   "frame_index": 1392,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t046_400.frame.png",
+   "frame_sha256": "7d6f0fa40e67948181dad948b74483d4c1720dc9b9544a5daacd134b5bd80d27",
+   "prediction": "candidates/saffire-vi-pmma-t046_400.prediction.png",
+   "prediction_sha256": "6bc26810e62c2f243c33860e4960cc4467c45f146b5af5507aec098be7fa54e3",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t048_600",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 48.6,
+   "frame_index": 1458,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t048_600.frame.png",
+   "frame_sha256": "870a69de9b15f352c107dcc4dfbf64ece3393abb621c87d11d5f205cf412a944",
+   "prediction": "candidates/saffire-vi-pmma-t048_600.prediction.png",
+   "prediction_sha256": "39480d8d2dc60468aab9aa6295a2e0d81edc3f007affc859bc366f7f4be22337",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t050_200",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 50.2,
+   "frame_index": 1506,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t050_200.frame.png",
+   "frame_sha256": "5707e0bb31d49b8fea0bb881bdcc9f8c287fe3be61167e3effed7a6c3ca0e2cb",
+   "prediction": "candidates/saffire-vi-pmma-t050_200.prediction.png",
+   "prediction_sha256": "18db80c5ad5442fc7f2b11c00d8a5d14fa505969caeb57acc53a8bd0d209977e",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t052_400",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 52.4,
+   "frame_index": 1572,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t052_400.frame.png",
+   "frame_sha256": "dcaca3e779384808047c890703716bcb9767dee261404163f83b0261fce71dc1",
+   "prediction": "candidates/saffire-vi-pmma-t052_400.prediction.png",
+   "prediction_sha256": "68259b77eb2552cf7276bbd611c04329e5a67c63bbad1566befc4c5cb063d92f",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t054_000",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 54.0,
+   "frame_index": 1620,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t054_000.frame.png",
+   "frame_sha256": "ea760a743618d39f1789d463150258c5ab95903ef914a6e8fd659deded0b567f",
+   "prediction": "candidates/saffire-vi-pmma-t054_000.prediction.png",
+   "prediction_sha256": "f1e7675dfa2d3258b4e6b10c9e9a9c8316458f2716365caac7a155f32e872649",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t056_200",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 56.2,
+   "frame_index": 1686,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t056_200.frame.png",
+   "frame_sha256": "fe198b4baef4099979c784b925e6539f0d5532706c67a9b22bb8054c3c351256",
+   "prediction": "candidates/saffire-vi-pmma-t056_200.prediction.png",
+   "prediction_sha256": "bd0df2b084605f00fb9ffec1a9f0e4b2a041c559b07a368ef30cdbf4dcd63960",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t057_800",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 57.8,
+   "frame_index": 1734,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "blue_dominant",
+   "frame": "candidates/saffire-vi-pmma-t057_800.frame.png",
+   "frame_sha256": "65f64182ce874ece62a0e130f7221ad6ae651c8127f10780e4228b62d201e04c",
+   "prediction": "candidates/saffire-vi-pmma-t057_800.prediction.png",
+   "prediction_sha256": "57da73aec451ad400bab60306df9b1d22c4a6760f52448941933090eee8aabcd",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  },
+  {
+   "id": "saffire-vi-pmma-t060_200",
+   "slug": "saffire-vi-pmma",
+   "source_url": "https://images.nasa.gov/details/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text",
+   "file_url": "https://images-assets.nasa.gov/video/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text/Saf-VI%20S8C3%2BC4%201-sided%20PMMA_unmapped_jpeg-20x%20no%20text~small.mp4",
+   "timestamp_s": 60.2,
+   "frame_index": 1806,
+   "frame_size": [
+    640,
+    268
+   ],
+   "selection_reason": "weak_or_no_flame",
+   "frame": "candidates/saffire-vi-pmma-t060_200.frame.png",
+   "frame_sha256": "a869dfa37f77b44d0d2a9bedbb3c09191ba7091f39feaa76f8eec7a8598db051",
+   "prediction": "candidates/saffire-vi-pmma-t060_200.prediction.png",
+   "prediction_sha256": "07d03e66c93a432654c79ffff656a29210c739d3135694fe3abce633b91053fa",
+   "pipeline_version": "flame-vision-1.0",
+   "pipeline_config": {
+    "roi": [
+     0.0,
+     0.0,
+     0.865,
+     1.0
+    ],
+    "luminous": {
+     "r_min": 90,
+     "r_over_g": 0.75
+    },
+    "blue": {
+     "b_min": 55,
+     "b_over_r": 15
+    }
+   }
+  }
+ ]
+}

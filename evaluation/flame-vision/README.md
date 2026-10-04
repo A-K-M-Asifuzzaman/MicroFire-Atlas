@@ -9,6 +9,13 @@ Run from the repository root:
 python3 -m unittest discover tests
 ```
 
+## Annotation workflow (tooling ready, no annotations yet)
+
+1. `.venv/bin/python evaluation/flame-vision/select_candidates.py` picks 40 candidate frames (20 per Saffire video), round-robin across the pipeline's own conditions (overexposed, weak or no flame, blue-dominant, clean bright) and spread through time. It writes each original frame and the pipeline prediction mask under `candidates/` (git-ignored, regenerable) and records their SHA-256 in `candidates.json`. Candidates are a sampling plan, not annotations. The two videos are mostly overexposed, which is itself a finding: most frames will be excluded from scoring.
+2. `npm run dev` in `apps/web`, then open `/dev/flame-annotation` (404 in production). Paint flame pixels on the original frame at native resolution. The pipeline mask is never shown, so the human mask stays independent. The mask is painted with integer pixel maths, so the PNG holds only 0 and 255.
+3. Save requires a reviewer name, a flame class, a leading-edge direction and an explicit approval tick. Saving copies the hash-checked frame and prediction into `annotations/`, writes the truth mask and adds the manifest entry.
+4. `.venv/bin/python evaluation/flame-vision/evaluate.py` scores the batch.
+
 ## Human annotation contract
 
 Select real NASA frames across bright, dim-blue, weak/no-flame, complex-background and overexposed cases. Record the NASA URL, timestamp, pipeline version/configuration and original full-resolution frame. A human must independently draw or explicitly correct and approve the flame mask. Freeze annotations before tuning segmentation. Have a second reviewer adjudicate ambiguous boundaries where possible. Keep evaluation frames separate from tuning frames.

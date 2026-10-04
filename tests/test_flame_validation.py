@@ -42,3 +42,34 @@ class ValidationArithmetic(unittest.TestCase):
             validation.measure(set(), set(), "unknown")
         with self.assertRaises(ValueError):
             validation.verified_file(ROOT, "../outside.png", "0"*64)
+
+
+class Candidates(unittest.TestCase):
+    """The candidate list is a sampling plan, never annotations."""
+
+    def test_candidate_manifest_is_a_plan_not_truth(self):
+        c = json.loads((ROOT / "evaluation/flame-vision/candidates.json").read_text())
+        self.assertTrue(30 <= len(c["frames"]) <= 50)
+        self.assertIn("NOT annotations", c["status"])
+        self.assertEqual({f["slug"] for f in c["frames"]}, {"saffire-v-ribs", "saffire-vi-pmma"})
+        for f in c["frames"]:
+            self.assertNotIn("truth", f)
+            self.assertNotIn("approved_by_human", f)
+            self.assertEqual(len(f["frame_sha256"]), 64)
+        manifest = json.loads((ROOT / "evaluation/flame-vision/manifest.json").read_text())
+        for f in manifest["frames"]:  # anything committed must carry a named human approval
+            self.assertIs(f["approved_by_human"], True)
+            self.assertTrue(f["reviewer"])
+
+    @unittest.skipUnless(importlib.util.find_spec("cv2"), "needs OpenCV (.venv)")
+    def test_pick_spreads_conditions_and_time(self):
+        spec = importlib.util.spec_from_file_location("select", ROOT / "evaluation/flame-vision/select_candidates.py")
+        sel = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sel)
+        frames = [{"t": i * 0.2, "flags": ["overexposed"] if i % 3 else [], "blue_px": 0, "luminous_px": 5} for i in range(300)]
+        chosen = sel.pick(frames)
+        self.assertEqual(len(chosen), sel.PER_VIDEO)
+        self.assertEqual({c for _, c in chosen}, {"overexposed", "clean_bright"})
+        ts = [f["t"] for f, _ in chosen]
+        self.assertTrue(all(b - a >= sel.MIN_GAP_S - 1e-9 for a, b in zip(ts, ts[1:])))
+        self.assertEqual(chosen, sel.pick(frames))
