@@ -11,8 +11,8 @@
  * eval-live.ts, which needs an API key.
  */
 import { buildEvidence, checkAnswer, parseQuestion, type ClaimType, type EvidenceItem } from "./ask-core.ts";
-import { fromBass, fromSaffire, fromLuci } from "./ontology.ts";
-import { rankFindings, fireInsight, validateInsight } from "./finding-relevance.ts";
+import { fromBass, fromSaffire, fromLuci, type MissionQuestion } from "./ontology.ts";
+import { rankFindings, fireInsight, validateInsight, findingRobustness, type FindingRung } from "./finding-relevance.ts";
 import type { Experiment, Finding, LuciRun, SaffireRun } from "./types";
 
 export type EvalQuestion = {
@@ -58,6 +58,68 @@ export function runFindingEval(cases: FindingEvalCase[], exps: Experiment[], fin
     wrongRegimePromotions:rows.filter(r=>r.wrongRegime).length, implications, unsupportedMissionImplicationRate:implications?rows.filter(r=>r.unsupportedImplication).length/implications:null,
     sourceRoles:{correct:roleResults.filter(Boolean).length,n:roleResults.length}, abstention:{correct:rows.filter(r=>r.abstention===true).length,n:rows.filter(r=>r.abstention!==null).length},
     adversarialImplications:{rejected:rows.reduce((s,r)=>s+r.rejected,0),n:rows.reduce((s,r)=>s+r.mutationChecks,0)}, rows };
+}
+
+/**
+ * Finding gold set v2: hand-labelled cases with an explicit scenario and topics, so this scores the finding
+ * ranker itself rather than the question parser. v1 above stays frozen.
+ */
+export type FindingGoldCase = {
+  id: string; category: string; question: string; scenario: MissionQuestion; topics: string[];
+  gold_primary: string[]; gold_acceptable: string[]; forbidden_promotions: string[];
+  expected_rung: FindingRung | "none"; abstain?: boolean; notes: string;
+};
+export function runFindingEvalV2(cases: FindingGoldCase[], exps: Experiment[], finds: Finding[], saffire: SaffireRun[], luci: LuciRun[]) {
+  const records = [...exps.map(fromBass), ...saffire.map(fromSaffire), ...luci.map(fromLuci)];
+  const rows = cases.map(c => {
+    if (c.abstain) {
+      // An unanswerable question must be flagged as a gap, and no insight may be attached to it
+      const ev = buildEvidence(c.question, exps, finds, saffire, luci);
+      const ranked = rankFindings(finds, records, { scenario: c.scenario, topics: c.topics });
+      return { id: c.id, category: c.category, abstain: true as const, top5: ranked.slice(0, 5).map(r => r.findingId),
+        abstained: signalOf(ev) === "gap" && fireInsight(ranked, finds) === null };
+    }
+    const query = { scenario: c.scenario, topics: c.topics };
+    const ranked = rankFindings(finds, records, query);
+    const ids = ranked.map(r => r.findingId);
+    const pos = (set: string[]) => { const p = set.map(id => ids.indexOf(id)).filter(i => i >= 0); return p.length ? Math.min(...p) : -1; };
+    const best = pos(c.gold_primary), relaxed = pos([...c.gold_primary, ...c.gold_acceptable]);
+    const hit = (p: number, k: number) => p >= 0 && p < k;
+    // anything ranked above the best primary answer (or in the top 5 when the primary is missing)
+    const above = ranked.slice(0, best >= 0 ? best : 5);
+    const solidExpected = c.expected_rung === "direct" || c.expected_rung === "analogous";
+    const insight = fireInsight(ranked, finds);
+    const stability = best >= 0 ? findingRobustness(finds, records, query)[ids[best]]?.top3 ?? 0 : 0;
+    return { id: c.id, category: c.category, abstain: false as const, top5: ids.slice(0, 5), bestPrimaryRank: best >= 0 ? best + 1 : null,
+      r1: hit(best, 1), r3: hit(best, 3), r5: hit(best, 5), relaxedR3: hit(relaxed, 3), rr: best >= 0 ? 1 / (best + 1) : 0,
+      rung: best >= 0 ? ranked[best].rung : null, rungMatch: best >= 0 && ranked[best].rung === c.expected_rung,
+      forbidden: above.some(r => c.forbidden_promotions.includes(r.findingId)),
+      mechanisticOverSolid: solidExpected && above.some(r => r.rung === "mechanistic"),
+      contextOverObservation: solidExpected && above.some(r => r.rung === "context"),
+      implication: !!insight, unsupportedImplication: !!insight && !validateInsight(insight, finds), stability };
+  });
+  const answer = rows.filter(r => !r.abstain) as Extract<typeof rows[number], { abstain: false }>[];
+  const abst = rows.filter(r => r.abstain) as Extract<typeof rows[number], { abstain: true }>[];
+  const rate = (f: (r: typeof answer[number]) => boolean) => answer.filter(f).length / answer.length;
+  const solid = answer.filter(r => { const c = cases.find(c => c.id === r.id)!; return c.expected_rung === "direct" || c.expected_rung === "analogous"; });
+  const implications = answer.filter(r => r.implication).length;
+  return {
+    cases: rows.length, answerable: answer.length, unanswerable: abst.length,
+    recall1: rate(r => r.r1), recall3: rate(r => r.r3), recall5: rate(r => r.r5), relaxedRecall3: rate(r => r.relaxedR3),
+    mrr: answer.reduce((s, r) => s + r.rr, 0) / answer.length, rungAgreement: rate(r => r.rungMatch),
+    forbiddenPromotions: answer.filter(r => r.forbidden).length,
+    mechanisticOverSolid: { n: solid.length, count: solid.filter(r => r.mechanisticOverSolid).length },
+    contextOverObservation: { n: solid.length, count: solid.filter(r => r.contextOverObservation).length },
+    implications, unsupportedImplications: answer.filter(r => r.unsupportedImplication).length,
+    abstention: { correct: abst.filter(r => r.abstained).length, n: abst.length },
+    meanTop3Stability: answer.reduce((s, r) => s + r.stability, 0) / answer.length,
+    byCategory: Object.fromEntries([...new Set(answer.map(r => r.category))].map(cat => {
+      const a = answer.filter(r => r.category === cat);
+      return [cat, { n: a.length, recall3: a.filter(r => r.r3).length / a.length }];
+    })),
+    misses: answer.filter(r => !r.r3).map(r => ({ id: r.id, bestPrimaryRank: r.bestPrimaryRank, top5: r.top5 })),
+    rows,
+  };
 }
 
 export function signalOf(ev: ReturnType<typeof buildEvidence>): Signal {

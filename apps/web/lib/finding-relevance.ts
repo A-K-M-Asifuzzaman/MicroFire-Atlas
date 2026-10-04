@@ -92,7 +92,13 @@ export function rankFindings(finds: Finding[], records: EvidenceRecord[], query:
       supportingRecordIds: linked.map(r => r.id).sort(), supportCount: linked.length, coverage,
       scope: publication ? "publication-level" : "record-linked", whyRelevant, limitations });
   }
-  return out.sort((a, b) => ORDER[a.rung] - ORDER[b.rung] || b.relevance - a.relevance || a.findingId.localeCompare(b.findingId));
+  // v1.1: a mission-condition question (no material, several topics) that no observation fully addresses lets the
+  // findings that address every requested topic lead, still rung-ordered and still labelled context. When any
+  // observation addresses the whole question, observations stay first (v1 order).
+  const covers = (r: FindingResult) => topics.length > 1 && r.matchedTopics.length === topics.length;
+  const contextLeads = !s.material && !out.some(r => (r.rung === "direct" || r.rung === "analogous") && covers(r));
+  const full = (r: FindingResult) => (contextLeads && covers(r) ? 0 : 1);
+  return out.sort((a, b) => full(a) - full(b) || ORDER[a.rung] - ORDER[b.rung] || b.relevance - a.relevance || a.findingId.localeCompare(b.findingId));
 }
 
 /** Sensitivity of project weights, not uncertainty in NASA measurements. Rung ordering stays fixed. */

@@ -8,7 +8,7 @@ import { FRONTIER } from "@/lib/frontier";
 import { OBSERVED_MIN } from "@/lib/gaps";
 import { LABELS, MATERIAL_CLASS, PRESSURE_SCALE_KPA, rank, SAME_CLASS_CREDIT, scalesFrom, WEIGHTS } from "@/lib/relevance";
 import { ladderRobustness, RANGES, rankRobustness, SAMPLES } from "@/lib/robustness";
-import { runEval, runFindingEval, type EvalQuestion } from "@/lib/eval";
+import { runEval, runFindingEval, runFindingEvalV2, type EvalQuestion, type FindingGoldCase } from "@/lib/eval";
 import { TRACEABILITY } from "@/lib/challenge";
 import { FoolTheChecker } from "@/components/method/FoolTheChecker";
 import { WeightPlayground } from "@/components/method/WeightPlayground";
@@ -17,6 +17,8 @@ import mstyles from "@/components/method/Method.module.css";
 import evalSet from "@/eval/microfire-eval-v1.json";
 import live from "@/eval/results-live.json";
 import findingLabels from "@/eval/finding-labels-v1.json";
+import findingGold from "@/eval/finding-gold-v2.json";
+import { FINDING_VARIATIONS } from "@/lib/finding-relevance";
 
 export const metadata: Metadata = { title: "Methodology" };
 
@@ -50,6 +52,7 @@ export default function MethodologyPage() {
   const moonRob = ladderRobustness(evidenceRecords, findings, moon.q);
   const ev = runEval(evalSet.questions as EvalQuestion[], experiments, findings, saffireRuns, luciRuns);
   const fev = runFindingEval(findingLabels.cases, experiments, findings, saffireRuns, luciRuns);
+  const fg = runFindingEvalV2(findingGold.cases as FindingGoldCase[], experiments, findings, saffireRuns, luciRuns);
   const pc = (x: number | null) => (x == null ? "—" : `${Math.round(x * 1000) / 10} %`);
   const lm = live.metrics, lr = live.rescored;
   return (
@@ -380,7 +383,7 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
           <p>Finding Relevance ranks verified NASA statements for a question; experiment relevance compares individual test conditions. Both are MicroFire heuristics. NASA did not create, validate or endorse this ranking.</p>
           <p>Requested topics come from the question selector plus explicit triggers: airflow at ≤5 cm/s; oxygen above 21 % or below 19 %; quench below 19 %; pressure below 95 kPa; partial gravity when lunar or Martian gravity is selected. These thresholds organize retrieval; they are not combustion limits.</p>
           <p><code>Relevance = 100 × (5 × topic recall + 3 × material match + 2 × gravity match) / requested-feature weights.</code> Topic recall is the fraction of requested topics found in the curated tags. Exact material and gravity matches are 1, otherwise 0. Unrequested features leave the denominator; requested features with unknown metadata remain in it and contribute zero. A finding must match a topic or material to enter the list.</p>
-          <p>Evidence type constrains sorting first: direct, analogous, mechanistic, context; only then relevance descending, with finding ID as the stable tie-break. Direct requires an observed finding with explicit row links and all linked rows matching the selected conditions under the existing Evidence Ladder tolerances, without platform caveats. Publication-level solid-fuel findings remain analogous. Liquid/gas evidence stays mechanistic; planned FM² work and background remain context.</p>
+          <p>Evidence type constrains sorting first: direct, analogous, mechanistic, context; only then relevance descending, with finding ID as the stable tie-break. Direct requires an observed finding with explicit row links and all linked rows matching the selected conditions under the existing Evidence Ladder tolerances, without platform caveats. Publication-level solid-fuel findings remain analogous. Liquid/gas evidence stays mechanistic; planned FM² work and background remain context. One exception (ranking v1.1): when no material is named, several topics are requested and no observation addresses all of them, findings that address every requested topic sort first, still in evidence-type order and still labelled. A mission-context question such as “which exploration atmospheres has NASA studied?” then shows the atmosphere studies first. Whenever an observation addresses the whole question, observations stay first.</p>
           <p>Material comes from explicit row links, material-specific sources, or literal material names in the quote. Gravity comes from linked records or a known experiment family. LUCI always retains its simulated-lunar-gravity limitation. These associations do not establish matched pressure, oxygen, geometry or flow history.</p>
           <p>Only explicit curated record IDs count as supporting records; a shared family or publication never creates row links. Support count is not a replication count. Coverage is the average fraction of requested condition fields reported in linked rows, not the fraction matching. Publication-level coverage is unknown. Only curated abstract labels establish source role; an unspecified PDF section stays unclassified.</p>
           <p>For example, weak-flow PMMA questions retrieve low-airflow findings. A lunar question also retrieves partial-gravity findings, with the simulated-platform limitation. A droplet result cannot outrank relevant solid-fuel evidence through topic count alone. A high relevance number can coexist with an analogous rung and unknown coverage.</p>
@@ -434,7 +437,6 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             The broken claims cover invented citations, wrong numbers, swapped units, microgravity results told as lunar, causal
             wording, predictions and uncited facts, ten of each. Still failing: {ev.failures.map((f) => `“${f.q}”`).join(" and ")}.
           </p>
-          <h3 className="text-lg font-semibold">With the model: one paid run, {lm.ranAt.slice(0, 10)}</h3>
           <h3 className="text-lg font-semibold">Finding-ranking extension — provisional source-reading labels</h3>
           <p>Seven existing benchmark questions have finding-ID labels read from verified quotes, plus six supplemental adversarial questions. These are engineering labels awaiting independent scientific adjudication, not LLM-generated reference answers. They measure the finding ranker using the existing question parser; Mission Analyst uses explicit condition and topic controls.</p>
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -447,6 +449,34 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
             <div><dt>Injected unsafe/directive/probability claims rejected</dt><dd>{fev.adversarialImplications.rejected} / {fev.adversarialImplications.n}</dd></div>
           </dl>
           <p className="text-sm text-muted">Wrong-regime checks detect mechanistic findings promoted ahead of relevant solid evidence. Implication checks enforce source-bound templates and reject injected prohibited statements; a zero rate is not an independent semantic or scientific accuracy measurement. Abstention requires a flagged request limitation and no direct finding. Source-role checks include correctly leaving PDF sections unknown. Labels and per-case output are in <code>eval/finding-labels-v1.json</code> and <code>node lib/eval-run.ts</code>.</p>
+          <h3 className="text-lg font-semibold">Finding gold set v2: {fg.cases} hand-labelled cases</h3>
+          <p>
+            Each case names a scenario and topics directly, so this measures the finding ranker itself, not the question parser.
+            Labels were assigned by reading each finding&apos;s quote, kind and topics before running the ranker: a primary answer,
+            other acceptable findings, and findings that must never rank above the primary. {fg.unanswerable} cases are
+            questions NASA evidence cannot answer (safest material, probabilities, proof, predictions).
+          </p>
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div><dt>Recall@1 / @3 / @5 (a primary answer in the top k)</dt><dd>{pc(fg.recall1)} / {pc(fg.recall3)} / {pc(fg.recall5)} of {fg.answerable}</dd></div>
+            <div><dt>Recall@3 counting acceptable findings</dt><dd>{pc(fg.relaxedRecall3)}</dd></div>
+            <div><dt>Mean reciprocal rank</dt><dd>{fg.mrr.toFixed(3)}</dd></div>
+            <div><dt>Forbidden findings ranked above the answer</dt><dd>{fg.forbiddenPromotions} / {fg.answerable}</dd></div>
+            <div><dt>Mechanism-only evidence above a solid-fuel answer</dt><dd>{fg.mechanisticOverSolid.count} / {fg.mechanisticOverSolid.n}</dd></div>
+            <div><dt>Context or planned work above an observation answer</dt><dd>{fg.contextOverObservation.count} / {fg.contextOverObservation.n}</dd></div>
+            <div><dt>Unanswerable questions flagged, with no insight attached</dt><dd>{fg.abstention.correct} / {fg.abstention.n}</dd></div>
+            <div><dt>Unsupported implications</dt><dd>{fg.unsupportedImplications} of {fg.implications}</dd></div>
+            <div><dt>Evidence-rung agreement with the label</dt><dd>{pc(fg.rungAgreement)}</dd></div>
+            <div><dt>Mean top-3 stability of the answer ({FINDING_VARIATIONS} weight variations)</dt><dd>{pc(fg.meanTop3Stability)}</dd></div>
+          </dl>
+          <p className="text-sm text-muted">
+            Still missed in the top 3: {fg.misses.map((m) => `${m.id} (rank ${m.bestPrimaryRank ?? "not ranked"})`).join(", ")}.
+            The first run of this set found that mission-context questions (which exploration atmospheres NASA studied, what FM²
+            will use) buried the context findings that answer them below observations that matched only one topic. Ranking
+            v1.1 lets findings that address every requested topic lead only when no observation does and no material is named;
+            observations otherwise stay first. That lifted Recall@3 from 71 % to {pc(fg.recall3)} with every guardrail above at
+            zero. Labels are engineering labels awaiting independent scientific adjudication. File:{" "}
+            <code>eval/finding-gold-v2.json</code>.
+          </p>
           <h3 className="text-lg font-semibold">Historical live-model run</h3>
           <p>
             All {lm.questions} questions were sent to the live Ask pipeline with {lm.model}. {lm.questions - lm.aiAnswers} matched no
