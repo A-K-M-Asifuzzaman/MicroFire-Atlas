@@ -53,5 +53,5 @@ open("build/subtitles.srt", "w").write("\n".join(cues))
 # 6. mux
 run("-i", "build/video.mp4", "-i", "build/mix.m4a", "-i", "build/subtitles.srt", "-map", "0:v", "-map", "1:a", "-map", "2",
     "-c:v", "copy", "-c:a", "copy", "-c:s", "mov_text", "-metadata:s:s:0", "language=eng", "-movflags", "+faststart",
-    "MicroFire-Atlas-explorer-film.mp4")
+    os.environ.get("OUT", "MicroFire-Atlas-explorer-film.mp4"))
 print(f"done: {T:.1f} s")

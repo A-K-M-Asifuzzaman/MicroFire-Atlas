@@ -5,7 +5,7 @@ arpeggios once the title has landed; a rising swell and a low impact on the titl
 card; arpeggios stop for the finale and the last chord resolves and fades. Writes build/music.wav.
     python3 score.py   (after narrate.py, which writes build/timed.json)
 """
-import json, wave
+import json, os, wave
 import numpy as np
 
 SR = 48000
@@ -15,7 +15,7 @@ start = {}; acc = 0.0
 for s in timed: start[s["id"]] = acc; acc += s["dur"]
 cold = timed[0]
 title_at = cold["dur"] - 4.8 + 0.35          # the title reveal: just after the last cold-open line
-chapters = [start[k] + 0.05 for k in ("freefall", "saffire", "frontier") if k in start]
+chapters = [start[k] + 0.05 for k in os.environ.get("CHAPTERS", "freefall,saffire,frontier").split(",") if k in start]
 finale = start.get("close", T - 18)
 
 n = int(T * SR); t = np.arange(n) / SR

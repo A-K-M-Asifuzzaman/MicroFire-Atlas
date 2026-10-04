@@ -1,0 +1,239 @@
+[
+ {
+  "id": "coldopen",
+  "lead": 1.6,
+  "lines": [
+   [
+    "This fire is real."
+   ],
+   [
+    "NASA lit it on purpose, inside an empty cargo spaceship, high above the Earth."
+   ],
+   [
+    "Because one day, people will live on the Moon... and up there, fire won't behave the way it does here."
+   ]
+  ]
+ },
+ {
+  "id": "what",
+  "lines": [
+   [
+    "This is MicroFire Atlas, built for the NASA Space Apps Challenge: Flame in Freefall.",
+    "Flame in Freefall · NASA Space Apps 2026"
+   ],
+   [
+    "The challenge: find, compare, summarize, rank and interpret NASA's microgravity fire research, so it can guide fire safety for human space exploration.",
+    "Find · compare · summarize · rank · interpret"
+   ],
+   [
+    "NASA has run these experiments for decades, but the answers are scattered across reports and tables. MicroFire puts them in one place, test by test, with every value traced to its source.",
+    "Every value traced to its NASA source"
+   ],
+   [
+    "There are two ways in: an adventure for young explorers, and a workstation for mission planners. Let's take the full tour.",
+    "Two ways in"
+   ]
+  ]
+ },
+ {
+  "id": "challenge",
+  "lead": 3.2,
+  "lines": [
+   [
+    "Short on time? Start with Challenge Mode. One real mission question, answered in nine stages, each one matching a word in the challenge.",
+    "Challenge Mode: nine stages"
+   ],
+   [
+    "Find: which NASA experiment families were searched, and what each one can, and cannot, tell us.",
+    "1 · Find"
+   ],
+   [
+    "Compare: the closest test records, condition by condition. Match, near, different, or not reported.",
+    "2 · Compare"
+   ],
+   [
+    "Summarize and rank: NASA's own findings, quoted word for word. Experiments and findings are ranked separately, and every rank says what matched and what didn't.",
+    "3 · Summarize   4 · Rank"
+   ],
+   [
+    "Then the honest part. No test in the atlas reaches thirty-four percent oxygen, so MicroFire names the gap, and the experiment that would close it.",
+    "7 · Gap   8 · Next experiment"
+   ],
+   [
+    "Ask it for the probability of a fire, and MicroFire says no. Saying what the evidence cannot support is a scientific result.",
+    "MicroFire says no"
+   ]
+  ]
+ },
+ {
+  "id": "atlas",
+  "lead": 3.2,
+  "lines": [
+   [
+    "The Evidence Atlas holds seventy-eight NASA test records from three experiment families: BASS on the space station, the large Saffire fires, and LUCI's simulated lunar gravity.",
+    "78 NASA test records · 3 families"
+   ],
+   [
+    "Plain-language filters narrow them down, and a detective table lets you sort and compare every record.",
+    "Filters and a detective table"
+   ],
+   [
+    "Open any test, and every value says where it came from: recorded for this test, stated in NASA's table, or derived by us. Each one links to the exact PDF page.",
+    "Every value labelled, every page linked"
+   ]
+  ]
+ },
+ {
+  "id": "compare",
+  "lines": [
+   [
+    "The Compare Lab lines tests up side by side, holding conditions constant where NASA's tables allow.",
+    "Compare Lab"
+   ],
+   [
+    "It keeps three things apart: what NASA observed, what we interpret, and what the data doesn't say.",
+    "Observed · interpreted · unknown"
+   ]
+  ]
+ },
+ {
+  "id": "saffire",
+  "lines": [
+   [
+    "The Saffire page covers twenty large-scale fires that NASA lit on purpose inside empty cargo ships, every number traced to its line in a NASA table.",
+    "Saffire: 20 spacecraft fires"
+   ],
+   [
+    "Some ran at lower pressure with more oxygen: the closest any test here gets to the exploration atmospheres NASA has studied.",
+    "Closest to exploration atmospheres"
+   ]
+  ]
+ },
+ {
+  "id": "analyst",
+  "lead": 3.2,
+  "lines": [
+   [
+    "For mission planners, the Mission Analyst starts from a cabin atmosphere NASA has studied, such as fifty-six and a half kilopascals with thirty-four percent oxygen.",
+    "A NASA-studied cabin atmosphere"
+   ],
+   [
+    "Under every control, small ticks show the real NASA tests. Push the oxygen past them, and you can see you've left the evidence behind.",
+    "Every tick is a real NASA test"
+   ],
+   [
+    "The evidence status says it plainly: direct, analogous, mechanistic, or a gap. There is no risk score and no probability, ever.",
+    "No risk score. No guessing."
+   ],
+   [
+    "Then come NASA's most relevant findings, each with a checklist explaining why it ranks where it does, and how stable that rank stays when the weights change.",
+    "Why #1? Every rank explained"
+   ],
+   [
+    "One observation becomes a carefully bounded fire-safety insight, with its limitations attached. And the whole analysis prints as a mission evidence brief.",
+    "Bounded insight · printable brief"
+   ]
+  ]
+ },
+ {
+  "id": "frontier",
+  "lead": 3.2,
+  "lines": [
+   [
+    "The Research Frontier shows where evidence runs out, starting with a fire-safety matrix: which parts of spacecraft fire safety have structured test data, which have published findings, and which aren't covered yet.",
+    "Fire-safety matrix"
+   ],
+   [
+    "The research planner links mission questions to shared evidence gaps, and shows which hypothetical experiment would cover the most open questions, if it were ever run.",
+    "Research planner"
+   ],
+   [
+    "And NASA's planned FM-two burns on the Moon appear as a research horizon: planned, with no results invented.",
+    "FM² · planned, no results invented"
+   ]
+  ]
+ },
+ {
+  "id": "ask",
+  "lines": [
+   [
+    "So where is the AI? On the Ask page. Evidence is retrieved first, and a language model only phrases the answer from that evidence.",
+    "Evidence first, then AI"
+   ],
+   [
+    "Every claim is then checked. Citations must exist, numbers must match the NASA record, and Moon claims drawn from orbit tests are flagged.",
+    "Every claim checked"
+   ],
+   [
+    "This verified example is re-checked on every build, so anyone can see the whole pipeline at work, even while live AI is switched off.",
+    "A verified example"
+   ]
+  ]
+ },
+ {
+  "id": "trust",
+  "lines": [
+   [
+    "Why trust any of it? The Methodology page shows every rule, weight and threshold, and lets you change them.",
+    "Every rule is visible"
+   ],
+   [
+    "Each ranking is recomputed a thousand times with the weights varied, and stable results are marked.",
+    "1,000 variations per ranking"
+   ],
+   [
+    "A hundred-question benchmark grades retrieval and the claim checker. A forty-two-case gold set grades the finding ranking, including questions that must be refused.",
+    "100 test questions · 42 gold cases"
+   ],
+   [
+    "You can even try to fool the claim checker yourself. Made-up numbers, unit swaps, Moon claims from orbit tests... it catches them.",
+    "Try to fool the checker"
+   ]
+  ]
+ },
+ {
+  "id": "sources",
+  "lines": [
+   [
+    "Every source is listed with its NASA report number, and the data is open: tables, JSON, and a typed evidence graph you can download.",
+    "Open data, every source listed"
+   ]
+  ]
+ },
+ {
+  "id": "explorer",
+  "lead": 3.2,
+  "lines": [
+   [
+    "For young explorers, the same evidence becomes an adventure.",
+    "For young explorers"
+   ],
+   [
+    "In Mission Freefall, kids switch gravity off, then build NASA's real BASS wind tunnel in 3D, part by part.",
+    "Build the real experiment in 3D"
+   ],
+   [
+    "In Follow the Spark, computer vision traces a real NASA flame and measures it in pixels.",
+    "Computer vision on a NASA film"
+   ],
+   [
+    "Children predict before NASA's record is revealed, and learn that a missing test is a question, not a promise of safety.",
+    "Predict first, then see NASA's record"
+   ]
+  ]
+ },
+ {
+  "id": "close",
+  "lines": [
+   [
+    "MicroFire Atlas."
+   ],
+   [
+    "Real NASA data. A real adventure. And honest answers about what we still don't know."
+   ],
+   [
+    "Come follow the spark."
+   ]
+  ]
+ }
+]

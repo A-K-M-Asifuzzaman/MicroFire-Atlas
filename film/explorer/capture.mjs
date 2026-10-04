@@ -15,6 +15,8 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const SITE = process.env.SITE ?? "http://localhost:3417";
 const FPS = +(process.env.FPS ?? 60);
@@ -191,7 +193,8 @@ const toEl = (sel, off = 80) => () => p.evaluate(([s, o]) => { const el = docume
 const chapter = (n, part, title, line) => () => p.evaluate(([a, b, c, d]) => window.__voxChapter?.(a, b, c, d), [n, part, title, line]);
 const lineEnd = (S, k, back = 0.6) => S.lines[k].at + S.lines[k].dur - back;
 
-const scenes = {
+// SCENES=path/to/scenes.mjs swaps in another film's choreography (run from that film's folder, which holds its build/)
+const scenes = process.env.SCENES ? (await import(pathToFileURL(resolve(process.env.SCENES)).href)).default({ p, ctx, go, btn, nextBtn, fx, chapter, toEl, lineEnd }) : {
   // cold open: real NASA footage, letterboxed, kinetic words, then the title reveal
   coldopen: [() => go("/"), (S) => {
     const cold = (st) => () => p.evaluate((x) => window.__voxCold?.(x), st);
