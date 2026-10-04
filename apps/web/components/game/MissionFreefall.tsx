@@ -726,6 +726,7 @@ export function MissionFreefall() {
                   );
                 })}
               </ul>
+              <p className="mt-2 text-[11px] text-faint">3D illustration. Camera and glove models: Poly Haven (CC0) and NASA 3D Resources.</p>
             </div>
           )}
 
