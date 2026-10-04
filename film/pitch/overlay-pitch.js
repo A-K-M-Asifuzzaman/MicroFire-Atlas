@@ -27,7 +27,7 @@
 #vp-team.s1 .m{animation:vp-pop .7s cubic-bezier(.2,1.5,.4,1) both}
 #vp-team .m img,#vp-team .m .ph{width:160px;height:160px;border-radius:50%;object-fit:cover;border:5px solid #ffcc79;box-shadow:0 0 0 8px #ffcc7922,0 20px 50px #000a;background:#1a2a50;display:grid;place-items:center;font-size:64px;font-weight:800;color:#ffcc79}
 #vp-team .m b{font-size:25px;line-height:1.15;font-weight:800}
-#vp-team .m span{font:600 20px system-ui,sans-serif;color:#9fd8e6}
+#vp-team .m span{font:600 18px/1.25 system-ui,sans-serif;color:#9fd8e6;max-width:230px}
 #vp-team .promises{display:flex;gap:26px;margin-top:44px}
 #vp-team .p{width:470px;padding:26px 28px;border-radius:26px;background:#0d1d3ce6;border:2px solid #ffffff1c;text-align:left;opacity:0;transform:translateY(40px)}
 #vp-team .p i{display:block;font-style:normal;font:800 18px system-ui,sans-serif;letter-spacing:.2em;margin-bottom:8px}
