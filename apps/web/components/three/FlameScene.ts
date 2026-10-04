@@ -16,13 +16,16 @@ export type CloudPoint = { id: string; label: string; x: number; y: number; z: n
 
 export type SceneState = {
   view: "bench" | "duct" | "cloud";
-  gravity: "earth" | "orbit";
+  /** Buoyancy scales with g: Moon and Mars sit between orbit and Earth. An illustration, not a simulation. */
+  gravity: "earth" | "moon" | "mars" | "orbit";
   /** Oxygen, vol %: drives flame brightness. */
   o2: number;
   /** Airflow, cm/s: drives drift and streak speed. */
   flow: number;
   outcome: Outcome;
-  material?: "PMMA" | "fabric";
+  material?: "PMMA" | "fabric" | "nomex" | "silicone" | "jersey";
+  /** No matching NASA evidence: the flame is replaced by a dashed "?" outline. */
+  unknown?: boolean;
   cloud?: CloudPoint[];
   highlight?: string[];
   /** Show an empty "no data" region in the cloud (e.g. 34 % O2). */
@@ -42,6 +45,8 @@ export type SceneState = {
   labels?: boolean;
   /** Close observation shot on the sample and flame instead of the whole glovebox. */
   focus?: boolean;
+  /** Tighter framing on the flame front only (Flame Lab close-up). */
+  zoom?: "flame";
 };
 
 /** BASS-II hardware the player can install (positions are illustrative, layout follows NASA's description). */
@@ -74,6 +79,33 @@ void main() {
 }`;
 
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
+const G: Record<SceneState["gravity"], number> = { earth: 1, mars: 0.38, moon: 0.17, orbit: 0 };
+
+/** Woven or knitted sample surfaces, drawn once on a canvas (no texture downloads). */
+const SAMPLE_LOOK: Record<NonNullable<SceneState["material"]>, { color: number; rough: number; opacity: number; weave?: [string, string] }> = {
+  PMMA: { color: 0xd6e6f2, rough: 0.12, opacity: 0.72 },
+  fabric: { color: 0xffffff, rough: 0.85, opacity: 1, weave: ["#b9a27e", "#8c7655"] },
+  nomex: { color: 0xffffff, rough: 0.8, opacity: 1, weave: ["#d4b13c", "#a88b25"] },
+  silicone: { color: 0xb79a96, rough: 0.9, opacity: 1 },
+  jersey: { color: 0xffffff, rough: 0.9, opacity: 1, weave: ["#ece6da", "#c9c0ad"] },
+};
+const weaveCache = new Map<string, THREE.CanvasTexture>();
+function weave([a, b]: [string, string]) {
+  const key = a + b;
+  if (weaveCache.has(key)) return weaveCache.get(key)!;
+  const c = document.createElement("canvas");
+  c.width = c.height = 64;
+  const x = c.getContext("2d")!;
+  x.fillStyle = a; x.fillRect(0, 0, 64, 64);
+  x.strokeStyle = b; x.lineWidth = 2;
+  for (let i = 0; i < 64; i += 8) { x.beginPath(); x.moveTo(0, i + 2); x.lineTo(64, i + 2); x.stroke(); x.beginPath(); x.moveTo(i + 6, 0); x.lineTo(i + 6, 64); x.globalAlpha = 0.5; x.stroke(); x.globalAlpha = 1; }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(10, 2);
+  t.colorSpace = THREE.SRGBColorSpace;
+  weaveCache.set(key, t);
+  return t;
+}
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
 /** A square frame (outer minus inner opening) in the y-z plane, `t` thick along x. */
@@ -155,14 +187,18 @@ export class FlameScene {
   private panelLeft = false;
   private partTags = new Map<string, THREE.Sprite>();
   private seekRing!: THREE.Sprite;
+  private ghost = new THREE.Group();
   private recentering = 0;
   private glovebox: THREE.Group | null = null;
   private gloveFront = new THREE.Group(); // glove ports and gloves: hidden in close-up shots so they never block the sample
   private disposed = false;
   private snap = true; // jump the camera straight to its framing on the first frame and on view cuts
 
-  constructor(private canvas: HTMLCanvasElement, initial: SceneState, opts: { compact?: boolean; panelLeft?: boolean } = {}) {
+  private fit = false; // frame the subject by distance (zoom) as well as target, without a side-panel shift
+
+  constructor(private canvas: HTMLCanvasElement, initial: SceneState, opts: { compact?: boolean; panelLeft?: boolean; fit?: boolean } = {}) {
     this.panelLeft = !!opts.panelLeft;
+    this.fit = !!opts.fit;
     this.state = initial;
     this.reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -659,6 +695,18 @@ export class FlameScene {
     this.light = new THREE.PointLight(0xf0a044, 4, 8, 1.6);
     this.flameGroup.add(this.light);
     for (let i = 0; i < N; i++) this.age[i] = this.life[i] = 1;
+
+    // evidence boundary: a dashed teardrop outline and a "?" where no NASA test supports drawing a flame
+    const prof = Array.from({ length: 14 }, (_, i) => { const t = i / 13; return new THREE.Vector2(Math.sin(Math.PI * t) * 0.42 * (1 - t * 0.55), t * 1.9); });
+    const lathe = new THREE.LatheGeometry(prof, 18);
+    const lines = new THREE.LineSegments(new THREE.EdgesGeometry(lathe, 1), new THREE.LineDashedMaterial({ color: 0xff8a5a, dashSize: 0.06, gapSize: 0.05, transparent: true, opacity: 0.55, toneMapped: false }));
+    lines.computeLineDistances();
+    const q = textSprite("?", "#ffc3a8", 120, 800);
+    q.position.set(0, 0.95, 0);
+    q.scale.multiplyScalar(1.4);
+    this.ghost.add(lines, q);
+    this.ghost.visible = false;
+    this.flameGroup.add(this.ghost);
   }
 
   private buildStreaks() {
@@ -738,7 +786,11 @@ export class FlameScene {
       (mesh.material as THREE.MeshStandardMaterial).opacity = hi.size && !on ? 0.25 : 0.95;
       label.visible = on;
     }
-    (this.sample.material as THREE.MeshStandardMaterial).color.set(s.material === "fabric" ? 0xb9a98c : 0xc9d1e3);
+    const look = SAMPLE_LOOK[s.material ?? "PMMA"];
+    const sm = this.sample.material as THREE.MeshStandardMaterial;
+    sm.color.set(look.color); sm.roughness = look.rough; sm.opacity = look.opacity;
+    sm.map = look.weave ? weave(look.weave) : null;
+    sm.needsUpdate = true;
     if (s.outcome !== "quench" && s.outcome !== "blowoff") this.p.lift = 0;
     const installed = new Set(s.parts ?? PART_IDS);
     for (const [id, g] of this.partGroups) {
@@ -759,7 +811,7 @@ export class FlameScene {
       this.duct.add(this.ghostBox);
     }
     if (immediate) {
-      this.p.grav = s.gravity === "earth" ? 1 : 0;
+      this.p.grav = G[s.gravity];
       this.p.o2 = s.o2;
       this.p.flow = s.flow;
       this.p.cloud = s.view === "cloud" ? 1 : 0;
@@ -842,11 +894,11 @@ export class FlameScene {
     this.coilGlow.visible = this.partGroups.get("igniter")!.visible;
     this.sample.visible = s.view !== "duct" || this.partGroups.get("holder")!.visible;
     this.gloveFront.visible = !s.focus;
-    p.grav = lerp(p.grav, s.gravity === "earth" ? 1 : 0, k);
+    p.grav = lerp(p.grav, G[s.gravity], k);
     p.o2 = lerp(p.o2, s.o2, k);
     p.flow = lerp(p.flow, s.flow, k);
     p.cloud = lerp(p.cloud, s.view === "cloud" ? 1 : 0, k);
-    p.blue = lerp(p.blue, s.outcome === "dim" || s.outcome === "quench" ? 1 : s.gravity === "orbit" ? 0.55 : 0, k * 0.6);
+    p.blue = lerp(p.blue, s.outcome === "dim" || s.outcome === "quench" ? 1 : 0.55 * (1 - G[s.gravity]), k * 0.6);
     p.gust = Math.max(0, p.gust - dt * 0.5);
     const targetLife = s.outcome === "none" ? 0 : s.outcome === "quench" ? 0 : s.outcome === "blowoff" ? 0 : 1;
     p.life = lerp(p.life, targetLife, s.outcome === "quench" ? dt * 1.1 : s.outcome === "blowoff" ? dt * 0.8 : k);
@@ -909,6 +961,12 @@ export class FlameScene {
     this.seekRing.position.set(fx, -0.3, 0.55);
     (this.seekRing.material as THREE.SpriteMaterial).opacity = s.seek === "found" ? 0.55 + 0.35 * Math.sin(this.time * 3) * (this.gentle ? 0 : 1) : 0;
     this.light.color.copy((this.glow.material as THREE.SpriteMaterial).color);
+    this.ghost.visible = !!s.unknown && s.view === "duct";
+    if (this.ghost.visible) {
+      this.ghost.position.set(this.sample.position.x - 1.2, this.sample.position.y + 0.05, 0.4);
+      this.ghost.rotation.y += dt * (this.gentle || this.reduced ? 0 : 0.35);
+      ((this.ghost.children[0] as THREE.LineSegments).material as THREE.LineDashedMaterial).opacity = 0.4 + 0.2 * Math.sin(this.time * 2.2) * (this.gentle ? 0 : 1);
+    }
 
     // airflow streaks
     const sp = p.flow * 0.12 * p.fanDir;
@@ -927,17 +985,17 @@ export class FlameScene {
     const aspect = this.camera.aspect;
     const wide = this.panelLeft && aspect > 1.3;
     const portrait = aspect < 0.9;
-    const half = s.view === "bench" ? { w: 2.2, h: 2.0 } : s.view === "cloud" ? { w: 4.8, h: 3.4 } : s.focus ? { w: 3.7, h: 1.9 } : { w: 7.3, h: 4.1 };
+    const half = s.view === "bench" ? { w: 2.2, h: 2.0 } : s.view === "cloud" ? { w: 4.8, h: 3.4 } : s.zoom === "flame" ? { w: 2.3, h: 1.35 } : s.focus ? { w: 3.7, h: 1.9 } : { w: 7.3, h: 4.1 };
     const visAspect = portrait && s.view === "bench" ? Math.max(aspect, 0.55) : portrait && s.view === "duct" ? Math.max(aspect, 0.36) : wide ? aspect * 0.62 : aspect;
     const tan = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
     const want = Math.max(half.h / tan, half.w / (tan * visAspect)) * (portrait ? 1.08 : 1.15);
     const shiftX = portrait && s.view === "bench" ? -0.9 : wide ? -(want * tan * aspect) * 0.34 : 0;
     const liftY = portrait && this.panelLeft ? -want * tan * 0.42 : 0;
     const baseY = s.view === "cloud" ? (s.voidRegion ? 1.2 : 0.2) : s.view === "bench" ? 0.6 : s.focus ? -0.3 : 0.1;
-    const camTarget = new THREE.Vector3(shiftX + (s.focus ? 0.3 : 0), baseY + liftY, 0);
+    const camTarget = s.zoom === "flame" ? new THREE.Vector3(this.sample.position.x - 0.7, -0.15, 0.2) : new THREE.Vector3(shiftX + (s.focus ? 0.3 : 0), baseY + liftY, 0);
     const kc = this.snap ? 1 : k;
     this.controls.target.lerp(camTarget, kc);
-    if (this.panelLeft) {
+    if (this.panelLeft || this.fit) {
       const off = this.camera.position.clone().sub(this.controls.target);
       if (this.recentering > 0) {
         off.lerp(new THREE.Vector3(0.45, 0.24, 0.86).multiplyScalar(off.length()), Math.min(1, dt * 4));

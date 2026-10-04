@@ -24,10 +24,10 @@ const recGravity = (r: EvidenceRecord) => (r.family === "luci" ? "moon (simulate
 
 export const PRESETS: { id: string; label: string; note: string; cfg: LabConfig }[] = [
   { id: "earth", label: "Earth baseline", note: "the familiar flame", cfg: { gravity: "earth", o2: 21, kpa: 101.3, flow: 0, material: "PMMA" } },
-  { id: "iss", label: "ISS / microgravity case", note: "fabric in a ventilated cabin", cfg: { gravity: "orbit", o2: 21, kpa: 101.3, flow: 10, material: "SIBAL fabric" } },
-  { id: "bass", label: "Low-airflow BASS case", note: "NASA test B16", cfg: { gravity: "orbit", o2: 16.5, kpa: 101.3, flow: 3, material: "PMMA" } },
-  { id: "moon", label: "Lunar habitat question", note: "34 % O₂ at 56.5 kPa", cfg: { gravity: "moon", o2: 34, kpa: 56.5, flow: 10, material: "PMMA" } },
-  { id: "mars", label: "Mars habitat question", note: "34 % O₂ at 56.5 kPa", cfg: { gravity: "mars", o2: 34, kpa: 56.5, flow: 10, material: "SIBAL fabric" } },
+  { id: "iss", label: "ISS cabin", note: "fabric, ventilated", cfg: { gravity: "orbit", o2: 21, kpa: 101.3, flow: 10, material: "SIBAL fabric" } },
+  { id: "bass", label: "Low-airflow BASS", note: "NASA test B16", cfg: { gravity: "orbit", o2: 16.5, kpa: 101.3, flow: 3, material: "PMMA" } },
+  { id: "moon", label: "Lunar habitat", note: "34 % O₂ · 56.5 kPa", cfg: { gravity: "moon", o2: 34, kpa: 56.5, flow: 10, material: "PMMA" } },
+  { id: "mars", label: "Mars habitat", note: "34 % O₂ · 56.5 kPa", cfg: { gravity: "mars", o2: 34, kpa: 56.5, flow: 10, material: "SIBAL fabric" } },
 ];
 
 export function toQuestion(c: LabConfig): MissionQuestion {

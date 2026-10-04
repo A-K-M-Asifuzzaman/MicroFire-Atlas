@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Chamber, type Phase, type Shown } from "./Chamber";
+import { Chamber3D } from "./Chamber3D";
 import { EvidenceSpace } from "@/components/EvidenceSpace";
 import { buildEvidence } from "@/lib/ask-core";
 import { evidenceRecords, experiments, findings, getSource, luciRuns, pdfLink, saffireRuns } from "@/lib/data";
@@ -33,7 +34,7 @@ const GRAVS: { id: LabGravity; label: string; glyph: string }[] = [
   { id: "earth", label: "Earth", glyph: "1 g" }, { id: "moon", label: "Moon", glyph: "⅙ g" }, { id: "mars", label: "Mars", glyph: "⅜ g" }, { id: "orbit", label: "Orbit", glyph: "≈0 g" },
 ];
 const FLOWS = [{ v: 0, l: "Still" }, { v: 2, l: "Low" }, { v: 5, l: "Medium" }, { v: 10, l: "High" }];
-const PRESSURES = [{ v: 101.3, l: "ISS cabin 101.3" }, { v: 70, l: "70" }, { v: 56.5, l: "56.5" }];
+const PRESSURES = [{ v: 101.3, l: "101.3 (ISS)" }, { v: 70, l: "70" }, { v: 56.5, l: "56.5" }];
 const O2S = [16, 21, 30, 34];
 const MARK: Record<DimStatus, string> = { match: "●", close: "◐", outside: "○", unknown: "?" };
 const WORD: Record<DimStatus, string> = { match: "Match", close: "Close", outside: "Outside range", unknown: "Not stated" };
@@ -380,7 +381,8 @@ export function FlameLab({ snap }: { snap: Snapshot }) {
           <p className={styles.tag} data-visual={phase === "result" ? shown?.visual : "idle"}>{stateTag}</p>
         </div>
         <div className={styles.stage}>
-          <Chamber cfg={cfg} phase={phase} shown={shown} />
+          <Chamber3D cfg={cfg} phase={phase} shown={shown} />
+          {phase === "analyzing" && <div className={styles.scan} aria-hidden="true" />}
           {phase !== "idle" && phase !== "result" && (
             <div className={styles.console} role="status">
               <p>Chamber configuration</p>
@@ -391,7 +393,7 @@ export function FlameLab({ snap }: { snap: Snapshot }) {
               {SEQ.indexOf(phase) >= 1 && <p className={styles.ok}>Atmosphere set</p>}
               {SEQ.indexOf(phase) >= 2 && <p className={styles.ok}>Airflow stable</p>}
               {SEQ.indexOf(phase) >= 3 && <p className={styles.ok}>Ignition</p>}
-              {SEQ.indexOf(phase) >= 4 && <p className={styles.ok}>Analyzing…</p>}
+              {SEQ.indexOf(phase) >= 4 && <p className={styles.ok}>Comparing with <span className="num">{evidenceRecords.length}</span> NASA records…</p>}
             </div>
           )}
           {phase === "idle" && <button type="button" className={styles.runFloat} onClick={run}>Run experiment</button>}
@@ -443,7 +445,7 @@ export function FlameLab({ snap }: { snap: Snapshot }) {
               <li>The flame is drawn three ways, always labelled: <b>NASA observation</b> (a matching test exists), <b>conceptual visualization</b> (established physics, not a prediction) or <b>insufficient experimental evidence</b> (no flame is drawn).</li>
               <li>Every run goes in the Notebook, including the ones where MicroFire refuses to infer an outcome.</li>
             </ol>
-            <p className={styles.small}>The chamber is an illustration. It does not predict how fire behaves on the Moon or Mars.</p>
+            <p className={styles.small}>The chamber is an illustration. It does not predict how fire behaves on the Moon or Mars. 3D camera and glove models: Poly Haven (CC0) and NASA 3D Resources.</p>
             <button type="button" autoFocus onClick={() => setHelp(false)}>Got it</button>
           </div>
         </div>
