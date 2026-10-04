@@ -34,6 +34,22 @@ async function session(viewport, scale, run) {
   await ctx.close();
 }
 
+// ---- Challenge Mode, stage by stage (ONLY=challenge shoots just these) ----
+await session({ width: 1440, height: 900 }, 2, async ({ p, go, to, shot }) => {
+  await go("/challenge"); await shot("33-challenge-find", 1200);
+  await to("#stage-2", 130); await shot("34-challenge-compare");
+  await to("#stage-4", 130); await shot("35-challenge-rank");
+  await to("#stage-6", 130); await shot("36-challenge-ai-checks");
+  await to("#stage-7", 130); await shot("37-challenge-gap");
+  await p.evaluate(() => document.querySelector("[aria-labelledby=says-no]")?.scrollIntoView({ block: "center" })); await shot("38-challenge-says-no");
+  await to("#stage-9", 130); await shot("39-challenge-traceability");
+});
+await session({ width: 390, height: 844 }, 3, async ({ go, to, shot }) => {
+  await go("/challenge"); await shot("40-phone-challenge", 1200);
+  await to("#stage-4", 120); await shot("41-phone-challenge-rank");
+});
+
+if (process.env.ONLY !== "challenge") {
 // ---- desktop tour ----
 await session({ width: 1440, height: 900 }, 2, async ({ p, go, btn, click, to, shot }) => {
   await go("/"); await shot("01-home", 1500);
@@ -114,6 +130,7 @@ await session({ width: 1440, height: 900 }, 2, async ({ p, go, btn, click, to, s
 await session({ width: 390, height: 844 }, 3, async ({ p, go, btn, click, shot }) => {
   await go("/expedition"); await shot("18-phone-expedition", 1200);
 });
+}
 await b.close();
 
 // PNG -> high-quality JPEG (keeps the repo light; 2x pixels are kept)

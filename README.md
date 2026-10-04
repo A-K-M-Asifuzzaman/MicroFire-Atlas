@@ -8,6 +8,25 @@ Live: **https://microfire-atlas.vercel.app**. Built for the NASA Space Apps Chal
 
 ▶ **Watch the 3-minute film:** https://www.youtube.com/watch?v=T9LLWsoYPws
 
+## In one paragraph
+
+MicroFire Atlas turns NASA's microgravity fire tests into mission-relevant evidence. Ask what NASA knows about a material under a future lunar-habitat scenario. It finds the records across BASS, Saffire and LUCI, compares conditions, and ranks experiments and verified findings separately. It interprets one observation within its limits, checks every AI claim, and names the untested combination. It never gives a safety rating or a probability. It shows both what NASA knows and where the evidence stops.
+
+## 60-second challenge demo
+
+Open **[/challenge](https://microfire-atlas.vercel.app/challenge)**. One question, *"What does NASA actually know about PMMA fire under a future lunar-habitat scenario?"*, answered in nine computed stages. Each stage maps to a word in the challenge brief.
+
+| Time | Stage | What you see |
+|---|---|---|
+| 0–10 s | **1 Find** | The evidence families searched, and the role each can play: structured test records (BASS-II, Saffire, LUCI), verified findings, mechanism only (FLEX, ACME), planned with no results (FM²). |
+| 10–20 s | **2 Compare** | The three closest test records, condition by condition: match, near, different or not reported. |
+| 20–30 s | **3 Summarize · 4 Rank** | The top NASA findings, quoted word for word with their pages. Experiments and findings are ranked separately; every rank lists what matched and what did not, with its stability across weight variations. |
+| 30–40 s | **5 Interpret · 6 AI** | One bounded fire-safety implication from a reviewed template, then the AI pipeline. Evidence is retrieved first, and each claim check is computed by the live checker. |
+| 40–50 s | **7 Gap · 8 Next** | Condition by condition: material, gravity, pressure and airflow were each tested somewhere, but no record reaches 34 % oxygen and none combines them. The matched-condition research question follows. |
+| 50–60 s | **MicroFire says no · 9 Traceability** | Asked for a probability, MicroFire refuses and shows the closest evidence, the mismatches and what is unknown. Each challenge verb links to the page that does it. |
+
+Switch to the alternate exploration atmosphere (66.2 kPa / 28.5 %) with the toggle at the top. Neither atmosphere is called "the Moon atmosphere": both are NASA-studied configurations used here as research scenarios.
+
 ## What problem it solves
 
 NASA has studied fire in microgravity for decades, but the results are spread across test tables, figures and reports. A crew-safety researcher or mission planner cannot quickly ask: *"For this material and this cabin atmosphere, what did NASA actually observe, and how sure can we be?"*
@@ -43,6 +62,13 @@ Characters and scenery are illustrations and are labelled as such. Only NASA foo
 ## A tour of the site
 
 These are real screenshots of the live site at 2× resolution. Click any image for full size. Characters and scenery are illustrations; anything labelled NASA is evidence.
+
+### Challenge Mode
+
+<table>
+<tr><td width="50%" valign="top"><a href="docs/screenshots/33-challenge-find.jpg"><img src="docs/screenshots/33-challenge-find.jpg" alt="Challenge Mode: find"></a><br><b>Challenge Mode: one question, nine stages</b><br>A NASA-studied atmosphere posed as a lunar research scenario. Stage 1 shows which evidence families were searched and the role each can play.</td><td width="50%" valign="top"><a href="docs/screenshots/35-challenge-rank.jpg"><img src="docs/screenshots/35-challenge-rank.jpg" alt="Challenge Mode: rank"></a><br><b>Rank, kept separate</b><br>Experiments and findings are ranked side by side but never merged. Each rank says what matched and what did not.</td></tr>
+<tr><td width="50%" valign="top"><a href="docs/screenshots/37-challenge-gap.jpg"><img src="docs/screenshots/37-challenge-gap.jpg" alt="Challenge Mode: gap"></a><br><b>What NASA has not tested yet</b><br>Condition by condition: material, gravity, pressure and airflow were each tested somewhere, but no record reaches 34 % oxygen, and none combines them.</td><td width="50%" valign="top"><a href="docs/screenshots/38-challenge-says-no.jpg"><img src="docs/screenshots/38-challenge-says-no.jpg" alt="MicroFire says no"></a><br><b>MicroFire says no</b><br>A probability question gets the closest evidence, the mismatches and the open research question. It never gets a number.</td></tr>
+</table>
 
 ### For young explorers
 
@@ -102,6 +128,10 @@ Run `python3 pipelines/fetch_sources.py` to download every PDF from NTRS. Hashes
 
 ## What we implemented
 
+- **Challenge Mode** (`/challenge`): the whole challenge brief answered for one lunar-habitat question in nine computed stages, with a deliberate abstention demo and a traceability table (also on `/methodology#challenge`).
+- **Finding gold set v2**: 42 hand-labelled finding-ranking cases (34 answerable across airflow, oxygen, pressure, partial gravity, material, scale, detection and smoke, plus 8 unanswerable ones such as "Which material is safest on the Moon?"). Recall@3 0.82, MRR 0.65; 0 forbidden promotions, 0 mechanism-over-solid, 0 context-over-observation; 8/8 abstentions. The first run exposed a real weakness: mission-context questions buried their answers. Ranking v1.1 fixes it without breaking a guardrail. Every finding card now says why it ranks where it does.
+- **Fire Safety Matrix**: each fire-safety domain shows its strongest evidence status (structured test data, verified publication finding, context only, planned evidence, not yet curated).
+- **Flame Vision annotation tooling**: a 40-frame candidate plan across both Saffire videos and a dev-only tool for drawing human truth masks. No annotations are included yet.
 - **Mission Analyst workstation**: atmosphere profiles (ISS-like, exploration A 56.5 kPa / 34 %, alternate 66.2 kPa / 28.5 %), a coverage instrument that draws every NASA record under each control, an evidence-status verdict with a mismatch budget, and a printable Mission Evidence Brief.
 - **Ranking robustness**: every ranking is recomputed 1,000 times with the weights, scales and ladder tolerances varied; each test shows its median rank, rank range and top-3 share, beside (never merged with) its relevance.
 - **MicroFire-Eval**: 100 frozen questions (lookups, numbers, comparisons, synthesis, mission scenarios, unanswerable and misleading). Before the model: 98/100 pass, gold recall 97 %, 0 over-claims, 70/70 broken claims caught with 0 false alarms. One paid run with gpt-5-mini: citation precision 99.9 %, numeric fidelity 98.0 %, 0 microgravity results told as lunar, 25/25 gaps admitted. Results in `apps/web/eval/`.
@@ -147,7 +177,7 @@ Without a key, the page says AI synthesis is coming soon and shows the evidence 
 ## Limitations
 
 - 78 test records: 56 BASS-II tests (thin samples, near 1 atm, in orbit), 20 Saffire runs (large samples, some at 54–73 kPa, in orbit) and 2 LUCI burns (simulated lunar gravity, normal air). No record comes from the Moon's surface or from Martian gravity, and none reaches 34 % oxygen.
-- Flame Vision segmentation has not yet been validated against hand-annotated frames.
+- Flame Vision segmentation has not yet been validated against hand-annotated frames. The candidate frames and the annotation tool are ready, but no human masks exist yet, and none will be invented.
 - Many flows ended at fan settings with no recorded velocity.
 - Outcome codes are our reading of short crew notes.
 - Flame Vision measures in image pixels only, and the films are not tied to specific test rows.
