@@ -1,0 +1,147 @@
+[
+ {
+  "id": "coldopen",
+  "lead": 1.6,
+  "lines": [
+   [
+    "This fire is real."
+   ],
+   [
+    "NASA lit it on purpose, inside an empty cargo spaceship, high above the Earth."
+   ],
+   [
+    "Because one day, people will live on the Moon... and up there, fire won't behave the way it does here."
+   ]
+  ]
+ },
+ {
+  "id": "who",
+  "lead": 2.9,
+  "tail": 0.9,
+  "lines": [
+   [
+    "We're a team of six at NASA Space Apps Bangladesh, and we built MicroFire Atlas on three promises.",
+    null,
+    0.4
+   ],
+   [
+    "Never fake a number. Every value is traced to the exact page of a NASA report.",
+    null,
+    0.4
+   ],
+   [
+    "Build for everyone: the planner choosing the air for a Moon base, and the kid who may live there one day.",
+    null,
+    0.4
+   ],
+   [
+    "And always show where the evidence stops.",
+    null,
+    0.4
+   ]
+  ]
+ },
+ {
+  "id": "why",
+  "lead": 2.9,
+  "tail": 0.9,
+  "lines": [
+   [
+    "In 1967, a fire in a pure-oxygen cabin killed the three astronauts of Apollo 1, during a test on the launch pad.",
+    null,
+    1.8
+   ],
+   [
+    "Fire is still a serious risk for every crew. And in space, it changes."
+   ],
+   [
+    "It affects every astronaut who will sleep in a Moon habitat, and every engineer who must decide what air they breathe."
+   ],
+   [
+    "Without gravity, nothing rises. A flame turns small, round and blue, and lives on the air drifting past it."
+   ],
+   [
+    "NASA is studying Moon habitat air with lower pressure and more oxygen. Decades of fire tests exist, scattered across reports."
+   ],
+   [
+    "So we gathered them. Seventy-eight test records. Sixty-two verified findings. And not one test at thirty-four percent oxygen.",
+    null,
+    1.6
+   ]
+  ]
+ },
+ {
+  "id": "what",
+  "lead": 2.9,
+  "tail": 0.7,
+  "lines": [
+   [
+    "MicroFire Atlas turns that scattered evidence into one mission tool.",
+    "One mission tool"
+   ],
+   [
+    "Ask what NASA knows about fire in a lunar habitat. It finds the records, compares every condition, and ranks NASA's own findings, explaining every rank.",
+    "Find · compare · rank"
+   ],
+   [
+    "The Mission Analyst runs any cabin atmosphere NASA has studied. Every tick under a slider is a real NASA test.",
+    "Every tick is a real NASA test"
+   ],
+   [
+    "Then it shows exactly where the evidence stops. Ask for a fire probability, and it says no.",
+    "MicroFire says no"
+   ],
+   [
+    "Change the ranking weights a thousand ways, and it shows which answers still hold.",
+    "1,000 variations per ranking"
+   ],
+   [
+    "Its AI answers only from NASA evidence, and a checker catches made-up numbers and Moon claims drawn from orbit tests.",
+    "Every claim checked"
+   ],
+   [
+    "And kids build NASA's real wind tunnel in 3D, then predict before the real record appears.",
+    "Built for young explorers"
+   ]
+  ]
+ },
+ {
+  "id": "how",
+  "lead": 2.9,
+  "tail": 0.6,
+  "lines": [
+   [
+    "What changes? Planners see the gap before a crew ever breathes that air.",
+    "See the gap first"
+   ],
+   [
+    "Our planner shows which hypothetical experiment would answer the most open questions, and where NASA's planned Moon burns already fit.",
+    "Research planner"
+   ],
+   [
+    "Planners get a printable evidence brief, researchers get open data, and children get a reason to love science.",
+    "Brief · open data · young explorers"
+   ],
+   [
+    "Next, we need fire scientists to review our labels, and real flame frames annotated by people."
+   ],
+   [
+    "One day, every new NASA fire test could plug straight into this map."
+   ]
+  ]
+ },
+ {
+  "id": "close",
+  "lines": [
+   [
+    "MicroFire Atlas."
+   ],
+   [
+    "Real NASA data. A real adventure. And honest answers about what we still don't know."
+   ],
+   [
+    "Come follow the spark."
+   ]
+  ]
+ }
+]

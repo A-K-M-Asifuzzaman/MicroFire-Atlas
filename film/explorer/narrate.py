@@ -18,15 +18,16 @@ scenes = json.load(open("script.json"))
 for sc in scenes:
     tail = sc.get("tail", END_TAIL if sc is scenes[-1] else TAIL)
     t, parts, lines = sc.get("lead", LEAD), [], []  # a scene may open with silence for a title or chapter card
-    for i, (text, *cap) in enumerate(sc["lines"]):
+    for i, (text, *rest) in enumerate(sc["lines"]):
+        cap, hold = (rest + [None, 0])[:2]  # optional caption, then optional extra silence after the line
         key = hashlib.sha1(f"{VOICE}|{RATE}|{text}".encode()).hexdigest()[:10]  # re-voice only lines whose text changed
         mp3 = f"build/{sc['id']}-{i}-{key}.mp3"
         if not os.path.exists(mp3):
             subprocess.run([EDGE, "--voice", VOICE, f"--rate={RATE}", "--text", text, "--write-media", mp3], check=True, capture_output=True)
         d = dur(mp3)
-        lines.append({"text": text, "cap": cap[0] if cap else None, "at": round(t, 3), "dur": round(d, 3)})
+        lines.append({"text": text, "cap": cap, "at": round(t, 3), "dur": round(d, 3)})
         parts.append((mp3, t))
-        t += d + (GAP if i < len(sc["lines"]) - 1 else tail)
+        t += d + (hold or 0) + (GAP if i < len(sc["lines"]) - 1 else tail)
     # place each line at its time on a silent bed
     ins = sum((["-i", f] for f, _ in parts), [])
     flt = ";".join(f"[{i}]adelay={int(at*1000)}|{int(at*1000)},aformat=sample_rates=48000:channel_layouts=stereo[a{i}]" for i, (_, at) in enumerate(parts))

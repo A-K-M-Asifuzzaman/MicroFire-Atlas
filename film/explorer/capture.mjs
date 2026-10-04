@@ -61,6 +61,8 @@ await ctx.addInitScript(() => {
   } catch {}
 });
 await ctx.addInitScript(OVERLAY);
+// EXTRA_OVERLAY=a.js,b.js adds a film's own recording-only overlays after the shared one
+for (const f of (process.env.EXTRA_OVERLAY ?? "").split(",").filter(Boolean)) await ctx.addInitScript(readFileSync(f, "utf8"));
 await ctx.addInitScript(DRIVE);
 await ctx.addInitScript(FADE);
 await ctx.clock.install({ time: new Date("2026-10-02T12:00:00Z") });
