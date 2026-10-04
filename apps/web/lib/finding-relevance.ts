@@ -11,6 +11,8 @@ export type FindingResult = {
   supportingRecordIds: string[]; supportCount: number; coverage: number | null;
   scope: "record-linked" | "publication-level";
   whyRelevant: string[]; limitations: string[];
+  // the sort keys themselves, so the UI can say why a finding ranks where it does
+  requestedTopics: string[]; materialMatch: boolean; gravityMatch: boolean; coverageTier: 0 | 1;
 };
 export const FINDING_WEIGHTS = { topics: 5, material: 3, gravity: 2 };
 export const FINDING_VARIATIONS = 200;
@@ -90,15 +92,24 @@ export function rankFindings(finds: Finding[], records: EvidenceRecord[], query:
     out.push({ findingId: f.id, sourceId: f.source_id, relevance: total ? 100 * score / total : 0, matchedTopics,
       unmatchedRequestedDimensions: unmatched, rung, sourceRole: f.in === "abstract" ? "abstract" : undefined,
       supportingRecordIds: linked.map(r => r.id).sort(), supportCount: linked.length, coverage,
-      scope: publication ? "publication-level" : "record-linked", whyRelevant, limitations });
+      scope: publication ? "publication-level" : "record-linked", whyRelevant, limitations,
+      requestedTopics: topics, materialMatch, gravityMatch, coverageTier: 1 });
   }
   // v1.1: a mission-condition question (no material, several topics) that no observation fully addresses lets the
   // findings that address every requested topic lead, still rung-ordered and still labelled context. When any
   // observation addresses the whole question, observations stay first (v1 order).
   const covers = (r: FindingResult) => topics.length > 1 && r.matchedTopics.length === topics.length;
   const contextLeads = !s.material && !out.some(r => (r.rung === "direct" || r.rung === "analogous") && covers(r));
-  const full = (r: FindingResult) => (contextLeads && covers(r) ? 0 : 1);
-  return out.sort((a, b) => full(a) - full(b) || ORDER[a.rung] - ORDER[b.rung] || b.relevance - a.relevance || a.findingId.localeCompare(b.findingId));
+  for (const r of out) r.coverageTier = contextLeads && covers(r) ? 0 : 1;
+  return out.sort((a, b) => a.coverageTier - b.coverageTier || ORDER[a.rung] - ORDER[b.rung] || b.relevance - a.relevance || a.findingId.localeCompare(b.findingId));
+}
+
+/** Which sort key put `a` ahead of `b`: mirrors rankFindings' comparator exactly. */
+export function whyAhead(a: FindingResult, b: FindingResult): string {
+  if (a.coverageTier !== b.coverageTier) return "it addresses every requested topic, and no NASA observation does";
+  if (a.rung !== b.rung) return `${a.rung} evidence is always ordered before ${b.rung} evidence`;
+  if (a.relevance !== b.relevance) return `it has higher relevance (${Math.round(a.relevance)} vs ${Math.round(b.relevance)} / 100)`;
+  return "the two tie on every ranking key, so only the finding ID orders them";
 }
 
 /** Sensitivity of project weights, not uncertainty in NASA measurements. Rung ordering stays fixed. */

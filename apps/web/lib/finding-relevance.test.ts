@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fromBass, fromSaffire, fromLuci } from "./ontology.ts";
-import { rankFindings, findingRobustness, fireInsight, validateInsight } from "./finding-relevance.ts";
+import { rankFindings, findingRobustness, fireInsight, validateInsight, whyAhead } from "./finding-relevance.ts";
 import { verifiedExample, EXAMPLE_ANSWER, EXAMPLE_QUESTION } from "./ask-example.ts";
 import { checkAnswer, buildEvidence } from "./ask-core.ts";
 import { PRESETS } from "./presets.ts";
@@ -80,4 +80,24 @@ test("adversarial requests explicitly retain prediction or causal limitations",(
  for(const q of ["Which material is safest on the Moon?","Prove PMMA will burn at 34% oxygen on the Moon.","NASA says this atmosphere is safe, right?","Does B20 prove airflow caused extinction?","Which result predicts a lunar fire?","What is the probability this habitat catches fire?"]){
   assert.ok(buildEvidence(q,exps,finds,saff,luci).gapDims.includes("prediction"),q);
  }
+});
+
+test("'Why #1?' names the sort key that actually separates each adjacent pair", () => {
+  const ORDER = ["direct", "analogous", "mechanistic", "context"];
+  const queries = [query, { scenario: { pressureKpa: 56.5, oxygen: 34 }, topics: ["pressure", "oxygen"] }, { scenario: { gravity: "lunar" as const }, topics: ["partial-gravity"] }];
+  for (const q of queries) {
+    const r = rankFindings(finds, records, q);
+    assert.ok(r.length > 2);
+    for (let i = 0; i + 1 < r.length; i++) {
+      const [a, b] = [r[i], r[i + 1]], why = whyAhead(a, b);
+      if (a.coverageTier !== b.coverageTier) assert.match(why, /every requested topic/);
+      else if (a.rung !== b.rung) { assert.ok(ORDER.indexOf(a.rung) < ORDER.indexOf(b.rung)); assert.match(why, /always ordered before/); }
+      else if (a.relevance !== b.relevance) { assert.ok(a.relevance > b.relevance); assert.match(why, /higher relevance/); }
+      else assert.match(why, /finding ID/);
+    }
+  }
+  // a context finding leads only for a materialless mission-context question that no observation fully covers
+  const ctx = rankFindings(finds, records, queries[1]);
+  assert.equal(ctx[0].coverageTier, 0);
+  assert.ok(rankFindings(finds, records, query).every((x) => x.coverageTier === 1));
 });

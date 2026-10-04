@@ -172,7 +172,7 @@ export function MissionLab() {
       </section>
 
       <div className="min-w-0 space-y-10">
-        <RankedFindings ranked={findingRanks} stability={findingQuery === settledFindings ? findingStability : {}} />
+        <RankedFindings ranked={findingRanks} scenario={question} stability={findingQuery === settledFindings ? findingStability : {}} />
         <h2 className="analyst-step-title"><span>5</span>How close the evidence gets</h2>
         <EvidenceLadder q={question} />
 

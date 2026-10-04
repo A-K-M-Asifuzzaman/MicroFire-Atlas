@@ -2,13 +2,13 @@ import Link from "next/link";
 import { Cite, shortName } from "@/components/Cite";
 import { evidenceRecords, findings } from "@/lib/data";
 import { FAMILIES, KIND_LABEL, SOURCE_FAMILY } from "@/lib/ontology";
-import { FINDING_VARIATIONS, type FindingResult, type FireInsight } from "@/lib/finding-relevance";
+import { FINDING_VARIATIONS, whyAhead, type FindingResult, type FireInsight } from "@/lib/finding-relevance";
 import styles from "./RankedFindings.module.css";
 
 const DIM: Record<string, string> = { pressureKpa: "pressure", flow: "airflow" };
 const TOPIC: Record<string, string> = { "partial-gravity": "reduced gravity", "materials-screening": "material screening", quench: "flames going out", blowoff: "flames blown out" };
 
-export function RankedFindings({ ranked, stability }: { ranked: FindingResult[]; stability: Record<string, { top3: number; samples: number }> }) {
+export function RankedFindings({ ranked, stability, scenario = {} }: { ranked: FindingResult[]; stability: Record<string, { top3: number; samples: number }>; scenario?: { material?: string; gravity?: string } }) {
   return <section id="ranked-findings" aria-labelledby="findings-title" className={styles.section}>
     <h2 id="findings-title" className="analyst-step-title"><span>4</span>Top relevant NASA findings</h2>
     <p className={styles.intro}>Finding relevance ranks scientific observations and context. Experiment relevance ranks physical conditions. Neither is a safety rating. <Link href="/methodology#finding-relevance" className="link">How findings are ranked</Link></p>
@@ -20,6 +20,17 @@ export function RankedFindings({ ranked, stability }: { ranked: FindingResult[];
         <header><b>#{i+1}</b><span>{family.name} · {r.rung}</span></header>
         <h3>{shortName(f.source_id)}</h3>
         <p className={styles.topics}>{r.matchedTopics.length ? `Matches: ${r.matchedTopics.map((t) => TOPIC[t] ?? t).join(", ")}` : "Matches: material"}</p>
+        <div className={styles.why}>
+          <p className={styles.label}>Why #{i+1}?</p>
+          <ul>
+            <li data-ok={r.rung === "direct" || r.rung === "analogous"}>Evidence type: {r.rung}{r.rung === "context" ? " (not a combustion result)" : r.rung === "mechanistic" ? " (liquid or gas mechanism, not a solid-material result)" : ""}</li>
+            {r.requestedTopics.length > 0 && <li data-ok={r.matchedTopics.length === r.requestedTopics.length}>Topics: {r.matchedTopics.length} of {r.requestedTopics.length} requested</li>}
+            {scenario.material && <li data-ok={r.materialMatch}>Material {r.materialMatch ? "matches" : "not matched"}: {scenario.material}</li>}
+            {scenario.gravity && <li data-ok={r.gravityMatch}>Gravity {r.gravityMatch ? "overlaps" : "not matched"}: {scenario.gravity}</li>}
+          </ul>
+          {i === 0 && ranked[1] && <p>Ahead of #2 because {whyAhead(r, ranked[1])}.</p>}
+          {i > 0 && <p>#{i} is ahead because {whyAhead(ranked[i-1], r)}.</p>}
+        </div>
         <p className={styles.label}>Why this is relevant</p>
         <ul>{r.whyRelevant.map(t=><li key={t}>{t}</li>)}</ul>
         <p className={styles.label}>NASA · {KIND_LABEL[f.kind]}</p>
