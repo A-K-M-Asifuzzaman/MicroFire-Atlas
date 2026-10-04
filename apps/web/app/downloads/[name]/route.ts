@@ -1,6 +1,9 @@
 import { evidenceRecords, experiments, findings, luciRuns, saffireRuns, sources } from "@/lib/data";
 import { buildGraph } from "@/lib/graph";
 import { FRONTIER } from "@/lib/frontier";
+import { MISSION_SCENARIOS } from "@/lib/mission-scenarios";
+import { buildResearchPlan } from "@/lib/research-planning";
+import { RESEARCH_DOWNLOADS, researchExport } from "@/lib/research-exports";
 import type { Analysis } from "@/lib/media";
 import saffireVi from "@/public/media/saffire-vi-pmma/analysis.json";
 import saffireV from "@/public/media/saffire-v-ribs/analysis.json";
@@ -15,6 +18,7 @@ const cell = (v: unknown) => {
 const csv = (header: string[], rows: unknown[][]) => [header.join(","), ...rows.map((r) => r.map(cell).join(","))].join("\n") + "\n";
 
 const FILES: Record<string, { type: string; body: () => string }> = {
+  ...Object.fromEntries(RESEARCH_DOWNLOADS.map(name=>[`${name}.json`,{type:"application/json",body:()=>JSON.stringify(researchExport(name,buildResearchPlan(MISSION_SCENARIOS,evidenceRecords,findings),evidenceRecords,findings,sources),null,2)}])),
   "bass2-tests.csv": {
     type: "text/csv",
     body: () => csv(

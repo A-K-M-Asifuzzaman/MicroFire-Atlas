@@ -14,69 +14,11 @@ import { ladder } from "@/lib/ontology";
 import { FlowO2Plot } from "@/components/FlowO2Plot";
 import { Legend, OutcomeTag } from "@/components/Outcome";
 import { evidenceRecords, experiments, findings, GROUP_LABEL } from "@/lib/data";
-import { confidence, rank, type Gravity, type Scenario } from "@/lib/relevance";
+import { confidence, rank, type Scenario } from "@/lib/relevance";
 import { RANGES, rankRobustness, SAMPLES, type RankStability } from "@/lib/robustness";
 import type { OutcomeGroup } from "@/lib/types";
 
-type Form = {
-  oxygen: number;
-  flow: number;
-  pressureKpa: number;
-  gravity: Gravity;
-  material: string;
-  flowDirection: string;
-};
-
-export const CONTEXTS: { id: string; label: string; detail: string; form: Form }[] = [
-  {
-    id: "iss",
-    label: "ISS cabin, fans running",
-    detail: "Normal air, near 1 atm, a moderate ventilation flow.",
-    form: { oxygen: 21, flow: 10, pressureKpa: 101.3, gravity: "microgravity", material: "any", flowDirection: "any" },
-  },
-  {
-    id: "still-air",
-    label: "ISS cabin, ventilation lost",
-    detail: "Normal air with almost no airflow, the regime where NASA saw dim, long-lived flames.",
-    form: { oxygen: 21, flow: 1, pressureKpa: 101.3, gravity: "microgravity", material: "any", flowDirection: "any" },
-  },
-  {
-    id: "low-o2",
-    label: "Reduced-oxygen corner",
-    detail: "Oxygen lowered to about 17 % with gentle flow, where many tests quenched.",
-    form: { oxygen: 17, flow: 3, pressureKpa: 101.3, gravity: "microgravity", material: "any", flowDirection: "any" },
-  },
-  {
-    id: "exploration",
-    label: "Exploration atmosphere A, in orbit",
-    detail: "56.5 kPa with 34 % oxygen: a NASA-studied and previously recommended exploration-atmosphere configuration.",
-    form: { oxygen: 34, flow: 10, pressureKpa: 56.5, gravity: "microgravity", material: "any", flowDirection: "any" },
-  },
-  {
-    id: "moon-base",
-    label: "Lunar habitat, atmosphere A",
-    detail: "PMMA in 34 % oxygen at 56.5 kPa, at lunar gravity: the hardest question in this atlas.",
-    form: { oxygen: 34, flow: 20, pressureKpa: 56.5, gravity: "lunar", material: "PMMA", flowDirection: "any" },
-  },
-  {
-    id: "mars-fabric",
-    label: "Mars habitat, atmosphere A",
-    detail: "Cotton-fiberglass fabric in 34 % oxygen at 56.5 kPa, at Martian gravity.",
-    form: { oxygen: 34, flow: 10, pressureKpa: 56.5, gravity: "martian", material: "SIBAL fabric", flowDirection: "any" },
-  },
-  {
-    id: "moon-base-alt",
-    label: "Lunar habitat, alternate atmosphere",
-    detail: "PMMA in 28.5 % oxygen at 66.2 kPa, the alternate exploration atmosphere NASA evaluated later, at lunar gravity.",
-    form: { oxygen: 28.5, flow: 20, pressureKpa: 66.2, gravity: "lunar", material: "PMMA", flowDirection: "any" },
-  },
-  {
-    id: "lunar",
-    label: "Lunar habitat, normal air",
-    detail: "Same air as the ISS, but at lunar gravity, where buoyancy returns.",
-    form: { oxygen: 21, flow: 10, pressureKpa: 101.3, gravity: "lunar", material: "any", flowDirection: "any" },
-  },
-];
+import { CONTEXTS, type MissionForm as Form } from "@/lib/mission-scenarios";
 
 const STRONG = 0.6;
 

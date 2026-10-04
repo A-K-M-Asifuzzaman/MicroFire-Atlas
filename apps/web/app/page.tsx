@@ -37,6 +37,12 @@ export default function Home() {
     <>
       <SparkJourney />
       <HomePaths />
+      <section className="mx-auto max-w-7xl px-5 py-8 border-b border-rule">
+        <p className="text-signal text-sm">From one question to the research frontier</p>
+        <h2 className="display text-2xl mt-2">Which missing evidence connects our mission questions?</h2>
+        <p className="text-muted mt-3 max-w-[75ch]">Mission question → closest NASA evidence → open gap → shared research requirements → potential condition coverage. The Evidence Gain Planner compares hypothetical research questions using transparent coverage rules.</p>
+        <Link className="link inline-flex mt-4 min-h-11 items-center" href="/gaps#research-planning">Explore the research landscape</Link>
+      </section>
       <section className="mx-auto max-w-7xl px-5 py-8" aria-labelledby="corpus-title">
         <h2 id="corpus-title" className="display text-2xl">Curated evidence corpus</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5">

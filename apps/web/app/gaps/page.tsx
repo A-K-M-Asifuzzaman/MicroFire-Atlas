@@ -6,17 +6,24 @@ import { GroundVsGravity, ResearchHorizon, SafetyMatrix } from "@/components/Fro
 import { GapMap } from "@/components/GapMap";
 import { evidenceRecords, findings, saffireRuns } from "@/lib/data";
 import { RouteStage } from "@/components/world/RouteStage";
+import { ResearchPlanning } from "@/components/ResearchPlanning";
+import { MISSION_SCENARIOS } from "@/lib/mission-scenarios";
+import { buildResearchPlan } from "@/lib/research-planning";
 
 export const metadata: Metadata = { title: "Research Frontier" };
 
 const GAP_QUOTES = ["luci-first-lunar", "luci-fm2", "low-g-burns-lower-o2", "exploration-atmosphere", "saffire-vs-bass", "saffire-partial-g-needed"];
 
-export default function GapsPage() {
+export default async function GapsPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
+  const sp=await searchParams;
+  const initialScenario=typeof sp.scenario==="string"?sp.scenario:undefined;
+  const plan=buildResearchPlan(MISSION_SCENARIOS,evidenceRecords,findings);
   const quotes = GAP_QUOTES.map((id) => findings.find((f) => f.id === id)!);
   return (
     <div className="explorer-page mx-auto max-w-7xl px-4 sm:px-6 py-12">
       <RouteStage kind="gaps" />
       <div className="mt-6"><QuestBoard page="gaps" crew="tala" /></div>
+      <ResearchPlanning key={initialScenario??"all"} plan={plan} initialScenario={initialScenario}/>
       <section className="mt-10" aria-labelledby="frontier">
         <p className="text-signal text-sm">Research Frontier</p>
         <h2 id="frontier" className="display text-3xl mt-2">Where the evidence runs out, and what would push it further</h2>

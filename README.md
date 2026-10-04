@@ -27,6 +27,16 @@ Open **[/challenge](https://microfire-atlas.vercel.app/challenge)**. One questio
 
 Switch to the alternate exploration atmosphere (66.2 kPa / 28.5 %) with the toggle at the top. Neither atmosphere is called "the Moon atmosphere": both are NASA-studied configurations used here as research scenarios.
 
+## Research impact layer
+
+Mission question → evidence → gap → shared-gap registry → Evidence Gain Planner.
+
+MicroFire compares missing conditions across a finite registry of existing mission presets and Research Frontier questions. The board exposes separate question breadth, direct/analogous support, family coverage, missing dimensions and planned NASA overlap. The Evidence Gain Planner reports which registered gaps could gain matched-condition coverage if a valid experiment at a candidate's conditions existed. These are transparent coverage heuristics, not NASA priorities or predicted outcomes. Exact duplicate questions do not inflate counts, and similar physical conditions are not merged.
+
+Open `/gaps#research-planning`, or follow the research-landscape link in Challenge Mode's final research-question stage. Unknown geometry, scale, duration and platform constraints stay visible. Hypothetical candidates have no NASA record identity or measured outcomes; FM² plans remain planned. Five versioned exports are available under `/downloads/`: `mission-scenarios.json`, `gap-registry.json`, `candidate-experiments.json`, `evidence-gain.json`, and `research-planning-graph.json`. Each includes deterministic corpus/source-manifest hashes and limitations.
+
+The research methodology is documented on `/methodology#research-planning-method`; core checks run with `node --test lib/research-planning.test.ts` from `apps/web`. The [pilot usability evaluation kit](evaluation/impact-study/README.md) contains tasks, an empty participant template and descriptive analysis. **No human impact study has been run and no performance improvement is claimed.**
+
 ## What problem it solves
 
 NASA has studied fire in microgravity for decades, but the results are spread across test tables, figures and reports. A crew-safety researcher or mission planner cannot quickly ask: *"For this material and this cabin atmosphere, what did NASA actually observe, and how sure can we be?"*

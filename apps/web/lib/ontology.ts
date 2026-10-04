@@ -170,9 +170,14 @@ export type Difference = { dim: "material" | "gravity" | "oxygen" | "pressure" |
 
 /** How one record differs from the question, dimension by dimension. Unrecorded values count as differences. */
 export function differences(r: EvidenceRecord, q: MissionQuestion, tol: Tolerance = TOLERANCE): Difference[] {
+  return conditionDifferences(r, q, tol);
+}
+
+/** Reused for hypothetical condition coverage without manufacturing an experimental record or outcome. */
+export function conditionDifferences(r: {material?: string; gravity?: Gravity; oxygen: number | null; pressureKpa: [number,number] | null; flowCmS: number | null}, q: MissionQuestion, tol: Tolerance = TOLERANCE): Difference[] {
   const out: Difference[] = [];
-  if (q.material && r.material !== q.material) out.push({ dim: "material", text: `${r.material}, not ${q.material}` });
-  if (q.gravity && q.gravity !== r.gravity) out.push({ dim: "gravity", text: `${GRAVITY_NAME[r.gravity]}, not ${GRAVITY_NAME[q.gravity]}` });
+  if (q.material && r.material !== q.material) out.push({ dim: "material", text: `${r.material ?? "material not reported"}, not ${q.material}`, ...(!r.material ? {unknown:true} : {}) });
+  if (q.gravity && q.gravity !== r.gravity) out.push({ dim: "gravity", text: `${r.gravity ? GRAVITY_NAME[r.gravity] : "gravity not reported"}, not ${GRAVITY_NAME[q.gravity]}`, ...(!r.gravity ? {unknown:true} : {}) });
   if (q.oxygen != null) {
     if (r.oxygen == null) out.push({ dim: "oxygen", text: "oxygen not recorded", unknown: true });
     else if (Math.abs(r.oxygen - q.oxygen) > tol.oxygen) out.push({ dim: "oxygen", text: `${r.oxygen} % O₂, not ${q.oxygen} %` });

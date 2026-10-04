@@ -189,6 +189,8 @@ export default async function ChallengePage({ searchParams }: { searchParams: Pr
       </Stage>
 
       <Stage n={8} verb="Next question" title="The experiment that would close the gap">
+        <p className="mb-5"><Link className="link" href={`/gaps?scenario=mission-${atm === "ea-a" ? "moon-base" : "moon-base-alt"}#research-planning`}>See how this gap compares with the whole research landscape</Link></p>
+        <p className="mb-5"><Link className="link" href="/gaps#evidence-gain">Which experiment could address the most open gaps?</Link></p>
         {c.gap.nextExperiment ? (
           <div className={styles.next}>
             <p className={styles.meta}>Matched-condition research question</p>

@@ -70,6 +70,7 @@ export default function MethodologyPage() {
             ["robustness", "Ranking robustness"],
             ["confidence", "Evidence Confidence"],
             ["gaps", "Evidence gaps"],
+            ["research-planning-method", "Research opportunities"],
             ["ai", "Where AI is used"],
             ["evaluate", "Evaluate MicroFire AI"],
             ["limits", "Limitations"],
@@ -389,6 +390,35 @@ coverage  = Σ wᵢ (reported by the test) / Σ wᵢ`}
           <p>For example, weak-flow PMMA questions retrieve low-airflow findings. A lunar question also retrieves partial-gravity findings, with the simulated-platform limitation. A droplet result cannot outrank relevant solid-fuel evidence through topic count alone. A high relevance number can coexist with an analogous rung and unknown coverage.</p>
           <p>Finding sensitivity uses 200 repeatable variations (seed 19), independently multiplying each weight by a uniform factor from 0.75 to 1.25. Evidence-type ordering stays fixed. Top-3 frequency is reported separately from relevance; it measures sensitivity to project weights, not measurement uncertainty or scientific confidence. Existing experiment sensitivity still uses 1,000 variations.</p>
           <p>Fire-Safety Insight uses a small set of source-bound interpretation templates. NASA observations retain their exact quotes; MicroFire interpretations are labelled and preserve mismatches. Without a reviewed template, the panel abstains. This is neither mission certification nor a crew procedure.</p>
+        </Section>
+
+        <Section id="research-planning-method" title="How MicroFire identifies research opportunities">
+          <p>Research planning supports spacecraft-fire researchers and early-stage mission evidence analysts before formal engineering assessment. It uses the current curated atlas; it does not determine whether a mission or material is safe.</p>
+          <h3 className="text-lg font-semibold">Mission Scenario Registry</h3>
+          <p>The finite registry reuses eight Mission Analyst presets and three additional Research Frontier questions. The duplicate Moon-base frontier and Challenge questions reuse existing presets. No Cartesian product is generated. Each question retains its origin, rationale, category and source context. Unspecified conditions remain unknown. Questions with identical normalized wording and conditions count once even if repeated under different IDs; distinct questions at identical conditions share one gap.</p>
+          <h3 className="text-lg font-semibold">Gap normalization, deduplication and shared gaps</h3>
+          <p>Normalize material, gravity, oxygen, pressure and airflow into a fixed key order; reject unsupported dimensions, invalid numbers and malformed values. The full canonical condition object determines the stable gap ID. Exact values define identity: 34 and 34.1 % remain different gaps even though they can be close under coverage tolerances. Missing pressure never equals a specified pressure.</p>
+          <p>Run the existing Evidence Ladder for each scenario against completed BASS, Saffire and LUCI records. A direct condition match prevents a coverage-gap entry; all platform caveats still apply. Findings and future FM² plans never become rows. Uncovered scenarios sharing exact conditions merge, retaining distinct scenario links and categories. The missing dimensions and next-experiment text come from the Ladder. A joint-condition gap remains even if each condition was tested separately.</p>
+          <p>Analogous support counts nonmatching rows with the requested material and at most two differing condition dimensions. It is a transparent proximity filter, not evidence strength. Links show the five closest rows even if more distant. Cross-family breadth uses those links and five selected non-context findings; mechanistic support remains a separate count of non-context liquid/gas findings.</p>
+          <h3 className="text-lg font-semibold">Candidate generation and Evidence Gain</h3>
+          <p>Each unresolved condition combination becomes a hypothetical research question. Only exact identical candidate specifications merge; no extra condition is borrowed from an analogue. Candidate objects have no measured outcome, NASA citation or experimental record family, and never enter the evidence corpus.</p>
+          <p>For every candidate–gap pair, reuse the Evidence Ladder&apos;s condition comparison: exact material/gravity, oxygen ±1.5 percentage points, pressure ±10 kPa, airflow ±max(1 cm/s, 50 % of requested flow). Missing requested candidate values fail. All requested dimensions matching means potential direct-condition coverage. Gravity or material mismatch excludes even partial coverage. Partial overlap requires a matched missing dimension (or two matched dimensions for a joint-combination gap); it remains a research lead, never counted as direct coverage or demonstrated gap reduction.</p>
+          <pre className="overflow-x-auto text-sm bg-panel p-4 rounded-lg">{`for each unique curated question:
+  classify current completed records with Evidence Ladder
+  if no direct condition match: group gap by EXACT conditions
+for each unique gap condition object:
+  create hypothetical candidate; keep unknown fields absent
+  compare candidate conditions with every registered gap
+  count matching gaps and UNION their distinct question IDs
+potential direct questions = current direct questions + new unique matches`}</pre>
+          <p>“Evidence Gain” means potential coverage if a valid completed record existed. It is not expected scientific information gain, entropy, Bayesian design, active learning or a prediction of experimental outcome. A broad question can be covered by a more specific candidate, but the reverse fails where required values are missing.</p>
+          <h3 className="text-lg font-semibold">Planned NASA overlap and sorting</h3>
+          <p>Verified FM² plan findings identify lunar-gravity and PMMA/SIBAL material overlap. This deliberately conservative mapping does not infer full atmosphere, flow or geometry compatibility. Plans count only as planned overlap and never increase observed coverage.</p>
+          <p>Board sorts expose separate dimensions: distinct questions, direct count ascending (then analogous support ascending), distinct categories, analogous support, planned overlap, or maximum candidate gap coverage. Descending sorts break ties by stable gap ID. Candidate order uses directly addressable gaps, then affected questions, then stable ID. There is no composite or official NASA priority score.</p>
+          <h3 className="text-lg font-semibold">Limits and non-goals</h3>
+          <p>Geometry, scale, duration, ignition method, confinement, orientation, hardware and sample history are not jointly represented. LUCI&apos;s lunar gravity is simulated. Even a direct match only covers represented dimensions under project tolerances. Counts depend on a small curated question set and do not measure researcher demand; repeated or selectively added scenarios can bias apparent breadth.</p>
+          <p>The planner does not estimate information entropy, outcome value, experiment cost, hardware feasibility, crew risk, TRL, schedule, program/funding/political priority, safety impact or probability of experiment success. NASA has not validated or endorsed these planning heuristics. Human usability impact study pending; no performance-improvement claim is made.</p>
+          <p><Link href="/gaps#research-planning" className="link">Open the research landscape</Link>. Versioned JSON exports retain corpus identity, assumptions and hypothetical/planned status. Source updates require human review before the evidence layer changes.</p>
         </Section>
 
         <Section id="ai" title="Where AI is used">
