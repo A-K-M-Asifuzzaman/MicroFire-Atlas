@@ -255,9 +255,30 @@ html[data-motion="gentle"] .nav-panel { animation: none; }
   .brief-section { break-inside: avoid; }
 }
 
-.home-learn { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 32px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .method-page section p, .method-page section li { line-height: 1.65; }
 .method-page section h3 { margin-top: 10px; color: #ffe2ac; }
 /* The offline example separates retrieval, saved synthesis and the checks. */
 .verified-example{margin:32px 0;padding:26px;border:1px solid var(--rule-strong);border-radius:18px;background:var(--panel);scroll-margin-top:80px}.verified-example-flow{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:28px;margin-top:24px}.verified-example-flow h3{font-size:13px;color:var(--signal);margin-bottom:12px}.verified-example-flow p,.verified-example-flow li{font-size:13px;line-height:1.75}.verified-example-flow ul{display:grid;gap:7px}.verified-example details{border-top:1px solid var(--rule);margin-top:24px;padding-top:12px;font-size:13px;line-height:1.7}.verified-example summary{cursor:pointer;min-height:44px;color:var(--signal)}
 @media(max-width:900px){.verified-example-flow{grid-template-columns:1fr}.verified-example{padding:20px}}
+/* Judge tour bar: follows the judge across pages; bottom-left so the guide character stays reachable */
+.judge-bar { position: fixed; left: 16px; bottom: 16px; z-index: 60; width: min(420px, calc(100vw - 32px)); display: grid; gap: 4px; padding: 14px 16px; border-radius: 14px; border: 1px solid #ffcf6b99; background: #0b1324f2; box-shadow: 0 18px 40px -12px #000c; }
+.judge-bar-step { font-size: 12px; font-weight: 700; color: #ffcf6b; }
+.judge-bar-title { font-weight: 700; font-size: 16px; }
+.judge-bar-look { font-size: 14px; color: var(--muted); }
+.judge-bar-actions { display: flex; gap: 8px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+.judge-bar-actions button, .judge-bar-actions a { min-height: 40px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--rule-strong); font-size: 14px; display: inline-flex; align-items: center; }
+.judge-bar-actions button:disabled { opacity: .4; }
+.judge-bar-actions .judge-bar-next { background: #ffd080; color: #1b160c; border-color: #ffd080; font-weight: 700; }
+.judge-bar-actions a { border: 0; color: var(--muted); text-decoration: underline; }
+.judge-demos { display: grid; gap: 14px; margin-top: 28px; }
+@media (min-width: 900px) { .judge-demos { grid-template-columns: repeat(3, 1fr); } }
+.judge-demo { display: grid; gap: 8px; align-content: start; padding: 18px; border-radius: 16px; border: 1px solid var(--rule-strong); background: var(--panel); }
+.judge-demo[data-kind="iss"] { border-top: 3px solid var(--signal); }
+.judge-demo[data-kind="moon"] { border-top: 3px solid var(--flame); }
+.judge-demo[data-kind="mars"] { border-top: 3px dashed #ff8a5a; }
+.judge-demo-cap { font-size: 13px; font-weight: 700; color: var(--signal); }
+.judge-demo[data-kind="moon"] .judge-demo-cap { color: var(--flame); }
+.judge-demo[data-kind="mars"] .judge-demo-cap { color: #ffc3a8; }
+.judge-demo dl { display: grid; gap: 4px; font-size: 14px; }
+.judge-demo dl div { display: grid; grid-template-columns: 110px 1fr; gap: 8px; }
+.judge-demo dt { color: var(--faint); }

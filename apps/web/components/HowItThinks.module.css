@@ -1,0 +1,49 @@
+.wrap { border-block: 1px solid var(--rule); background: linear-gradient(180deg, var(--panel), var(--void)); }
+.why { border-top: 1px solid var(--rule); }
+.inner { max-width: 80rem; margin: 0 auto; padding: 4rem 1rem; }
+@media (min-width: 640px) { .inner { padding-inline: 1.5rem; } }
+.title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 600; }
+.lede { color: var(--muted); margin-top: 0.6rem; max-width: 62ch; font-size: 1.05rem; }
+
+/* The pipeline: a numbered sequence, so numbers carry meaning. A thin signal travels along the connectors. */
+.flow { display: grid; gap: 0.75rem; margin-top: 2rem; counter-reset: s; }
+@media (min-width: 640px) { .flow { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .flow { grid-template-columns: repeat(4, 1fr); } }
+.flow li { position: relative; }
+.flow a { display: grid; gap: 0.3rem; height: 100%; padding: 1rem 1rem 1.1rem; border: 1px solid var(--rule-strong); border-radius: 0.5rem; background: color-mix(in srgb, var(--void) 70%, transparent); transition: border-color 0.2s, transform 0.2s; }
+.flow a:hover, .flow a:focus-visible { border-color: var(--signal); transform: translateY(-2px); }
+.flow strong { font-weight: 600; font-size: 1.05rem; }
+.flow a > span:last-child { color: var(--muted); font-size: 0.9rem; }
+.n { font-variant-numeric: tabular-nums; color: var(--signal); font-size: 0.8rem; }
+.flow li[data-stop] a { border-style: dashed; }
+.flow li[data-stop] .n { color: var(--flame); }
+/* connectors between stages (desktop rows only) */
+@media (min-width: 1100px) {
+  .flow li:not(:nth-child(4n))::after {
+    content: ""; position: absolute; top: 1.55rem; right: -0.75rem; width: 0.75rem; height: 1px;
+    background: linear-gradient(90deg, var(--rule-strong), var(--signal), var(--rule-strong)); background-size: 300% 100%;
+    animation: pulse 3.2s linear infinite;
+  }
+  .flow li:nth-child(2)::after { animation-delay: 0.4s; }
+  .flow li:nth-child(3)::after { animation-delay: 0.8s; }
+  .flow li:nth-child(5)::after { animation-delay: 1.6s; }
+  .flow li:nth-child(6)::after { animation-delay: 2s; }
+  .flow li:nth-child(7)::after { animation-delay: 2.4s; }
+}
+@keyframes pulse { from { background-position: 100% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .flow li::after { animation: none !important; } .flow a { transition: none; } .flow a:hover { transform: none; } }
+
+.abilities { display: grid; gap: 1.5rem 2rem; margin-top: 2.5rem; }
+@media (min-width: 760px) { .abilities { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .abilities { grid-template-columns: repeat(4, 1fr); } }
+.abilities li { border-top: 2px solid var(--rule-strong); padding-top: 0.9rem; display: grid; gap: 0.4rem; align-content: start; }
+.abilities h3 { font-weight: 600; font-size: 1.1rem; }
+.abilities p { color: var(--muted); font-size: 0.95rem; }
+.abilities a { min-height: 2.5rem; display: inline-flex; align-items: center; }
+
+.verbs { display: grid; gap: 0.5rem 2rem; margin-top: 1.75rem; }
+@media (min-width: 760px) { .verbs { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .verbs { grid-template-columns: repeat(3, 1fr); } }
+.verbs a { display: block; padding: 0.9rem 0; border-bottom: 1px solid var(--rule); color: var(--muted); min-height: 2.75rem; }
+.verbs a:hover { color: var(--ink); }
+.verbs b { color: var(--flame); font-weight: 600; font-size: 1.15rem; margin-right: 0.35rem; }

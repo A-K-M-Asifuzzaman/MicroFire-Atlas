@@ -6,6 +6,8 @@ import { checkSummary, EXAMPLE_ANSWER, EXAMPLE_QUESTION } from "@/lib/ask-exampl
 import { ATMOSPHERES } from "@/lib/atmospheres";
 import { abstention, ABSTAIN_QUESTION, buildChallenge, CHALLENGE_ATMOSPHERES, TRACEABILITY, type ChallengeAtmosphere, type DimStatus } from "@/lib/challenge";
 import { FAMILIES, KIND_LABEL, SOURCE_FAMILY } from "@/lib/ontology";
+import { BriefActions, StageRail } from "@/components/challenge/StageRail";
+import { deployedSnapshot, gate } from "@/lib/model-lab";
 import styles from "@/components/challenge/Challenge.module.css";
 
 export const metadata: Metadata = {
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
 
 const DATA = { experiments, findings, saffire: saffireRuns, luci: luciRuns, records: evidenceRecords };
 const MARK: Record<DimStatus, string> = { match: "✓ match", near: "≈ near", different: "✗ different", "not reported": "? not reported" };
-const STAGES = ["Find", "Compare", "Summarize", "Rank", "Interpret", "AI", "Gap", "Next", "Trace"];
+const STAGES = ["Find", "Compare", "Summarize", "Rank", "Interpret", "AI", "Uncertainty", "Next experiment", "Traceability"];
 
 function Stage({ n, verb, title, children }: { n: number; verb: string; title: string; children: React.ReactNode }) {
   return (
@@ -38,10 +40,31 @@ export default async function ChallengePage({ searchParams }: { searchParams: Pr
   const checks = checkSummary(c.ai.checked);
   const keys = [...new Set(c.ai.checked.flatMap((x) => x.cites))];
 
+  // Mission Evidence Brief: every line computed from the stages above
+  const best = c.closest[0];
+  const top = c.topFindings[0];
+  const passed = c.ai.checked.filter((x) => x.verified).length;
+  const tested = c.gap.coverage.map((d) => `${d.label.toLowerCase()} ${d.count > 0 ? `in ${d.count} record${d.count === 1 ? "" : "s"}` : "never"}`).join(", ");
+  const ml = gate(deployedSnapshot(experiments), { material: c.q.material!, gravity: "lunar", o2: c.q.oxygen!, kpa: c.q.pressureKpa!, flow: c.q.flow! });
+  const blockedBy = ml.checks.filter((x) => x.status === "out" || x.status === "insufficient").map((x) => x.dim.toLowerCase());
+  const brief: [string, string, string?][] = [
+    ["Question", c.text, `Scenario: ${c.scenario}.`],
+    ["What NASA directly tested", c.gap.direct ? `${c.gap.direct} record${c.gap.direct === 1 ? "" : "s"} match every condition.` : "No NASA test in this atlas matches every condition.", `Each condition on its own: ${tested}.`],
+    ["Closest evidence", best ? `${best.record.label}. NASA recorded: ${best.record.outcomeLabel}.` : "None", best ? `Differs in: ${best.dims.filter((d) => d.status !== "match").map((d) => d.dim.toLowerCase()).join(", ") || "nothing"}.` : undefined],
+    ["Most relevant finding", top ? `“${top.finding.quote}”` : "None", top ? `${FAMILIES[SOURCE_FAMILY[top.finding.source_id] ?? "context"].name}, ${top.result.rung} evidence.` : undefined],
+    ["What AI contributed", `Synthesized the retrieved NASA evidence into plain language; ${passed} of ${c.ai.checked.length} claims passed every deterministic check.`, "Saved, verified example re-checked on every build, not a live request. The AI never decided what NASA observed."],
+    ["Main uncertainty", c.gap.gaps[0]?.text ?? "No single condition is missing.", c.gap.gaps.length > 1 ? `${c.gap.gaps.length - 1} more named gap${c.gap.gaps.length === 2 ? "" : "s"}.` : undefined],
+    ["What cannot yet be claimed", "Any outcome or probability for this condition.", `The AI Model Lab blocks a prediction here (${blockedBy.join(", ")} outside its evidence). ${no.reason ?? ""}`],
+    ["Next research question", c.gap.nextExperiment ?? "Direct evidence exists for every condition.", "Computed from the missing conditions. Not a NASA-endorsed plan."],
+  ];
+  const traceCites = [best?.record.cite, top && { source_id: top.finding.source_id, pdf_page: top.finding.pdf_page, table: undefined }].filter((x): x is { source_id: string; pdf_page: number; table?: string } => !!x);
+  const briefText = ["MicroFire Mission Evidence Brief (an evidence summary, not a NASA safety report)", "", ...brief.map(([k, v, d]) => `${k.toUpperCase()}\n${v}${d ? `\n${d}` : ""}`), "", `SOURCE TRACE\n${traceCites.map((t) => `${t.source_id}, PDF page ${t.pdf_page}`).join("\n")}`, "", "https://microfire-atlas.vercel.app/challenge"].join("\n\n");
+
   return (
     <div className={`explorer-page ${styles.page}`}>
       <header className={styles.hero}>
         <p className={styles.kicker}>Challenge Mode · the whole answer in about 90 seconds</p>
+        <p className={styles.promise}>One question. Nine steps. Every claim traceable.</p>
         <h1 className={styles.question}>{c.text}</h1>
         <p className={styles.scenario}>Research scenario: {c.scenario}.</p>
         <div className={styles.atmos} role="group" aria-label="Atmosphere for the scenario">
@@ -52,10 +75,8 @@ export default async function ChallengePage({ searchParams }: { searchParams: Pr
           })}
           <Link href={`/mission?context=${atm === "ea-a" ? "moon-base" : "moon-base-alt"}`} className="link text-sm">Change every condition in Mission Analyst</Link>
         </div>
-        <nav className={styles.stageNav} aria-label="Challenge stages">
-          {STAGES.map((s, i) => <a key={s} href={`#stage-${i + 1}`}><b>{i + 1}</b>{s}</a>)}
-        </nav>
       </header>
+      <StageRail stages={STAGES} />
 
       <Stage n={1} verb="Find" title="Find the evidence">
         <p className={styles.lead}>Searching the curated NASA evidence in this atlas. This is local, deterministic retrieval over checked records: no web search, no model.</p>
@@ -227,6 +248,33 @@ export default async function ChallengePage({ searchParams }: { searchParams: Pr
         </ul>
         <p className={styles.final}>MicroFire shows both what NASA knows and where the evidence stops.</p>
       </Stage>
+
+      <section id="brief" className={styles.brief} aria-labelledby="brief-title">
+        <header className={styles.briefHead}>
+          <div>
+            <h2 id="brief-title">Mission Evidence Brief</h2>
+            <p>The nine steps in one page. A MicroFire evidence summary, not a NASA safety report.</p>
+          </div>
+          <BriefActions text={briefText} />
+        </header>
+        <dl className={styles.briefGrid}>
+          {brief.map(([k, v, d]) => (
+            <div key={k} data-tone={k === "What cannot yet be claimed" || k === "Main uncertainty" ? "stop" : undefined}>
+              <dt>{k}</dt>
+              <dd>{v}{d && <small>{d}</small>}</dd>
+            </div>
+          ))}
+          <div>
+            <dt>Source trace</dt>
+            <dd className={styles.trail}>{traceCites.map((t) => <Cite key={t.source_id + t.pdf_page} sourceId={t.source_id} page={t.pdf_page} where={t.table} />)}</dd>
+          </div>
+        </dl>
+        <nav className={styles.briefLinks} aria-label="Go deeper">
+          <a href="#stage-1">View details</a>
+          <Link href={`/mission?context=${atm === "ea-a" ? "moon-base" : "moon-base-alt"}`}>Open Mission Analyst</Link>
+          <Link href="/model-lab">Why the model abstains</Link>
+        </nav>
+      </section>
     </div>
   );
 }

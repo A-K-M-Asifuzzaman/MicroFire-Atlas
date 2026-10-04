@@ -44,7 +44,7 @@ export function ResearchPlanning({ plan, initialScenario }: { plan: ResearchPlan
       <p className={styles.kicker}>Research planning · professional system view</p>
       <h2 id="research-title" className={styles.title}>From one question to shared evidence gaps</h2>
       <p className={styles.lede}>For spacecraft-fire researchers and early-stage evidence analysts, before formal engineering assessment: which missing NASA evidence connects our mission questions? These are coverage questions across a finite curated registry.</p>
-      <p className={styles.badge}>A MicroFire research-planning view, not NASA prioritization</p>
+      <p className={styles.badge}>MicroFire research-planning heuristic, not NASA prioritization</p>
     </header>
 
     <ol className={styles.pipeline} aria-label="Research landscape">

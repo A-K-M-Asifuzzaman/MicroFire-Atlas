@@ -34,8 +34,8 @@ export function HomePaths() {
         </Link>
       </div>
       <p className={styles.judge}>
-        Judging or mentoring? <Link href="/challenge" className="link">Challenge Mode</Link> answers one mission question end to end in about 90
-        seconds: find, compare, summarize, rank, interpret, verify the AI, and see where NASA&apos;s evidence stops.
+        Judging or mentoring? <Link href="/tour" className="link">Judge Mode</Link> has three one-click demonstrations and a guided 90-second tour.{" "}
+        <Link href="/challenge" className="link">Challenge Mode</Link> answers one mission question end to end in nine steps.
       </p>
     </section>
   );

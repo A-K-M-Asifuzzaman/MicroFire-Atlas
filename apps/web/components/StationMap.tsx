@@ -26,6 +26,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/analyze", label: "Flame Vision", title: "Observation station", detail: "Computer vision on real NASA footage, frame by frame, in pixels.", icon: "eye" },
       { href: "/ask", label: "Ask PIX", title: "Ask the evidence", detail: "Bring a question. Every answer leads back to its NASA source.", icon: "chat" },
+      { href: "/model-lab", label: "AI Model Lab", title: "Evidence-bounded ML", detail: "A validated model on NASA tests that refuses to predict outside its evidence.", icon: "sliders" },
     ],
   },
   {
@@ -39,7 +40,7 @@ export const NAV_GROUPS: NavGroup[] = [
     id: "about", label: "About", blurb: "How MicroFire Atlas knows what it says",
     items: [
       { href: "/challenge", label: "Challenge Mode", title: "Challenge Mode", detail: "One mission question, answered stage by stage: find, compare, summarize, rank, interpret, verify, and where the evidence stops.", icon: "map" },
-      { href: "/tour", label: "90-second tour", title: "For judges and mentors", detail: "Seven stops that show the strongest evidence, fast.", icon: "orbit" },
+      { href: "/tour", label: "Judge Mode", title: "For judges and mentors", detail: "Three one-click demonstrations and a guided 90-second tour.", icon: "orbit" },
       { href: "/methodology", label: "Method", title: "How it works", detail: "Every rule, score and tolerance, so you can check it.", icon: "map" },
       { href: "/sources", label: "Sources", title: "The station library", detail: "Every NASA document, with its NTRS record and file hash.", icon: "book" },
     ],

@@ -1,5 +1,6 @@
 "use client";
 
+import { ClaimChecks } from "@/components/ClaimTrace";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { CheckedClaim, ClaimType, EvidenceItem, EvidenceRung } from "@/lib/ask-core";
@@ -189,9 +190,8 @@ export function AskPanel({ onAnswered, initialQuestion }: { onAnswered?: () => v
                             <Link href={byKey.get(k)!.href} className="link text-sm">{byKey.get(k)!.kind === "test" ? "Open the full record" : "See all sources"}</Link>
                           </div>
                         ))}
-                        {!c.verified && (
-                          <p className="mt-2 text-sm text-flame">Not verified: {c.issues.join("; ")}. Treat this claim with caution.</p>
-                        )}
+                        <ClaimChecks issues={c.issues} />
+                        {!c.verified && <p className="mt-2 text-sm text-flame">Treat this claim with caution.</p>}
                       </li>
                     ))}
                   </ol>

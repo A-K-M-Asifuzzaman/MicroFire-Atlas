@@ -126,6 +126,7 @@ export const TRACEABILITY = [
   { verb: "Rank", what: "Rank experiments and findings for mission conditions, with ranking robustness", href: "/mission?context=moon-base", where: "Mission Analyst" },
   { verb: "Interpret", what: "Turn an observation into a carefully bounded fire-safety implication", href: "/mission?context=still-air#fire-safety-insight", where: "Evidence-backed insight" },
   { verb: "AI-powered", what: "Evidence is retrieved first; AI synthesizes; every factual claim is checked", href: "/ask", where: "Ask, with a verified example" },
+  { verb: "Evidence-bounded ML", what: "A validated model on NASA tests, gated so it abstains outside the conditions NASA tested", href: "/model-lab", where: "AI Model Lab" },
   { verb: "Human space exploration", what: "NASA-studied exploration atmospheres, orbit, simulated lunar gravity and planned Moon-surface tests", href: "/gaps", where: "Research Frontier" },
   { verb: "Uncertainty", what: "Evidence Ladder, ranking robustness and named gaps show where the evidence stops", href: "/methodology#robustness", where: "Methodology" },
 ] as const;

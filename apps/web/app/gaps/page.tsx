@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { QuestBoard } from "@/components/quest/QuestBoard";
-import { Cite, Quote } from "@/components/Cite";
 import { FrontierCards } from "@/components/FrontierCards";
 import { GroundVsGravity, ResearchHorizon, SafetyMatrix } from "@/components/FrontierExtras";
-import { GapMap } from "@/components/GapMap";
-import { evidenceRecords, findings, saffireRuns } from "@/lib/data";
+import { EvidenceSpace } from "@/components/EvidenceSpace";
+import { evidenceRecords, findings } from "@/lib/data";
 import { RouteStage } from "@/components/world/RouteStage";
 import { ResearchPlanning } from "@/components/ResearchPlanning";
 import { MISSION_SCENARIOS } from "@/lib/mission-scenarios";
@@ -12,13 +11,10 @@ import { buildResearchPlan } from "@/lib/research-planning";
 
 export const metadata: Metadata = { title: "Research Frontier" };
 
-const GAP_QUOTES = ["luci-first-lunar", "luci-fm2", "low-g-burns-lower-o2", "exploration-atmosphere", "saffire-vs-bass", "saffire-partial-g-needed"];
-
 export default async function GapsPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const sp=await searchParams;
   const initialScenario=typeof sp.scenario==="string"?sp.scenario:undefined;
   const plan=buildResearchPlan(MISSION_SCENARIOS,evidenceRecords,findings);
-  const quotes = GAP_QUOTES.map((id) => findings.find((f) => f.id === id)!);
   return (
     <div className="explorer-page mx-auto max-w-7xl px-4 sm:px-6 py-12">
       <RouteStage kind="gaps" />
@@ -33,6 +29,18 @@ export default async function GapsPage({searchParams}:{searchParams:Promise<Reco
         </p>
         <div className="mt-8"><FrontierCards /></div>
       </section>
+
+      <section className="mt-16" aria-labelledby="map-title">
+        <h2 id="map-title" className="display text-2xl">Combustion Evidence Space</h2>
+        <p className="mt-2 text-sm text-muted max-w-[78ch]">
+          Every mark is a real NASA test record from BASS/BASS-II, Saffire or LUCI. Nothing is drawn between them. Set a mission condition and the
+          box shows whether any test sits close enough to count as direct evidence.
+        </p>
+        <div id="gaps-tool" className="scroll-mt-20 mt-6">
+          <EvidenceSpace />
+        </div>
+      </section>
+
 
       <section className="mt-16" aria-labelledby="horizon">
         <h2 id="horizon" className="display text-2xl">Research horizon</h2>
@@ -58,46 +66,6 @@ export default async function GapsPage({searchParams}:{searchParams:Promise<Reco
         <div className="mt-8"><GroundVsGravity /></div>
       </section>
 
-      <section className="mt-20" aria-labelledby="map-title">
-        <h2 id="map-title" className="display text-2xl">The BASS-II oxygen and airflow map</h2>
-        <p className="mt-2 text-sm text-muted max-w-[78ch]">
-          Dense cells are well observed; dashed cells have no BASS-II test at all. Saffire runs sit on a different map, by pressure and
-          oxygen, on the <a href="/saffire" className="link">Saffire page</a>.
-        </p>
-        <div id="gaps-tool" className="scroll-mt-20 mt-6">
-          <GapMap />
-        </div>
-      </section>
-
-      <section className="mt-20">
-        <h2 className="display text-2xl">Gaps across the whole atlas</h2>
-        <dl className="mt-6 grid gap-px bg-rule border border-rule md:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["Gravity", `${evidenceRecords.filter((r) => r.gravity === "microgravity").length} of ${evidenceRecords.length} test records ran in microgravity. ${evidenceRecords.filter((r) => r.gravity === "lunar").length} ran in simulated lunar gravity (LUCI, normal air). None ran at Martian gravity.`],
-            ["Pressure", `BASS-II ran near 1 atm. Saffire IV to VI went down to ${Math.min(...saffireRuns.filter((r) => r.pressure_kpa != null).map((r) => r.pressure_kpa!))} kPa. NASA studied 56.5 kPa with 34 % oxygen and later evaluated 66.2 kPa with 28.5 % oxygen; neither is a universal lunar habitat specification.`],
-            ["Materials", `${[...new Set(evidenceRecords.map((r) => r.material))].join(", ")}. Real cabins hold many more.`],
-            ["Scale", `From a ${Math.min(...evidenceRecords.filter((r) => r.sizeCm).map((r) => r.sizeCm!))} cm strip to a ${Math.max(...evidenceRecords.filter((r) => r.sizeCm).map((r) => r.sizeCm!))} cm sheet. NASA reports that larger Saffire burns spread more slowly than small-duct tests of the same fabric.`],
-          ].map(([k, v]) => (
-            <div key={k} className="bg-void p-6">
-              <dt className="font-semibold">{k}</dt>
-              <dd className="mt-2 text-[15px] text-muted">{v}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      <section className="mt-16">
-        <h2 className="display text-2xl">What NASA says about the edges of this evidence</h2>
-        <div className="mt-8 grid gap-x-12 gap-y-10 md:grid-cols-2">
-          {quotes.map((f) => (
-            <Quote key={f.id} f={f} />
-          ))}
-        </div>
-        <p className="mt-8 text-sm text-muted">
-          The two LUCI burns are the only lunar-gravity test rows here; Martian-gravity results exist only as reported findings.{" "}
-          <Cite sourceId="partial-g" />, <Cite sourceId="luci" />
-        </p>
-      </section>
     </div>
   );
 }

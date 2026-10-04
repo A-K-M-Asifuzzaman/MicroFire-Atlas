@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { buildDataset } from "@/lib/model-lab";
 import { Cite } from "@/components/Cite";
 import { OutcomeMark } from "@/components/Outcome";
 import { evidenceRecords, experiments, findings, luciRuns, OUTCOME_STYLE, saffireRuns, sources } from "@/lib/data";
@@ -42,6 +43,8 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
+const MODEL_ROWS = buildDataset(experiments);
+
 export default function MethodologyPage() {
   const sc = scalesFrom(experiments);
   const moon = FRONTIER.find((f) => f.id === "moon-base")!;
@@ -71,6 +74,7 @@ export default function MethodologyPage() {
             ["confidence", "Evidence Confidence"],
             ["gaps", "Evidence gaps"],
             ["research-planning-method", "Research opportunities"],
+            ["model", "Evidence-bounded ML"],
             ["ai", "Where AI is used"],
             ["evaluate", "Evaluate MicroFire AI"],
             ["limits", "Limitations"],
@@ -419,6 +423,24 @@ potential direct questions = current direct questions + new unique matches`}</pr
           <p>Geometry, scale, duration, ignition method, confinement, orientation, hardware and sample history are not jointly represented. LUCI&apos;s lunar gravity is simulated. Even a direct match only covers represented dimensions under project tolerances. Counts depend on a small curated question set and do not measure researcher demand; repeated or selectively added scenarios can bias apparent breadth.</p>
           <p>The planner does not estimate information entropy, outcome value, experiment cost, hardware feasibility, crew risk, TRL, schedule, program/funding/political priority, safety impact or probability of experiment success. NASA has not validated or endorsed these planning heuristics. Human usability impact study pending; no performance-improvement claim is made.</p>
           <p><Link href="/gaps#research-planning" className="link">Open the research landscape</Link>. Versioned JSON exports retain corpus identity, assumptions and hypothetical/planned status. Source updates require human review before the evidence layer changes.</p>
+        </Section>
+
+        <Section id="model" title="Evidence-bounded machine learning">
+          <p>
+            The <Link href="/model-lab" className="link">AI Model Lab</Link> trains a regularised logistic regression on {MODEL_ROWS.rows.length} BASS-II tests
+            (SIBAL fabric and PMMA; reused samples, suspect oxygen readings and the all-negative Nomex family excluded). It predicts one thing: whether a
+            flame was established after the ignition attempt. Final outcomes are not modelled, because most BASS-II flames were extinguished on purpose
+            by turning the fan down. Saffire and LUCI are not pooled: different scale, different gravity regime.
+          </p>
+          <p>
+            Validation leaves one crew session out at a time, with bootstrap intervals, a repeated stratified check and a leave-one-material-out stress
+            test. Five models are benchmarked against a baseline; the simplest one that beats it on proper scores is deployed.
+          </p>
+          <p>
+            Every query passes a domain gate first: gravity must be microgravity, the material must be in the training data, pressure must be ISS-cabin
+            pressure, oxygen and airflow must sit inside each material&apos;s tested range, and at least three similar tests must lie nearby. Otherwise the
+            answer is “out of domain” or “insufficient evidence”, and no number is shown. Reproduce it with <code>npm run model-lab</code>.
+          </p>
         </Section>
 
         <Section id="ai" title="Where AI is used">
