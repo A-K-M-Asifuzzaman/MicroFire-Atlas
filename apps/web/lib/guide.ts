@@ -14,8 +14,8 @@ export const PAGES: GuidePage[] = [
     name: "Home",
     match: (p) => p === "/",
     steps: [
-      { target: "hero", kid: "Hi, I'm Ember! On Earth, flames like me stand tall because hot air rises. In space nothing rises, so we change shape!", pro: "MicroFire Atlas: 56 BASS/BASS-II tests transcribed from NASA/TM-20210011385, with page-level citations and verified quotes." },
-      { target: "paths", kid: "Pick your way in: the adventure with me and the crew, or the mission desk where scientists check the evidence.", pro: "Two entry points to the same evidence: Explorer (Follow the Spark) and Mission Analyst (Evidence Ladder, robustness, brief)." },
+      { target: "hero", kid: "Hi, I'm Ember! On Earth, flames like me stand tall because hot air rises. In space nothing rises, so we change shape!", pro: "The readout is computed live from the NASA records: no test has burned PMMA in a lunar habitat at 34 % oxygen." },
+      { target: "paths", kid: "Pick your mission: the 90-second Challenge, an adventure with me and the crew, or the mission desk where scientists check the evidence.", pro: "Three entry points to the same evidence: Challenge Mode (nine steps), Explorer and Mission Analyst." },
     ],
   },
   {
@@ -233,7 +233,7 @@ export const CREW: Record<CrewId, { name: string; job: string; img: string; pose
 /** "What am I looking for?": one short goal per page, in Explorer and Scientist words. */
 export const GOALS: Record<string, { crew: CrewId; kid: string; pro: string; next?: { label: string; href: string } }> = {
   learn: { crew: "kofi", kid: "Flip gravity off, then scroll slowly: three real tests show what changes across near-matched tests with different airflow.", pro: "Explainer: gravity illustration plus the B16/B20/B19 scroll story, each beat a recorded outcome.", next: { label: "Build the experiment", href: "/story" } },
-  home: { crew: "tala", kid: "Press Follow the Spark to start the adventure, or scroll down: a real flame NASA filmed in space is waiting!", pro: "Cinematic opener, real NASA footage, the B16/B20/B19 map and where the evidence stops.", next: { label: "Follow the Spark", href: "/expedition" } },
+  home: { crew: "tala", kid: "Try Challenge Mode for the whole story in 90 seconds, or watch a real NASA flame just below.", pro: "Live evidence readout, three ways in, an evidence instrument (watch, measure, compare, explain) and the Research Frontier matrix.", next: { label: "Enter Challenge Mode", href: "/challenge" } },
   atlas: { crew: "mei", kid: "Every dot is a real fire test from the space station. Tap a dot, then read what the astronauts wrote.", pro: "All 56 records by O₂ and airflow; select a point for its full provenance.", next: { label: "Compare two tests", href: "/compare" } },
   analyze: { crew: "kofi", kid: "Play the real NASA video, then press Flame Vision to see the computer find the flame.", pro: "Classical CV on NASA footage; pixel units only.", next: { label: "Explore the tests", href: "/atlas" } },
   compare: { crew: "mei", kid: "Look at what stayed the same and what changed. Then read what NASA saw, and what we can't say yet.", pro: "Held constant, changed and recorded are computed from the records; can and can't say follow from them.", next: { label: "Explore the Research Frontier", href: "/gaps" } },
