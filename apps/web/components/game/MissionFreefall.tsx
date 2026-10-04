@@ -927,7 +927,7 @@ export function MissionFreefall() {
           {screen.id === "moon" && (
             <div className="mt-4">
               <p className="text-[15px]">
-                NASA has studied an exploration atmosphere with <b>{MOON_AIR.o2} % oxygen at {MOON_AIR.kpa} kPa</b> for exploration habitats; it is not a final universal lunar atmosphere. <Cite sourceId="exploration-atmosphere" />
+                NASA has studied an exploration atmosphere with <b>{MOON_AIR.o2} % oxygen at {MOON_AIR.kpa} kPa</b> for exploration habitats; it is not a final, universal lunar-habitat atmosphere. <Cite sourceId="exploration-atmosphere" />
               </p>
               <MoonMap marker={save.marker} onTap={tapMap} />
               {hint && !save.marker && <p className="mt-2 text-sm text-flame" role="status">{hint}</p>}

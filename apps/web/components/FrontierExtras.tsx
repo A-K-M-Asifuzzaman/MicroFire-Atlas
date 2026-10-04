@@ -60,7 +60,7 @@ const DOMAINS: { name: string; kid: string; topics: string[]; rows: boolean }[] 
   { name: "Cabin atmosphere", kid: "Oxygen and air pressure", topics: ["oxygen", "pressure"], rows: true },
   { name: "Reduced gravity", kid: "The Moon and Mars", topics: ["partial-gravity"], rows: false },
   { name: "Smoke and detection", kid: "Noticing a fire and the gases it makes", topics: ["smoke", "detection"], rows: false },
-  { name: "Material screening", kid: "Which materials NASA rates as safe to fly", topics: ["materials-screening"], rows: false },
+  { name: "Material screening", kid: "How NASA screens materials for flammability before flight", topics: ["materials-screening"], rows: false },
   { name: "Suppression", kid: "Putting fires out", topics: ["suppression"], rows: false },
   { name: "Post-fire cleanup", kid: "Cleaning the air afterwards", topics: ["cleanup"], rows: false },
 ];

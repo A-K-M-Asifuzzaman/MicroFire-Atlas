@@ -73,7 +73,7 @@ export const PAGES: GuidePage[] = [
     match: (p) => p === "/gaps",
     steps: [
       { target: "grid", kid: "Each box counts tests. Empty boxes mean nobody has tested there yet. That's a job for future scientists, maybe you!", pro: "O₂ × airflow bins: observed (3+), sparse (1-2), outside evidence (0)." },
-      { target: "grid", kid: "The orange rows have more oxygen than the air on Earth. Moon bases might use air like that, and no test here went there.", pro: "These BASS records stop at 21 % O₂. NASA has studied 56.5 kPa / 34 % O₂ and a later alternate 66.2 kPa / 28.5 % O₂; neither is a guaranteed final lunar atmosphere." },
+      { target: "grid", kid: "The orange rows have more oxygen than the air on Earth. Moon bases might use air like that, and no test here went there.", pro: "These BASS records stop at 21 % O₂. NASA has studied 56.5 kPa / 34 % O₂ and a later alternate 66.2 kPa / 28.5 % O₂; neither is a guaranteed final lunar-habitat atmosphere." },
     ],
   },
   {

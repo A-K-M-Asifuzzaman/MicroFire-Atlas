@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const MOON_Q = "What evidence exists for PMMA at 34% oxygen and 56.5 kPa on the Moon?";
 
-/** Judge mode: seven stops, each one link away from the exact view that proves the point. */
+/** Judge mode: seven stops, each one link away from the exact NASA evidence behind it. */
 export default function TourPage() {
   const STEPS = [
     {
@@ -60,7 +60,7 @@ export default function TourPage() {
       <p className="text-signal text-sm">For judges and mentors</p>
       <h1 className="display text-4xl sm:text-5xl mt-3">See MicroFire Atlas in 90 seconds.</h1>
       <p className="mt-4 text-lg text-muted max-w-[64ch]">
-        Seven stops, each one click from the exact view that proves the point. {evidenceRecords.length} test records,{" "}
+        Seven stops, each one click from the exact NASA evidence behind it. {evidenceRecords.length} test records,{" "}
         {findings.length} verified findings, and an honest map of where NASA&apos;s evidence stops.
       </p>
       <p className="mt-6 rounded-2xl border border-[var(--rule-strong)] p-4 max-w-[64ch]">
