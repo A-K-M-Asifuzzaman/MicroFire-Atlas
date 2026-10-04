@@ -323,7 +323,9 @@ export function snapshot(rows: Row[], modelId: Snapshot["modelId"]): Snapshot {
     const m = rows.filter((x) => x.material === mat);
     return [mat, { o2: [Math.min(...m.map((x) => x.o2)), Math.max(...m.map((x) => x.o2))], flow: [Math.min(...m.map((x) => x.flow)), Math.max(...m.map((x) => x.flow))], n: m.length, negatives: m.filter((x) => !x.y).length }];
   })) as Snapshot["domain"];
-  return { version: MODEL_VERSION, modelId, fs, features: FEATURE_NAMES[fs], model: fitLogit(X, y), boot, rows, domain };
+  // Six decimals is far below any displayed precision and keeps the page payload small.
+  const r6 = (m: Logit): Logit => { const q = (x: number) => Math.round(x * 1e6) / 1e6; return { mu: m.mu.map(q), sd: m.sd.map(q), w: m.w.map(q), b: q(m.b) }; };
+  return { version: MODEL_VERSION, modelId, fs, features: FEATURE_NAMES[fs], model: r6(fitLogit(X, y)), boot: boot.map(r6), rows, domain };
 }
 
 /* ---------------------------------------------------------------- domain gate */

@@ -8,6 +8,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     id: "explore", label: "Explore", blurb: "Start here: the story-led adventure",
     items: [
+      { href: "/lab", label: "Flame Lab", title: "Interactive flame lab", detail: "Set gravity, oxygen and airflow, then see what NASA tested and where the evidence stops.", icon: "fire" },
       { href: "/expedition", label: "Follow the Spark", title: "Follow the Spark", detail: "The main adventure: watch real NASA flames, find clues and take them to the Moon.", icon: "orbit" },
       { href: "/learn", label: "Why flames change", title: "Why flames change", detail: "Switch gravity off, then scroll through three near-matched tests with different airflow and 16.4–16.5 % oxygen.", icon: "fire" },
       { href: "/story", label: "Build the experiment", title: "Build the experiment", detail: "Mission Freefall: assemble NASA's wind tunnel in 3D and light a real test.", icon: "rocket" },

@@ -8,7 +8,7 @@ export const TOUR: TourStop[] = [
   { href: "/model-lab", title: "Machine learning that abstains", look: "Try “Lunar habitat scenario”: prediction blocked, with the reasons and the nearest NASA tests.", seconds: 15, criteria: "AI · Validity" },
   { href: "/ask#example-title", title: "How an AI answer is checked", look: "Open a claim: six checks, and the exact NASA records behind it.", seconds: 15, criteria: "AI · Transparency" },
   { href: "/analyze/saffire-vi-pmma", title: "Computer vision on a real NASA flame", look: "Switch Flame Vision on. Units are pixels: NASA publishes no calibration.", seconds: 10, criteria: "Best use of technology" },
-  { href: "/expedition", title: "The same evidence, for a ten-year-old", look: "One evidence layer, two depths: the story never invents a result.", seconds: 15, criteria: "Storytelling" },
+  { href: "/lab", title: "Flame Lab: one dataset, two depths", look: "Run the Low-airflow BASS case, then the Lunar habitat question. Switch Explorer and Scientist: same evidence, two voices.", seconds: 15, criteria: "Storytelling · Interactivity" },
 ];
 
 export const TOUR_KEY = "microfire-judge-tour";

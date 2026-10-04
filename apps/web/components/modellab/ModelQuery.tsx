@@ -42,7 +42,7 @@ export function ModelQuery({ snap }: { snap: Snapshot }) {
 
   return (
     <div className={styles.instrument}>
-      <form className={styles.controls} onSubmit={(e) => e.preventDefault()} aria-label="Model query">
+      <div className={styles.controls} role="group" aria-label="Model query">
         <fieldset className={styles.presets}>
           <legend>Try a condition</legend>
           {PRESETS.map((x) => (
@@ -64,7 +64,7 @@ export function ModelQuery({ snap }: { snap: Snapshot }) {
         {num("o2", "Oxygen", "% O₂", 10, 40, 0.1)}
         {num("kpa", "Pressure", "kPa", 30, 110, 0.1)}
         {num("flow", "Starting airflow", "cm/s", 0, 30, 0.5)}
-      </form>
+      </div>
 
       <section className={styles.result} data-status={g.status} aria-live="polite" aria-labelledby="mq-status">
         <p className={styles.statusRow}>
