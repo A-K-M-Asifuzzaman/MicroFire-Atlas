@@ -4,9 +4,9 @@
 
 Live: **https://microfire-atlas.vercel.app**. Built for the NASA Space Apps Challenge 2026, *Flame in Freefall*.
 
-[![Watch the MicroFire Atlas film: fire in space, explored with real NASA data](docs/screenshots/film-thumbnail.jpg)](https://www.youtube.com/watch?v=T9LLWsoYPws)
+[![Watch the MicroFire Atlas team pitch: fire in space, explored with real NASA data](docs/screenshots/film-thumbnail.jpg)](https://youtu.be/2EOt7eWySiY)
 
-▶ **Watch the 3-minute film:** https://www.youtube.com/watch?v=T9LLWsoYPws
+▶ **Watch the team pitch (3:42):** https://youtu.be/2EOt7eWySiY
 
 ## In one paragraph
 
@@ -224,12 +224,8 @@ HawkScan (StackHawk) DAST runs against the site and `/api/ask` (`stackhawk.yml`,
 
 ## Demo film
 
-- **Watch:** https://www.youtube.com/watch?v=T9LLWsoYPws
-- `film/explorer/` renders the 3:08 explorer film and its thumbnail (see `film/explorer/README.md`):
-  - real site footage, rendered frame by frame at 4K and 60 fps;
-  - a disclosed AI voiceover;
-  - every number checked against the data.
-- `film/` builds the original 240-second data film (see `film/README.md`).
+- **Watch:** https://youtu.be/2EOt7eWySiY
+- The 3:42 team pitch on the Space Apps WHO / WHY / WHAT / HOW model: real site footage recorded at 4K and 60 fps, real NASA flame footage, every number checked against the data, and a disclosed AI voiceover.
 
 
 ## Attribution
