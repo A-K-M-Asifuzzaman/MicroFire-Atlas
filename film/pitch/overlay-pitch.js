@@ -22,14 +22,26 @@
 
 /* team */
 #vp-team .event{margin-top:12px;font-size:30px;font-weight:600;color:#ffe2ac}
-#vp-team .members{display:flex;gap:30px;justify-content:center;margin-top:40px}
-#vp-team .m{display:grid;justify-items:center;align-content:start;gap:8px;width:250px;opacity:0}
+#vp-team .group{position:relative;margin-top:22px;display:grid;justify-items:center;gap:6px}
+#vp-team .row{display:flex;justify-content:center;align-items:flex-end}
+#vp-team .back{gap:170px}
+#vp-team .front{gap:60px;margin-top:22px}
+#vp-team .stagefloor{position:absolute;left:50%;bottom:58px;width:1180px;height:110px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 50% 50%,#ffcc7912 0%,transparent 65%);opacity:0}
+#vp-team.s1 .stagefloor{animation:vp-fade 1.2s .2s both}
+#vp-team .m{display:grid;justify-items:center;align-content:start;gap:6px;width:260px;opacity:0}
 #vp-team.s1 .m{animation:vp-pop .7s cubic-bezier(.2,1.5,.4,1) both}
-#vp-team .m img,#vp-team .m .ph{width:160px;height:160px;border-radius:50%;object-fit:cover;border:5px solid #ffcc79;box-shadow:0 0 0 8px #ffcc7922,0 20px 50px #000a;background:#1a2a50;display:grid;place-items:center;font-size:64px;font-weight:800;color:#ffcc79}
-#vp-team .m b{font-size:25px;line-height:1.15;font-weight:800}
-#vp-team .m span{font:600 18px/1.25 system-ui,sans-serif;color:#9fd8e6;max-width:230px}
-#vp-team .promises{display:flex;gap:26px;margin-top:44px}
-#vp-team .p{width:470px;padding:26px 28px;border-radius:26px;background:#0d1d3ce6;border:2px solid #ffffff1c;text-align:left;opacity:0;transform:translateY(40px)}
+#vp-team .m img,#vp-team .m .ph{width:135px;height:135px;border-radius:50%;object-fit:cover;border:4px solid #ffcc79bb;box-shadow:0 0 0 6px #ffcc7914,0 16px 40px #000a;background:#1a2a50;display:grid;place-items:center;font-size:54px;font-weight:800;color:#ffcc79}
+#vp-team .m b{font-size:22px;line-height:1.15;font-weight:800}
+#vp-team .m span{font:600 16px/1.25 system-ui,sans-serif;color:#9fd8e6;max-width:250px}
+#vp-team .m.side img,#vp-team .m.side .ph{width:180px;height:180px;border:5px solid #ffcc79;box-shadow:0 0 0 8px #ffcc7922,0 20px 50px #000a}
+#vp-team .m.side b{font-size:25px}
+#vp-team .m.side span{font-size:18px}
+#vp-team .m.lead{width:320px;position:relative}
+#vp-team .m.lead img,#vp-team .m.lead .ph{width:220px;height:220px;border:5px solid #ffcc79;box-shadow:0 0 0 8px #ffcc7922,0 20px 50px #000a}
+#vp-team .m.lead b{margin-top:14px;font-size:26px}
+#vp-team .m.lead span{font-size:18px;max-width:320px}
+#vp-team .promises{display:flex;gap:26px;margin-top:26px}
+#vp-team .p{width:470px;padding:20px 26px;border-radius:26px;background:#0d1d3ce6;border:2px solid #ffffff1c;text-align:left;opacity:0;transform:translateY(40px)}
 #vp-team .p i{display:block;font-style:normal;font:800 18px system-ui,sans-serif;letter-spacing:.2em;margin-bottom:8px}
 #vp-team .p b{display:block;font-size:36px;line-height:1.1;font-weight:800}
 #vp-team .p span{display:block;margin-top:10px;font:600 21px system-ui,sans-serif;color:#b9cde0}
@@ -141,9 +153,16 @@
 
   window.__vpTeam = (n) => stage(full("vp-team", () => {
     const T = window.__TEAM ?? {};
-    const members = (T.members ?? []).map((m, i) => `<div class="m" style="animation-delay:${(0.15 + i * 0.13).toFixed(2)}s">${m.photo ? `<img src="${esc(m.photo)}" alt="">` : `<div class="ph">${esc((m.name || "?").trim()[0])}</div>`}<b>${esc(m.name)}</b><span>${esc(m.role)}</span></div>`).join("");
+    // group photo: back row smaller; front row Isma (left), the team lead (centre, largest), Adrita (right).
+    // Entrances build toward the lead: back row, then the sides, then the lead last.
+    const card = (m, cls, delay) => `<div class="m ${cls}" style="animation-delay:${delay.toFixed(2)}s">${m.photo ? `<img src="${esc(m.photo)}" alt="">` : `<div class="ph">${esc((m.name || "?").trim()[0])}</div>`}<b>${esc(m.name)}</b><span>${esc(m.role)}</span></div>`;
+    const all = T.members ?? [];
+    const by = (slot) => all.filter((m) => m.slot === slot);
+    const back = by("back").map((m, i) => card(m, "", 0.15 + i * 0.13)).join("");
+    const front = [...by("left").map((m) => card(m, "side", 0.65)), ...by("lead").map((m) => card(m, "lead", 1.05)), ...by("right").map((m) => card(m, "side", 0.8))].join("");
+    const members = all.length ? `<div class="group"><div class="stagefloor"></div><div class="row back">${back}</div><div class="row front">${front}</div></div>` : "";
     return `<div class="vp-kicker">01 · WHO WE ARE</div><h2>${esc(T.name ?? "Our team")}</h2><div class="event">${esc(T.event ?? "NASA Space Apps Challenge 2026 · Flame in Freefall")}</div>
-${members ? `<div class="members">${members}</div>` : ""}
+${members}
 <div class="promises"><div class="p p1"><i>PROMISE 1</i><b>Never fake a number</b><span>Every value traced to the exact page of a NASA report</span></div>
 <div class="p p2"><i>PROMISE 2</i><b>Build for everyone</b><span>The mission planner, and the kid who may live on the Moon</span></div>
 <div class="p p3"><i>PROMISE 3</i><b>Show where evidence stops</b><span>A gap is a result, not a failure</span></div></div>`;

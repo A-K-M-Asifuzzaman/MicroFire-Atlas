@@ -3,34 +3,40 @@
   "event": "NASA Space Apps Challenge 2026 · Bangladesh · Flame in Freefall",
   "members": [
     {
-      "name": "Asif Zaman",
-      "role": "Team Lead · AI/ML & Web Developer",
-      "photo": "photos/asif.jpg"
-    },
-    {
-      "name": "Adrita Biswas",
-      "photo": "photos/adrita.jpg",
-      "role": "Voice Artist"
-    },
-    {
       "name": "Md Abdullah Al Jamee",
       "photo": "photos/jamee.jpg",
-      "role": "Web Developer"
+      "role": "Web Developer",
+      "slot": "back"
     },
     {
       "name": "Robiul Hasan Jisan",
       "photo": "photos/jisan.jpg",
-      "role": "AI/ML & Web Developer"
+      "role": "AI/ML & Web Developer",
+      "slot": "back"
     },
     {
       "name": "Upal Deb Shubhro",
       "photo": "photos/upal.jpg",
-      "role": "NASA Data Finder"
+      "role": "NASA Data Finder",
+      "slot": "back"
     },
     {
       "name": "Nusrat Jahan Isma",
       "photo": "photos/isma.jpg",
-      "role": "Researcher"
+      "role": "Researcher · Data Finder",
+      "slot": "left"
+    },
+    {
+      "name": "Asif Zaman",
+      "role": "Team Lead · AI/ML & Web Developer",
+      "photo": "photos/asif.jpg",
+      "slot": "lead"
+    },
+    {
+      "name": "Adrita Biswas",
+      "photo": "photos/adrita.jpg",
+      "role": "Voice Artist · Researcher",
+      "slot": "right"
     }
   ]
 }
