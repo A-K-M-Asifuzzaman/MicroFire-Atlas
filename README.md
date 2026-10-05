@@ -4,7 +4,7 @@
 
 Live: **https://microfire-atlas.vercel.app**. Built for the NASA Space Apps Challenge 2026, *Flame in Freefall*.
 
-[![Watch the MicroFire Atlas film: fire in space, explored with real NASA data](film/explorer/thumbnail.jpg)](https://www.youtube.com/watch?v=T9LLWsoYPws)
+[![Watch the MicroFire Atlas film: fire in space, explored with real NASA data](docs/screenshots/film-thumbnail.jpg)](https://www.youtube.com/watch?v=T9LLWsoYPws)
 
 ▶ **Watch the 3-minute film:** https://www.youtube.com/watch?v=T9LLWsoYPws
 
@@ -35,7 +35,7 @@ MicroFire compares missing conditions across a finite registry of existing missi
 
 Open `/gaps#research-planning`, or follow the research-landscape link in Challenge Mode's final research-question stage. Unknown geometry, scale, duration and platform constraints stay visible. Hypothetical candidates have no NASA record identity or measured outcomes; FM² plans remain planned. Five versioned exports are available under `/downloads/`: `mission-scenarios.json`, `gap-registry.json`, `candidate-experiments.json`, `evidence-gain.json`, and `research-planning-graph.json`. Each includes deterministic corpus/source-manifest hashes and limitations.
 
-The research methodology is documented on `/methodology#research-planning-method`; core checks run with `node --test lib/research-planning.test.ts` from `apps/web`. The [pilot usability evaluation kit](evaluation/impact-study/README.md) contains tasks, an empty participant template and descriptive analysis. **No human impact study has been run and no performance improvement is claimed.**
+The research methodology is documented on `/methodology#research-planning-method`; core checks run with `node --test lib/research-planning.test.ts` from `apps/web`. A pilot usability evaluation kit contains tasks, an empty participant template and descriptive analysis. **No human impact study has been run and no performance improvement is claimed.**
 
 ## What problem it solves
 

@@ -7,3 +7,18 @@ __pycache__/
 .env*
 .venv/
 evaluation/flame-vision/candidates/
+
+# Kept locally, not published
+/film/
+/evaluation/
+/pipelines/
+/tests/
+/data/
+/openapi.yaml
+/stackhawk.yml
+/docs/*
+!/docs/screenshots/
+/docs/screenshots/*.mjs
+/apps/web/AGENTS.md
+/apps/web/CLAUDE.md
+/apps/web/README.md
