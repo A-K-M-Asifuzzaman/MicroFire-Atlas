@@ -38,7 +38,7 @@ export default ({ p, go, btn, fx, chapter, toEl, lineEnd }) => {
     }, "none"],
 
     // 02 WHY: empathy for the problem
-    why: [async () => { await p.evaluate(() => localStorage.removeItem("microfire-mission-freefall-v2")); await go("/story"); }, (S) => {
+    why: [async () => { await go("/story"); await p.evaluate(() => localStorage.removeItem("microfire-mission-freefall-v2")); await go("/story"); }, (S) => {
       S.at(0.05, chapter(2, "WHY · CREATE EMPATHY", "Why it matters", "People, fire, and the evidence we don't have"));
       S.at(0.4, quad(2));
       S.at(S.L[0] - 0.3, call("__vpMemorial", 1));
@@ -58,10 +58,11 @@ export default ({ p, go, btn, fx, chapter, toEl, lineEnd }) => {
     }, "none"],
 
     // 03 WHAT: the big idea, shown live
-    what: [() => go("/challenge"), (S) => {
+    what: [() => go("/"), (S) => {
       S.at(0.05, chapter(3, "WHAT · OUR BIG IDEA", "What we built", "A live demo of the real website"));
       S.at(0.4, quad(3));
-      S.glide(S.L[0] + 1.0, 2.6, 180);
+      S.at(S.L[0] + 2.2, fx.sticker("0 direct NASA tests", 1250, 700));
+      S.at(S.L[1] - 0.3, () => go("/challenge"));
       S.glideEl(S.L[1] + 0.2, 1.6, "#stage-1", 0.1);
       S.glideEl(S.L[1] + 3.2, 1.6, "#stage-2", 0.1);
       S.glideEl(S.L[1] + 6.6, 1.8, "#stage-4", 0.1);
@@ -69,27 +70,32 @@ export default ({ p, go, btn, fx, chapter, toEl, lineEnd }) => {
       S.at(S.L[2] + 1.2, () => p.locator('input[type="range"]').first().focus());
       for (let k = 0; k < 10; k++) S.at(S.L[2] + 2.0 + k * 0.17, () => p.keyboard.press("ArrowRight"));
       S.at(S.L[2] + 4.2, fx.sticker("Past the evidence!", 1300, 200));
-      S.at(S.L[3] - 0.3, async () => { await go("/challenge"); await toEl("#stage-7", 60)(); });
-      S.glideEl(S.L[3] + 2.8, 1.6, "#says-no", 0.22);
-      S.at(S.L[4] - 0.3, async () => { await go("/methodology"); await zoom(1.25)(); await heading("Drag a weight and watch", 140)(); });
+      // the AI Model Lab: a real model, gated, refusing to predict
+      S.at(S.L[3] - 0.3, async () => { await go("/model-lab"); await toEl("#query-title", 40)(); });
+      S.tap(S.L[3] + 2.4, () => p.getByRole("button", { name: /Lunar habitat scenario/ }), "lunar");
+      S.at(S.L[3] + 3.6, fx.sticker("Prediction blocked", 1250, 300));
+      S.at(S.L[4] - 0.4, async () => { await go("/methodology"); await zoom(1.25)(); await heading("Drag a weight and watch", 140)(); });
       [1.25, 1.5, 1.75, 2].forEach((v, k) => S.at(S.L[4] + 0.8 + k * 0.45, () => p.locator('input[type="range"]').first().fill(String(v))));
       S.at(S.L[5] - 0.2, heading("fool the checker", 70));
       S.tap(S.L[5] + 2.0, () => p.getByRole("button", { name: "It gets flagged" }).nth(1), "wrong-number");
       S.tap(S.L[5] + 3.6, () => p.getByRole("button", { name: "It gets flagged" }).nth(1), "moon-claim");
       S.at(S.L[5] + 4.0, fx.sticker("Caught!", 1300, 260));
-      S.at(S.L[6] - 0.5, freefallAt(2));
-      S.tap(S.L[6] + 0.2, () => btn("Continue mission"), "continue");
-      S.tap(S.L[6] + 1.2, () => p.locator(".game-part", { hasText: "Flow duct" }), "duct-preview");
-      S.tap(S.L[6] + 1.7, () => p.locator(".game-part", { hasText: "Flow duct" }), "duct-install");
-      S.tap(S.L[6] + 2.6, () => btn("Quick build"), "quick");
-      S.at(S.L[6] + 3.0, fx.sticker("Built it!", 1250, 300));
+      // the Flame Lab in 3D: a NASA-matched burn, then the edge of the evidence
+      S.at(S.L[6] - 0.6, () => go("/lab"));
+      S.tap(S.L[6] + 0.3, () => p.locator("aside button", { hasText: "Run experiment" }), "run-b16");
+      S.tap(S.L[6] + 3.5, () => p.locator("label", { hasText: "Fast runs" }), "fast");
+      S.tap(S.L[6] + 3.8, () => p.getByRole("button", { name: /^Lunar habitat/ }), "moon");
+      S.tap(S.L[6] + 4.1, () => p.locator("aside button", { hasText: "Run experiment" }), "run-moon");
+      S.at(S.L[6] + 4.6, fx.sticker("Evidence stops here", 1150, 260));
     }],
 
     // 04 HOW: impact, needs, and what it could be one day
-    how: [async () => { await go("/mission?context=moon-base"); await toEl("#step-status", 70)(); }, (S) => {
+    how: [async () => { await go("/"); await toEl("#frontier-title", 40)(); }, (S) => {
       S.at(0.05, chapter(4, "HOW · IMPACT & NEEDS", "What changes next", "Impact, our needs, and where this goes"));
       S.at(0.4, quad(4));
-      S.at(S.L[0] + 2.4, fx.sticker("See the gap first", 1250, 230));
+      S.tap(S.L[0] + 1.2, () => p.getByRole("button", { name: /^Mars, ≥ 31/ }), "mars");
+      S.tap(S.L[0] + 2.6, () => p.getByRole("button", { name: /^Moon, ≥ 31/ }), "moon");
+      S.at(S.L[0] + 2.8, fx.sticker("See the gap first", 1250, 230));
       S.at(S.L[1] - 0.3, async () => { await go("/gaps"); await toEl("#research-planning", 70)(); });
       S.glideEl(S.L[1] + 4.0, 1.8, "#evidence-gain", 0.04);
       S.go(S.L[2] - 0.3, "/mission/brief?o2=34&kpa=56.5&flow=20&g=lunar&m=PMMA");

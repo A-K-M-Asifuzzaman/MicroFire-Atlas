@@ -88,8 +88,8 @@
     "Every tick is a real NASA test"
    ],
    [
-    "Then it shows exactly where the evidence stops. Ask for a fire probability, and it says no.",
-    "MicroFire says no"
+    "Then it shows exactly where the evidence stops. Ask for a fire probability, and its machine-learning model refuses: prediction blocked.",
+    "Even the ML says no"
    ],
    [
     "Change the ranking weights a thousand ways, and it shows which answers still hold.",
@@ -100,8 +100,8 @@
     "Every claim checked"
    ],
    [
-    "And kids build NASA's real wind tunnel in 3D, then predict before the real record appears.",
-    "Built for young explorers"
+    "And in the Flame Lab, anyone can run NASA's wind tunnel in 3D, and see the moment the evidence runs out.",
+    "Flame Lab · in 3D"
    ]
   ]
  },
