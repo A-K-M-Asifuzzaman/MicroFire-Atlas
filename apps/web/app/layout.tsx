@@ -3,10 +3,12 @@ import { Archivo, Fredoka, Lexend } from "next/font/google";
 import Link from "next/link";
 import { connection } from "next/server";
 import { Nav } from "@/components/Nav";
+import { CommandDeck } from "@/components/CommandDeck";
 import { ExplorerProvider } from "@/components/guide/EmberGuide";
 import { JudgeTourBar } from "@/components/JudgeTour";
 import "./globals.css";
 import "./explorer-ui.css";
+import "./orbital-ui.css";
 
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] }); // data tables and numbers
 const fredoka = Fredoka({ variable: "--font-fredoka", subsets: ["latin"], axes: ["wdth"] }); // friendly headings
@@ -29,13 +31,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 bg-panel px-3 py-2">
           Skip to content
         </a>
-        <header className="site-header">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 h-14 flex items-center justify-between gap-6">
-            <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="MicroFire Atlas home">
+        <header className="site-header cosmic-header">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
+            <Link href="/" className="cosmic-brand flex items-center gap-2.5 shrink-0" aria-label="MicroFire Atlas home">
               <Mark />
               <span className="display text-[15px] tracking-tight">MicroFire Atlas</span>
             </Link>
-            <Nav />
+            <div className="cosmic-navigation"><Nav /><CommandDeck /></div>
           </div>
         </header>
         <main id="main" className="flex-1">
