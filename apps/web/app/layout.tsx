@@ -9,6 +9,7 @@ import { JudgeTourBar } from "@/components/JudgeTour";
 import "./globals.css";
 import "./explorer-ui.css";
 import "./orbital-ui.css";
+import "./playground.css";
 
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] }); // data tables and numbers
 const fredoka = Fredoka({ variable: "--font-fredoka", subsets: ["latin"], axes: ["wdth"] }); // friendly headings
