@@ -4,6 +4,7 @@ import { Legend } from "@/components/Outcome";
 import { Cite, Quote } from "@/components/Cite";
 import { Chamber } from "@/components/lab/Chamber";
 import { HomeHero } from "@/components/home/HomeHero";
+import { GravityPlayground } from "@/components/home/GravityPlayground";
 import { MissionSelector } from "@/components/home/MissionSelector";
 import { EvidenceExperience } from "@/components/home/EvidenceExperience";
 import { FrontierMatrix, type MiniRecord } from "@/components/home/FrontierMatrix";
@@ -56,6 +57,7 @@ export default function Home() {
   return (
     <>
       <HomeHero />
+      <GravityPlayground />
       <MissionSelector oxygen={evidenceRecords.flatMap((r) => (r.oxygen == null ? [] : [{ id: r.id, o2: r.oxygen, family: r.family }]))} />
       <EvidenceExperience compareStage={compareStage} compareCopy={compareCopy} explainStage={explainStage} findings={cards} />
       <FrontierMatrix records={mini} quotes={findings.length} />

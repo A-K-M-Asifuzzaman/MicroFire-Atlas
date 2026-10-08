@@ -1,0 +1,45 @@
+.cosmic-playground{position:relative;isolation:isolate;width:min(1320px,100%);margin:48px auto;padding:clamp(18px,3vw,38px);border:1px solid #6abde747;border-radius:28px;background:radial-gradient(ellipse at 0% 0%,#225c8657,transparent 55%),linear-gradient(135deg,#0b1c32,#070e20);box-shadow:0 25px 90px #0007, inset 0 1px #c3f6ff15}
+.cosmic-playground-top{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:26px}
+.cosmic-playground-top h2{font-size:clamp(25px,3vw,43px);max-width:700px;margin:7px 0 10px;color:#f1faff}
+.cosmic-playground-top p:not(.cosmic-eyebrow){font-size:14px;color:#bcd0e4;max-width:660px}
+.cosmic-playground-link{white-space:nowrap;color:#0c182b;background:linear-gradient(100deg,#8feafa,#ecfbff);padding:13px 18px;border-radius:12px;font-weight:800;font-size:13px}
+.cosmic-playground-link:hover{filter:brightness(1.08)}
+.cosmic-playground-grid{display:grid;grid-template-columns: minmax(0,1.3fr) minmax(310px,.7fr);gap:20px}
+.cosmic-playground-stage{position:relative;min-height:430px;overflow:hidden;border-radius:20px;border:1px solid #83c5ec46;background:radial-gradient(ellipse at 50% 60%,#173d62,#060e21 68%);display:grid;place-items:center}
+.cosmic-stage-stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 15%,#f5faff 98%,transparent),radial-gradient(1.5px 1.5px at 78% 33%,#f5faff 98%,transparent),radial-gradient(1px 1px at 68% 87%,#bdd4ff 98%,transparent),radial-gradient(1px 1px at 40% 70%,#bdd4ff 98%,transparent);background-size:300px 240px;opacity:.6}
+.cosmic-stage-orbit{position:absolute;width:320px;height:320px;border:1px solid #5ed5ed23;border-radius:50%;box-shadow:0 0 0 45px #3c95de09,0 0 0 90px #3c95de05}
+.cosmic-flame-field{position:relative;width:220px;height:270px;display:flex;align-items:center;justify-content:center}
+.cosmic-flame-halo{position:absolute;width:125px;height:170px;background:#ff9f2850;filter:blur(44px);border-radius:50%;transition:background .6s}
+.cosmic-flame-core{position:absolute;bottom:45px;width:105px;height:165px;background:linear-gradient(0deg,#fff3ae 0%,#ffae47 37%,#ff682e 75%,#ff3f2b);border-radius:12% 83% 45% 55% / 16% 76% 29% 95%;transform:rotate(45deg);box-shadow:0 0 35px #ff8c28a8,inset -15px 8px 22px #f9ecb4aa;transition:all .65s cubic-bezier(.2,.7,.2,1);animation:cosmicFlame 2.6s ease-in-out infinite alternate}
+.cosmic-flame-inner{position:absolute;bottom:53px;width:54px;height:85px;border-radius:20% 80% 42% 58%/20% 75% 25% 80%;transform:rotate(45deg);background:#faffd7d9;filter:blur(5px);transition:all .65s}
+.cosmic-flame-base{position:absolute;bottom:34px;width:142px;height:12px;background:#2e5676;border:1px solid #86daff91;border-radius:50%;box-shadow:0 0 24px #47dffd70}
+.cosmic-air-vector{position:absolute;width:0;height:4px;left:8px;top:115px;background:#6aeaffb8;box-shadow:0 0 12px #6aeaff;transition:width .3s}
+.cosmic-playground-stage[data-airflow=high] .cosmic-air-vector{width:62px}
+.cosmic-playground-stage[data-gravity=orbit] .cosmic-flame-halo{background:#316eff7a}
+.cosmic-playground-stage[data-gravity=orbit] .cosmic-flame-core{bottom:67px;width:120px;height:120px;border-radius:50%;transform:rotate(0);background:radial-gradient(circle at 50% 50%,#b9fbff 3%,#3bc9f8 25%,#3363e9 62%,#182f90 85%);box-shadow:0 0 55px #337efe77,inset 0 0 25px #acf8ff8a}
+.cosmic-playground-stage[data-gravity=orbit] .cosmic-flame-inner{bottom:101px;width:56px;height:56px;transform:none;border-radius:50%;background:#bdffff9a}
+.cosmic-playground-stage[data-airflow=high][data-gravity=orbit] .cosmic-flame-core{transform:translateX(23px) scaleX(1.2)}
+.cosmic-stage-axis{position:absolute;left:22px;top:22px;color:#8bbbd2;display:grid;gap:35px;font-family:monospace;font-size:11px}
+.cosmic-stage-meta{position:absolute;top:16px;right:17px;display:grid;text-align:right;gap:5px;color:#b6d8eb;font-size:10px;letter-spacing:.12em}
+.cosmic-stage-flow{position:absolute;bottom:18px;left:18px;color:#94ddeb;font-size:12px;text-transform:uppercase;letter-spacing:.11em}
+.cosmic-playground-controls{background:linear-gradient(165deg,#10253b,#0a162b);border:1px solid #5c9aba61;border-radius:20px;padding:clamp(19px,2vw,27px)}
+.cosmic-playground-controls h3{font-size:25px;margin:8px 0 23px}
+.cosmic-playground-controls legend,.cosmic-slider-label{font-size:13px;font-weight:700;color:#c9e3f2}
+.cosmic-gravity-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.cosmic-gravity-options button{display:grid;justify-items:center;gap:4px;padding:13px;border:1px solid #5385a5;border-radius:13px;background:#0b192e;min-height:85px;color:#dbeafa}
+.cosmic-gravity-options button[aria-pressed=true]{background:#1356737a;border-color:#75edff;box-shadow:0 0 16px #56e5ff28}
+.cosmic-gravity-options small{font-size:11px;color:#a1c8da}
+.cosmic-slider-label{display:flex;justify-content:space-between;margin-top:25px;margin-bottom:6px}
+.cosmic-slider-label output{color:#78eaff}
+.cosmic-playground-controls input[type=range]{width:100%;accent-color:#73e7f6;cursor:pointer}
+.cosmic-slider-ends{display:flex;justify-content:space-between;font-size:11px;color:#9ebbd0}
+.cosmic-discovery-box{min-height:141px;background:#081524;border:1px solid #33627d;border-radius:13px;padding:14px;margin:22px 0 12px}
+.cosmic-discovery-box strong{color:#f9c37c;font-size:13px}
+.cosmic-discovery-box p{font-size:13px;color:#bdd4e5;margin-top:7px;line-height:1.6}
+.cosmic-reveal{display:flex;justify-content:space-between;align-items:center;width:100%;background:linear-gradient(100deg,#ff9648,#ffca7e);color:#201306;font-weight:800;padding:14px 17px;border-radius:12px}
+.cosmic-reveal:hover{filter:brightness(1.1)}
+.cosmic-playground-disclaimer{font-size:11px;line-height:1.5;color:#9fbacd;margin-top:15px}
+.cosmic-playground-disclaimer a{color:#7ce9f6;text-decoration:underline}
+@keyframes cosmicFlame{to{filter:brightness(1.11);scale:1.035}}
+@media(max-width:880px){.cosmic-playground{width:calc(100% - 28px)}.cosmic-playground-top{align-items:start;flex-direction:column}.cosmic-playground-grid{grid-template-columns:1fr}.cosmic-playground-stage{min-height:300px}.cosmic-playground-controls h3{margin-bottom:18px}}
+@media(prefers-reduced-motion:reduce){.cosmic-flame-core{animation:none!important;transition:none}.cosmic-flame-inner,.cosmic-flame-halo{transition:none}}
